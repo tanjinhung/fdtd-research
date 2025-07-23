@@ -1,5 +1,5 @@
 #define NOB_IMPLEMENTATION
-#include "nob.h"
+#include "../nob.h"
 
 int main(int argc, char *argv[]) {
   printf(argc > 1 ? "Hello, %s!\n" : "Hello, World!\n",
