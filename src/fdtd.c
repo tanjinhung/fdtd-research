@@ -27,12 +27,23 @@ void simulate_fdtd(double ez[], double hy[], double impedence0) {
   }
 }
 
+void Draw2DGrid(int pos_x, int pos_y, int width, int height, float spacing,
+                Color color) {
+  for (float x = pos_x; x < width; x += spacing) {
+    DrawLineV((Vector2){pos_x + x, 0}, (Vector2){pos_x + x, height}, color);
+  }
+  for (float y = pos_y; y < height; y += spacing) {
+    DrawLineV((Vector2){0, pos_y + y}, (Vector2){width, pos_y + y}, color);
+  }
+}
+
 int main() {
   double ez[SIZE] = {0.};
   double hy[SIZE] = {0.};
   double impedence0 = 377.0;
   const int screenWidth = 800;
   const int screenHeight = 600;
+  int qTime = 0;
 
   InitWindow(screenWidth, screenHeight, "FDTD Simulation");
   SetTargetFPS(60);
@@ -42,10 +53,14 @@ int main() {
   simulate_fdtd(ez, hy, impedence0);
 
   while (!WindowShouldClose()) {
+    if (qTime > MAX_TIME)
+      qTime = 0;
     BeginDrawing();
     ClearBackground(RAYWHITE);
-    DrawFPS(10, 10);
+    Draw2DGrid(100, 200, screenWidth - 100, screenHeight - 200, 20.0f,
+               (Color){0x1e, 0x1e, 0x1e, 0xff});
     EndDrawing();
+    qTime++;
   }
 
   CloseWindow();
