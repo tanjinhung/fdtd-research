@@ -29,11 +29,11 @@ void simulate_fdtd(double ez[], double hy[], double impedence0) {
 
 void Draw2DGrid(int pos_x, int pos_y, int width, int height, float spacing,
                 Color color) {
-  for (float x = pos_x; x < width; x += spacing) {
-    DrawLineV((Vector2){pos_x + x, 0}, (Vector2){pos_x + x, height}, color);
+  for (int x = pos_x; x <= pos_x + width; x += spacing) {
+    DrawLine((int)x, pos_y, (int)x, pos_y + height, color);
   }
-  for (float y = pos_y; y < height; y += spacing) {
-    DrawLineV((Vector2){0, pos_y + y}, (Vector2){width, pos_y + y}, color);
+  for (int y = pos_y; y <= pos_y + height; y += spacing) {
+    DrawLine(pos_x, (int)y, pos_x + width, (int)y, color);
   }
 }
 
@@ -57,8 +57,7 @@ int main() {
       qTime = 0;
     BeginDrawing();
     ClearBackground(RAYWHITE);
-    Draw2DGrid(100, 200, screenWidth - 100, screenHeight - 200, 20.0f,
-               (Color){0x1e, 0x1e, 0x1e, 0xff});
+    Draw2DGrid(50, 150, screenWidth - 100, screenHeight - 200, 20.0f, BLACK);
     EndDrawing();
     qTime++;
   }
