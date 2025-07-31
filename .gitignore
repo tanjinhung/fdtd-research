@@ -57,3 +57,4 @@ dkms.conf
 build/
 nob
 nob.old
+test/
