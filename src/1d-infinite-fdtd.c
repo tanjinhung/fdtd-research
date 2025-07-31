@@ -5,37 +5,7 @@
 #include "raylib.h"
 
 #define SIZE 200
-#define MAX_TIME 250
-
-void simulate_fdtd(double ez[], double hy[], double impedence0) {
-  int qTime, mm;
-  for (qTime = 0; qTime < MAX_TIME; qTime++) {
-    for (mm = 0; mm < SIZE - 1; mm++) {
-      hy[mm] += (ez[mm + 1] - ez[mm]) / impedence0;
-    }
-
-    for (mm = 1; mm < SIZE; mm++) {
-      ez[mm] += (hy[mm] - hy[mm - 1]) * impedence0;
-    }
-
-    ez[0] = exp(-(qTime - 30.) * (qTime - 30.) / 100.0);
-
-    if (qTime % 10 == 0) {
-      printf("Time step %d: ", qTime);
-      printf("%g\n", ez[50]);
-    }
-  }
-}
-
-void Draw2DGrid(int pos_x, int pos_y, int width, int height, float spacing,
-                Color color) {
-  for (int x = pos_x; x <= pos_x + width; x += spacing) {
-    DrawLine((int)x, pos_y, (int)x, pos_y + height, color);
-  }
-  for (int y = pos_y; y <= pos_y + height; y += spacing) {
-    DrawLine(pos_x, (int)y, pos_x + width, (int)y, color);
-  }
-}
+#define MAX_TIME 450
 
 static inline float map_value(float v, float d0, float d1, float r0, float r1) {
   return r0 + (v - d0) / (d1 - d0) * (r1 - r0);
@@ -86,53 +56,40 @@ int main() {
   static float ez[SIZE] = {0.};
   static float hy[SIZE] = {0.};
   static float impedence0 = 377.0;
-  int qTime = 0;
-  int mm;
-  // Source Position
-  int src = SIZE / 2;
-
-  // hy[m] = hy[m] + (ez[m + 1] - ez[m]) / impedence0;
-  // ez[m] = ez[m] + (hy[m] - hy[m - 1]) * impedence0;
-  // ez[0] = exp(-(qTime - 30.) * (qTime - 30.) / 100.0);
-  // simulate_fdtd(ez, hy, impedence0);
+  int qTime = 0, mm;
+  int src = 50;
 
   while (!WindowShouldClose()) {
-    if (qTime > MAX_TIME)
-      qTime = 0;
+    float maxEz = 1.0f;
+    float minEz = -1.0f;
 
-    float maxEz = FP_INFINITE;
-    float minEz = -FP_INFINITE;
+    hy[SIZE - 1] = hy[SIZE - 2];
 
     for (mm = 0; mm < SIZE - 1; mm++)
       hy[mm] += (ez[mm + 1] - ez[mm]) / impedence0;
-    for (mm = 1; mm < SIZE; mm++) {
+
+    ez[0] = ez[1];
+
+    for (mm = 1; mm < SIZE; mm++)
       ez[mm] += (hy[mm] - hy[mm - 1]) * impedence0;
 
-      float e = ez[mm];
-      if (e > maxEz)
-        maxEz = e;
-      if (e < minEz)
-        minEz = e;
-    }
-
-    ez[src] = exp(-(qTime - 30.0f) * (qTime - 30.0f) / 100.0f);
-    if (ez[src] > maxEz)
-      maxEz = ez[src];
-    if (ez[src] < minEz)
-      minEz = ez[src];
+    ez[src] += exp(-(qTime - 30.0f) * (qTime - 30.0f) / 100.0f);
 
     BeginDrawing();
     ClearBackground(RAYWHITE);
 
-    float padY = (maxEz - minEz) * 0.1f;
-    float yMin = minEz - padY;
-    float yMax = maxEz + padY;
-
     DrawPlot((Rectangle){50, 100, screenWidth - 100, screenHeight - 200}, 0,
-             SIZE - 1, yMin, yMax, SIZE, ez, LIGHTGRAY, RED);
+             SIZE - 1, minEz, maxEz, SIZE, ez, LIGHTGRAY, RED);
 
     EndDrawing();
     qTime++;
+    if (qTime >= MAX_TIME) {
+      qTime = 0;
+      for (mm = 0; mm < SIZE; mm++) {
+        ez[mm] = 0.0f;
+        hy[mm] = 0.0f;
+      }
+    }
   }
 
   CloseWindow();
