@@ -7,24 +7,24 @@
 #define SIZE 200
 #define MAX_TIME 450
 
-static inline float map_value(float v, float d0, float d1, float r0, float r1) {
+static inline double map_value(double v, double d0, double d1, double r0, double r1) {
   return r0 + (v - d0) / (d1 - d0) * (r1 - r0);
 }
 
-void DrawPlot(Rectangle rect, float xMin, float xMax, float yMin, float yMax,
-              int count, const float *data, Color gridColor, Color plotColor) {
+void DrawPlot(Rectangle rect, double xMin, double xMax, double yMin, double yMax,
+              int count, const double *data, Color gridColor, Color plotColor) {
   const int xTicks = 10, yTicks = 10;
 
   // 1) GRID
   for (int i = 0; i <= xTicks; i++) {
-    float x = xMin + (xMax - xMin) * (i / (float)xTicks);
-    float sx = map_value(x, xMin, xMax, rect.x, rect.x + rect.width);
+    double x = xMin + (xMax - xMin) * (i / (double)xTicks);
+    double sx = map_value(x, xMin, xMax, rect.x, rect.x + rect.width);
     DrawLine((int)sx, (int)rect.y, (int)sx, (int)(rect.y + rect.height),
              gridColor);
   }
   for (int j = 0; j <= yTicks; j++) {
-    float y = yMin + (yMax - yMin) * (j / (float)yTicks);
-    float sy = map_value(y, yMin, yMax, rect.y + rect.height, rect.y);
+    double y = yMin + (yMax - yMin) * (j / (double)yTicks);
+    double sy = map_value(y, yMin, yMax, rect.y + rect.height, rect.y);
     DrawLine((int)rect.x, (int)sy, (int)(rect.x + rect.width), (int)sy,
              gridColor);
   }
@@ -32,17 +32,17 @@ void DrawPlot(Rectangle rect, float xMin, float xMax, float yMin, float yMax,
   if (count < 2)
     return;
   for (int i = 0; i < count; i++) {
-    float x0 = xMin + (xMax - xMin) * ((i - 1) / (float)(count - 1));
-    float x1 = xMin + (xMax - xMin) * (i / (float)(count - 1));
+    double x0 = xMin + (xMax - xMin) * ((i - 1) / (double)(count - 1));
+    double x1 = xMin + (xMax - xMin) * (i / (double)(count - 1));
 
-    float sx0 = map_value(x0, xMin, xMax, rect.x, rect.x + rect.width);
-    float sx1 = map_value(x1, xMin, xMax, rect.x, rect.x + rect.width);
+    double sx0 = map_value(x0, xMin, xMax, rect.x, rect.x + rect.width);
+    double sx1 = map_value(x1, xMin, xMax, rect.x, rect.x + rect.width);
 
-    float y0 = data[i - 1];
-    float y1 = data[i];
+    double y0 = data[i - 1];
+    double y1 = data[i];
 
-    float sy0 = map_value(y0, yMin, yMax, rect.y + rect.height, rect.y);
-    float sy1 = map_value(y1, yMin, yMax, rect.y + rect.height, rect.y);
+    double sy0 = map_value(y0, yMin, yMax, rect.y + rect.height, rect.y);
+    double sy1 = map_value(y1, yMin, yMax, rect.y + rect.height, rect.y);
 
     DrawLine((int)sx0, (int)sy0, (int)sx1, (int)sy1, plotColor);
   }
@@ -53,15 +53,15 @@ int main() {
   InitWindow(screenWidth, screenHeight, "FDTD Simulation");
   SetTargetFPS(60);
 
-  static float ez[SIZE] = {0.};
-  static float hy[SIZE] = {0.};
-  static float impedence0 = 377.0;
+  static double ez[SIZE] = {0.};
+  static double hy[SIZE] = {0.};
+  static double impedence0 = 377.0;
   int qTime = 0, mm;
   int src = 50;
 
   while (!WindowShouldClose()) {
-    float maxEz = 1.0f;
-    float minEz = -1.0f;
+    double maxEz = 1.0f;
+    double minEz = -1.0f;
 
     hy[SIZE - 1] = hy[SIZE - 2];
 
