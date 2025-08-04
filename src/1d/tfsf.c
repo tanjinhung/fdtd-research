@@ -68,12 +68,15 @@ int main() {
     for (mm = 0; mm < SIZE - 1; mm++)
       hy[mm] += (ez[mm + 1] - ez[mm]) / impedence0;
 
+    hy[src - 1] -=
+        exp(-(qTime - 30.0f) * (qTime - 30.0f) / 100.0f) / impedence0;
     ez[0] = ez[1];
 
     for (mm = 1; mm < SIZE; mm++)
       ez[mm] += (hy[mm] - hy[mm - 1]) * impedence0;
 
-    ez[src] += exp(-(qTime - 30.0f) * (qTime - 30.0f) / 100.0f);
+    ez[src] += exp(-(qTime + 0.5f - (-0.5f) - 30.0f) *
+                   (qTime + 0.5f - (-0.5f) - 30.0f) / 100.0f);
 
     BeginDrawing();
     ClearBackground(RAYWHITE);

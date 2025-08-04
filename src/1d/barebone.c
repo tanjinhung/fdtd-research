@@ -1,7 +1,7 @@
 #include <math.h>
 #define NOB_IMPLEMENTATION
 #define NOB_STRIP_PREFIX
-#include "../nob.h"
+#include "../../nob.h"
 #include "raylib.h"
 
 #define SIZE 200
@@ -89,7 +89,7 @@ int main() {
   int qTime = 0;
   int mm;
   // Source Position
-  int src = SIZE / 2;
+  int src = 0;
 
   // hy[m] = hy[m] + (ez[m + 1] - ez[m]) / impedence0;
   // ez[m] = ez[m] + (hy[m] - hy[m - 1]) * impedence0;
@@ -97,42 +97,32 @@ int main() {
   // simulate_fdtd(ez, hy, impedence0);
 
   while (!WindowShouldClose()) {
-    if (qTime > MAX_TIME)
-      qTime = 0;
-
-    float maxEz = FP_INFINITE;
-    float minEz = -FP_INFINITE;
+    float maxEz = 1.0f;
+    float minEz = -1.0f;
 
     for (mm = 0; mm < SIZE - 1; mm++)
       hy[mm] += (ez[mm + 1] - ez[mm]) / impedence0;
-    for (mm = 1; mm < SIZE; mm++) {
+
+    for (mm = 1; mm < SIZE; mm++)
       ez[mm] += (hy[mm] - hy[mm - 1]) * impedence0;
 
-      float e = ez[mm];
-      if (e > maxEz)
-        maxEz = e;
-      if (e < minEz)
-        minEz = e;
-    }
-
     ez[src] = exp(-(qTime - 30.0f) * (qTime - 30.0f) / 100.0f);
-    if (ez[src] > maxEz)
-      maxEz = ez[src];
-    if (ez[src] < minEz)
-      minEz = ez[src];
 
     BeginDrawing();
     ClearBackground(RAYWHITE);
 
-    float padY = (maxEz - minEz) * 0.1f;
-    float yMin = minEz - padY;
-    float yMax = maxEz + padY;
-
     DrawPlot((Rectangle){50, 100, screenWidth - 100, screenHeight - 200}, 0,
-             SIZE - 1, yMin, yMax, SIZE, ez, LIGHTGRAY, RED);
+             SIZE - 1, minEz, maxEz, SIZE, ez, LIGHTGRAY, RED);
 
     EndDrawing();
     qTime++;
+    if (qTime >= MAX_TIME) {
+      qTime = 0;
+      for (mm = 0; mm < SIZE; mm++) {
+        ez[mm] = 0.0f;
+        hy[mm] = 0.0f;
+      }
+    }
   }
 
   CloseWindow();
