@@ -75,6 +75,7 @@ int main(int argc, char **argv) {
     return 1;
 
   Nob_Cmd cmd = {0};
+  Nob_Procs proc = {0};
   Files files_to_process = {0};
 
   traverse_directory_and_append_to_files(src_folder, &files_to_process);
@@ -96,9 +97,9 @@ int main(int argc, char **argv) {
     nob_cc_inputs(&cmd, input.items);
     nob_cc_output(&cmd, output.items);
     nob_cmd_append(&cmd, "-lm", "-lraylib");
-    if (!nob_cmd_run_sync_and_reset(&cmd))
-      return 1;
+    da_append(&proc, nob_cmd_run_async_and_reset(&cmd));
   }
+  nob_procs_wait(proc);
 
   return 0;
 }
