@@ -12,9 +12,6 @@
 #define map_value(v, d0, d1, r0, r1)                                           \
   ((r0) + ((v) - (d0)) / ((d1) - (d0)) * ((r1) - (r0)))
 
-// static inline double map_value(double v, double d0, double d1, double r0,
-// double r1) { return r0 + (v - d0) / (d1 - d0) * (r1 - r0); }
-
 void DrawPlot(Rectangle rect, double xMin, double xMax, double yMin,
               double yMax, int count, const double *data, Color gridColor,
               Color plotColor) {
