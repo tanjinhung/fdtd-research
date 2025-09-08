@@ -37,12 +37,14 @@ void Draw2DGrid(int pos_x, int pos_y, int width, int height, double spacing,
   }
 }
 
-static inline double map_value(double v, double d0, double d1, double r0, double r1) {
+static inline double map_value(double v, double d0, double d1, double r0,
+                               double r1) {
   return r0 + (v - d0) / (d1 - d0) * (r1 - r0);
 }
 
-void DrawPlot(Rectangle rect, double xMin, double xMax, double yMin, double yMax,
-              int count, const double *data, Color gridColor, Color plotColor) {
+void DrawPlot(Rectangle rect, double xMin, double xMax, double yMin,
+              double yMax, int count, const double *data, Color gridColor,
+              Color plotColor) {
   const int xTicks = 10, yTicks = 10;
 
   // 1) GRID
@@ -110,11 +112,10 @@ int main() {
 
     BeginDrawing();
     ClearBackground(RAYWHITE);
-
     DrawPlot((Rectangle){50, 100, screenWidth - 100, screenHeight - 200}, 0,
              SIZE - 1, minEz, maxEz, SIZE, ez, LIGHTGRAY, RED);
-
     EndDrawing();
+
     qTime++;
     if (qTime >= MAX_TIME) {
       qTime = 0;
