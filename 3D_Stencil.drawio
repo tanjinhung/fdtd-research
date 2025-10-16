@@ -1,0 +1,34 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64; rv:144.0) Gecko/20100101 Firefox/144.0" version="28.2.7">
+  <diagram name="Page-1" id="fSabuPujAMSZEU_hh4CQ">
+    <mxGraphModel dx="1765" dy="1100" grid="1" gridSize="7.874" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Mt6bxmGleEoaamjlU8Mx-26" value="" style="group;fontSize=24;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="125.98" y="220.47000000000003" width="629.8177599999999" height="631.5600000000001" as="geometry" />
+        </mxCell>
+        <mxCell id="Mt6bxmGleEoaamjlU8Mx-24" value="Below" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;aspect=fixed;size=62;fontSize=24;" vertex="1" parent="Mt6bxmGleEoaamjlU8Mx-26">
+          <mxGeometry x="189.85987999999998" y="379.59000000000003" width="251.968" height="251.97" as="geometry" />
+        </mxCell>
+        <mxCell id="Mt6bxmGleEoaamjlU8Mx-22" value="&lt;div&gt;North&lt;/div&gt;" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;size=61;fontSize=24;" vertex="1" parent="Mt6bxmGleEoaamjlU8Mx-26">
+          <mxGeometry x="126.98999999999997" y="128.2899999999999" width="251.97" height="251.97" as="geometry" />
+        </mxCell>
+        <mxCell id="Mt6bxmGleEoaamjlU8Mx-21" value="East" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;aspect=fixed;size=63;fontSize=24;" vertex="1" parent="Mt6bxmGleEoaamjlU8Mx-26">
+          <mxGeometry x="377.84975999999995" y="188.85000000000002" width="251.968" height="251.97" as="geometry" />
+        </mxCell>
+        <mxCell id="Mt6bxmGleEoaamjlU8Mx-19" value="Current" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fillColor=#ffe6cc;strokeColor=#d79b00;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;size=62;fontSize=24;" vertex="1" parent="Mt6bxmGleEoaamjlU8Mx-26">
+          <mxGeometry x="188.9899999999999" y="188.98199999999986" width="251.968" height="251.968" as="geometry" />
+        </mxCell>
+        <mxCell id="Mt6bxmGleEoaamjlU8Mx-18" value="South" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;opacity=50;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;size=65;fontSize=24;" vertex="1" parent="Mt6bxmGleEoaamjlU8Mx-26">
+          <mxGeometry x="250.34984000000003" y="253.23000000000002" width="251.968" height="251.968" as="geometry" />
+        </mxCell>
+        <mxCell id="Mt6bxmGleEoaamjlU8Mx-20" value="West" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;size=63;fontSize=24;" vertex="1" parent="Mt6bxmGleEoaamjlU8Mx-26">
+          <mxGeometry y="188.97999999999996" width="251.97" height="251.97" as="geometry" />
+        </mxCell>
+        <mxCell id="Mt6bxmGleEoaamjlU8Mx-23" value="Above" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;aspect=fixed;size=63;fontSize=24;" vertex="1" parent="Mt6bxmGleEoaamjlU8Mx-26">
+          <mxGeometry x="188.97987999999998" width="251.968" height="251.97" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
