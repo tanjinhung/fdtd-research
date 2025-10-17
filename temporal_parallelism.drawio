@@ -8,7 +8,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="Llj-Aqbqn6B6f8hP61X6-59" value="PE $$1$$" style="rounded=0;whiteSpace=wrap;html=1;fontSize=20;horizontal=1;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;" parent="1" vertex="1">
-          <mxGeometry x="240" y="320" width="160" height="120" as="geometry" />
+          <mxGeometry x="280" y="320" width="160" height="120" as="geometry" />
         </mxCell>
         <mxCell id="Llj-Aqbqn6B6f8hP61X6-66" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=20;horizontal=1;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;" parent="1" source="Llj-Aqbqn6B6f8hP61X6-62" target="Llj-Aqbqn6B6f8hP61X6-64" edge="1">
           <mxGeometry relative="1" as="geometry" />
@@ -20,21 +20,21 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="Llj-Aqbqn6B6f8hP61X6-64" value="$$\dots$$" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=none;fillColor=none;fontSize=20;horizontal=1;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;" parent="1" vertex="1">
-          <mxGeometry x="800" y="320" width="160" height="120" as="geometry" />
+          <mxGeometry x="760" y="320" width="160" height="120" as="geometry" />
         </mxCell>
         <mxCell id="Llj-Aqbqn6B6f8hP61X6-65" value="PE $$i_t$$" style="rounded=0;whiteSpace=wrap;html=1;fontSize=20;horizontal=1;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;" parent="1" vertex="1">
-          <mxGeometry x="1080" y="320" width="160" height="120" as="geometry" />
+          <mxGeometry x="1000" y="320" width="160" height="120" as="geometry" />
         </mxCell>
         <mxCell id="Llj-Aqbqn6B6f8hP61X6-69" value="Row" style="endArrow=classic;startArrow=classic;html=1;rounded=0;horizontal=1;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;fontSize=18;" parent="1" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="220" y="440" as="sourcePoint" />
-            <mxPoint x="220" y="320" as="targetPoint" />
+            <mxPoint x="260" y="440" as="sourcePoint" />
+            <mxPoint x="260" y="320" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="Llj-Aqbqn6B6f8hP61X6-70" value="Column" style="endArrow=classic;startArrow=classic;html=1;rounded=0;horizontal=1;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;fontSize=18;" parent="1" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="240" y="300" as="sourcePoint" />
-            <mxPoint x="400" y="300" as="targetPoint" />
+            <mxPoint x="280" y="300" as="sourcePoint" />
+            <mxPoint x="440" y="300" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="Llj-Aqbqn6B6f8hP61X6-71" value="Repeat \(\lceil iterations / i_t \rceil\) times" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontFamily=Noto Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DNoto%2BSans;fontSize=18;" parent="1" source="Llj-Aqbqn6B6f8hP61X6-65" target="Llj-Aqbqn6B6f8hP61X6-59" edge="1">
@@ -42,14 +42,14 @@
             <mxPoint x="1160" y="450" as="sourcePoint" />
             <mxPoint x="1160" y="520" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="1160" y="480" />
-              <mxPoint x="320" y="480" />
+              <mxPoint x="1080" y="480" />
+              <mxPoint x="360" y="480" />
             </Array>
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="Llj-Aqbqn6B6f8hP61X6-73" value="\( i_t := \)&amp;nbsp;The number of Temporal Stages" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=20;" parent="1" vertex="1">
-          <mxGeometry x="870" y="520" width="370" height="30" as="geometry" />
+          <mxGeometry x="780" y="520" width="380" height="40" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
