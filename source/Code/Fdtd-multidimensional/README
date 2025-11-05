@@ -1,3 +1,0 @@
-Color images were generated from matlab using commands such as:
-
-  print -depsc2 -r100 foo.eps
