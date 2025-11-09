@@ -5,7 +5,7 @@
 #define FDTD_IMPLEMENTATION
 #include "fdtd.h"
 #define NOB_IMPLEMENTATION
-#include "../nob.h"
+#include "../../../nob.h"
 
 double ez_source_input(Grid *grid, SourceType type, SourceParameter param) {
   (void)type;

@@ -1,6 +1,6 @@
 #ifndef FDTD_H_
 #define FDTD_H_
-#include "../nob.h"
+#include "../../../nob.h"
 #include <math.h>
 
 typedef enum {
