@@ -5,4 +5,5 @@ AlignConsecutiveMacros: true
 AlignAfterOpenBracket: true
 AlignArrayOfStructures: Right
 AlignEscapedNewlines: Right
+AlignOperands: true
 # AllowShortBlocksOnASingleLine: Always

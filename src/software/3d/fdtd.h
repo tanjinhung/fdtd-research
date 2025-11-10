@@ -11,21 +11,21 @@ typedef enum {
 } GridType;
 
 typedef struct {
-  int sizeX, sizeY, sizeZ;
-  int maxTime;
+  int    sizeX, sizeY, sizeZ;
+  int    maxTime;
   double cdtds;
   double imp0;
 } GridParameter;
 
 typedef struct {
-  int time;
-  double *hx, *chxh, *chxe;
-  double *hy, *chyh, *chye;
-  double *hz, *chzh, *chze;
-  double *ex, *cexe, *cexh;
-  double *ey, *ceye, *ceyh;
-  double *ez, *ceze, *cezh;
-  GridType type;
+  int           time;
+  double       *hx, *chxh, *chxe;
+  double       *hy, *chyh, *chye;
+  double       *hz, *chzh, *chze;
+  double       *ex, *cexe, *cexh;
+  double       *ey, *ceye, *ceyh;
+  double       *ez, *ceze, *cezh;
+  GridType      type;
   GridParameter param;
 } Grid;
 
@@ -36,12 +36,12 @@ typedef enum {
 } BoundaryType;
 
 typedef struct {
-  double coef0, coef1, coef2;
+  double  coef0, coef1, coef2;
   double *ezLeft, *ezRight, *ezTop, *ezBottom;
 } BoundaryParam;
 
 typedef struct {
-  double coef;
+  double  coef;
   double *exy0, *exy1, *exz0, *exz1;
   double *eyx0, *eyx1, *eyz0, *eyz1;
   double *ezx0, *ezx1, *ezy0, *ezy1;
@@ -56,7 +56,7 @@ typedef enum {
 typedef struct {
   double time;
   double location;
-  int ppw;
+  int    ppw;
 } SourceParameter;
 
 typedef struct {
@@ -69,13 +69,13 @@ typedef struct {
 } tfsfRectangle;
 
 typedef struct {
-  int start_time;
-  int temporalStride;
-  int frame;
-  int slice;
-  int startX, endX, spatialStrideX;
-  int startY, endY, spatialStrideY;
-  int startZ, endZ, spatialStrideZ;
+  int   start_time;
+  int   temporalStride;
+  int   frame;
+  int   slice;
+  int   startX, endX, spatialStrideX;
+  int   startY, endY, spatialStrideY;
+  int   startZ, endZ, spatialStrideZ;
   char *filename;
   char *basename;
 } Snapshot;
@@ -93,7 +93,7 @@ typedef struct {
     (p) = NULL;                                                                \
   } while (0)
 
-#define IDX2(M, N, WIDTH) ((M) * (WIDTH) + (N))
+#define IDX2(M, N, WIDTH)       ((M) * (WIDTH) + (N))
 #define IDX3(M, N, P, COL, ROW) ((((M) * (COL) + (N)) * (ROW) + (P)))
 
 void updateH(Grid *grid);
@@ -180,13 +180,13 @@ bool grid_init(Grid *grid, GridType type, GridParameter param) {
 
   GridParameter p = param;
 
-  grid->type = type;
+  grid->type  = type;
   grid->param = p;
-  grid->time = 0;
+  grid->time  = 0;
 
-  size_t sx = (size_t)p.sizeX;
-  size_t sy = (size_t)p.sizeY;
-  size_t sz = (size_t)p.sizeZ;
+  size_t sx   = (size_t)p.sizeX;
+  size_t sy   = (size_t)p.sizeY;
+  size_t sz   = (size_t)p.sizeZ;
   size_t sx_1 = sx ? sx - 1 : 0;
   size_t sy_1 = sy ? sy - 1 : 0;
   size_t sz_1 = sz ? sz - 1 : 0;
@@ -534,9 +534,9 @@ void updateE(Grid *grid) {
 }
 
 void snapshotGrid(Grid *grid, Snapshot *snap) {
-  int mm, nn;
+  int   mm, nn;
   float dim, temp;
-  char filename[100];
+  char  filename[100];
   FILE *out;
 
   nob_minimal_log_level = NOB_WARNING;
