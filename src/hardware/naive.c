@@ -29,9 +29,7 @@ static double ez_buffer[NBUF]   = {0};
 static double cezh_buffer[NBUF] = {0};
 static double ceze_buffer[NBUF] = {0};
 
-int main(int argc, char *argv[]) {
-  (void)argc;
-  (void)argv;
+int main(void) {
   printf("Naive hardware module initialized successfully.\n");
 
   // clang-format off
