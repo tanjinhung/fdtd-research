@@ -18,9 +18,9 @@ double ez_source_input(Grid *grid, SourceType type, SourceParameter param) {
 }
 
 void snapshotGrid3d(Grid *grid, Snapshot *snap) {
-  int mm, nn, pp;
+  int   mm, nn, pp;
   float v;
-  char filename[100];
+  char  filename[100];
   FILE *out;
 
   // nob_minimal_log_level = NOB_WARNING;
@@ -43,10 +43,10 @@ void snapshotGrid3d(Grid *grid, Snapshot *snap) {
   }
 
   fwrite("FDTD", 1, 4, out);
-  int32_t nx = (int32_t)grid->param.sizeX;
-  int32_t ny = (int32_t)grid->param.sizeY;
-  int32_t nz = (int32_t)pp;
-  float time_f = (float)grid->time;
+  int32_t nx     = (int32_t)grid->param.sizeX;
+  int32_t ny     = (int32_t)grid->param.sizeY;
+  int32_t nz     = (int32_t)pp;
+  float   time_f = (float)grid->time;
 
   fwrite(&nx, sizeof(int32_t), 1, out);
   fwrite(&ny, sizeof(int32_t), 1, out);
@@ -68,9 +68,9 @@ void snapshotGrid3d(Grid *grid, Snapshot *snap) {
 void boundary_init_3d(Grid *grid, BoundaryType type, BoundaryParam3d *param) {
   (void)type;
   param->coef = (grid->param.cdtds - 1.0) / (grid->param.cdtds + 1.0);
-  int SizeX = grid->param.sizeX;
-  int SizeY = grid->param.sizeY;
-  int SizeZ = grid->param.sizeZ;
+  int SizeX   = grid->param.sizeX;
+  int SizeY   = grid->param.sizeY;
+  int SizeZ   = grid->param.sizeZ;
 
   CALLOC(param->eyx0, double, ((SizeY - 1) * (SizeZ)));
   CALLOC(param->ezx0, double, ((SizeY) * (SizeZ - 1)));
@@ -233,7 +233,7 @@ void boundary_abc_3d(Grid *grid, BoundaryParam3d *param) {
 int main(int argc, char *argv[]) {
   (void)argc;
   (void)argv;
-  Grid *grid;
+  Grid            *grid;
   BoundaryParam3d *p;
 
   CALLOC(grid, Grid, 1);
@@ -241,11 +241,12 @@ int main(int argc, char *argv[]) {
 
   grid_init(grid, ThreeDimension,
             (GridParameter){
-                .sizeX = 32,
-                .sizeY = 31,
-                .sizeZ = 31,
+                .sizeX   = 32,
+                .sizeY   = 31,
+                .sizeZ   = 31,
                 .maxTime = 300,
-                .cdtds = 1.0 / sqrt(3.0),
+                .cdtds   = 1.0 / sqrt(3.0),
+                .imp0    = 377.0,
             });
 
   boundary_init_3d(grid, ABC, p);
@@ -262,26 +263,26 @@ int main(int argc, char *argv[]) {
                                                          (SourceParameter){
                                                              .time = grid->time,
                                                              .location = 0.0,
-                                                             .ppw = 15,
+                                                             .ppw      = 15,
                                                          });
     // printf("boundary_abc_3d\n");
     // boundary_abc_3d(grid, p);
     printf("snapshotGrid3d\n");
     snapshotGrid3d(grid, &(Snapshot){
-                             .start_time = 10,
+                             .start_time     = 10,
                              .temporalStride = 10,
-                             .slice = (grid->param.sizeZ / 2),
-                             .startX = 0,
-                             .endX = (grid->param.sizeX - 1),
+                             .slice          = (grid->param.sizeZ / 2),
+                             .startX         = 0,
+                             .endX           = (grid->param.sizeX - 1),
                              .spatialStrideX = 1,
-                             .startY = 0,
-                             .endY = (grid->param.sizeY - 1),
+                             .startY         = 0,
+                             .endY           = (grid->param.sizeY - 1),
                              .spatialStrideY = 1,
-                             .startZ = 0,
-                             .endZ = (grid->param.sizeZ - 1),
+                             .startZ         = 0,
+                             .endZ           = (grid->param.sizeZ - 1),
                              .spatialStrideZ = 1,
-                             .basename = "sim",
-                             .filename = "3d-tfsf",
+                             .basename       = "sim",
+                             .filename       = "3d-tfsf",
                          });
   }
 

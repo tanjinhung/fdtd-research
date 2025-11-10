@@ -1,0 +1,8 @@
+BasedOnStyle: LLVM
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
+AlignConsecutiveMacros: true
+AlignAfterOpenBracket: true
+AlignArrayOfStructures: Right
+AlignEscapedNewlines: Right
+# AllowShortBlocksOnASingleLine: Always
