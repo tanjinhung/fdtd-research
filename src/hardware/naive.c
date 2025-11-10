@@ -8,26 +8,28 @@
 #define NY       42
 #define NZ       42
 #define MAX_TIME 300
-#define NBUF     (NX * NY * NZ)
 
-static double hx_buffer[NBUF]   = {0};
-static double chxh_buffer[NBUF] = {0};
-static double chxe_buffer[NBUF] = {0};
-static double hy_buffer[NBUF]   = {0};
-static double chyh_buffer[NBUF] = {0};
-static double chye_buffer[NBUF] = {0};
-static double hz_buffer[NBUF]   = {0};
-static double chzh_buffer[NBUF] = {0};
-static double chze_buffer[NBUF] = {0};
-static double ex_buffer[NBUF]   = {0};
-static double cexh_buffer[NBUF] = {0};
-static double cexe_buffer[NBUF] = {0};
-static double ey_buffer[NBUF]   = {0};
-static double ceyh_buffer[NBUF] = {0};
-static double ceye_buffer[NBUF] = {0};
-static double ez_buffer[NBUF]   = {0};
-static double cezh_buffer[NBUF] = {0};
-static double ceze_buffer[NBUF] = {0};
+static double hx_buffer[NX]   = {0};
+static double chxh_buffer[NX] = {0};
+static double chxe_buffer[NX] = {0};
+static double hy_buffer[NY]   = {0};
+static double chyh_buffer[NY] = {0};
+static double chye_buffer[NY] = {0};
+static double hz_buffer[NZ]   = {0};
+static double chzh_buffer[NZ] = {0};
+static double chze_buffer[NZ] = {0};
+static double ex_buffer[NX]   = {0};
+static double cexh_buffer[NX] = {0};
+static double cexe_buffer[NX] = {0};
+static double ey_buffer[NY]   = {0};
+static double ceyh_buffer[NY] = {0};
+static double ceye_buffer[NY] = {0};
+static double ez_buffer[NZ]   = {0};
+static double cezh_buffer[NZ] = {0};
+static double ceze_buffer[NZ] = {0};
+
+void updateH(Grid *g) {}
+void updateE(Grid *g) {}
 
 int main(void) {
   printf("Naive hardware module initialized successfully.\n");
@@ -45,23 +47,36 @@ int main(void) {
 
   GridExtern external = {NX, NY, NZ, 1.0 / sqrt(3.0), 377.0, 0};
 
-  for (int i = 0; i < NBUF; ++i) {
+  for (int i = 0; i < NX; ++i) {
+#pragma HLS PIPELINE II = 1
     internal.chxh[i] = 1.0;
     internal.chxe[i] = external.cdtds / external.imp0;
-    internal.chyh[i] = 1.0;
-    internal.chye[i] = external.cdtds / external.imp0;
-    internal.chzh[i] = 1.0;
-    internal.chze[i] = external.cdtds / external.imp0;
-
     internal.cexe[i] = 1.0;
     internal.cexh[i] = external.cdtds * external.imp0;
+  }
+
+  for (int i = 0; i < NY; ++i) {
+#pragma HLS PIPELINE II = 1
+    internal.chyh[i] = 1.0;
+    internal.chye[i] = external.cdtds / external.imp0;
     internal.ceye[i] = 1.0;
     internal.ceyh[i] = external.cdtds * external.imp0;
+  }
+
+  for (int i = 0; i < NZ; ++i) {
+#pragma HLS PIPELINE II = 1
+    internal.chzh[i] = 1.0;
+    internal.chze[i] = external.cdtds / external.imp0;
     internal.ceze[i] = 1.0;
     internal.cezh[i] = external.cdtds * external.imp0;
   }
 
   Grid g = {ThreeDimension, external, internal};
+
+  for (g.external.time = 0; g.external.time < MAX_TIME; g.external.time++) {
+    updateH(&g);
+    updateE(&g);
+  }
 
   return EXIT_SUCCESS;
 }
