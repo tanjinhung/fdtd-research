@@ -4,40 +4,24 @@
 #include <stdlib.h>
 // #include <ap_fixed.h>
 
-#define MAX_TIME  300
-#define IMP0      377.0
-#define CDTDS     0.57735026918962576 // Precomputed value of 1/sqrt(3)
-#define NX_0      42
-#define NY_0      42
-#define NZ_0      42
-#define NX_1      (NX_0 - 1)
-#define NY_1      (NY_0 - 1)
-#define NZ_1      (NZ_0 - 1)
-#define HX_BUFFER (NX_0 * NY_1 * NZ_1)
-#define HY_BUFFER (NX_1 * NY_0 * NZ_1)
-#define HZ_BUFFER (NX_1 * NY_1 * NZ_0)
-#define EX_BUFFER (NX_1 * NY_0 * NZ_0)
-#define EY_BUFFER (NX_0 * NY_1 * NZ_0)
-#define EZ_BUFFER (NX_0 * NY_0 * NZ_1)
-
-static double hx_buffer[HX_BUFFER]   = {0};
-static double chxh_buffer[HX_BUFFER] = {0};
-static double chxe_buffer[HX_BUFFER] = {0};
-static double hy_buffer[HY_BUFFER]   = {0};
-static double chyh_buffer[HY_BUFFER] = {0};
-static double chye_buffer[HY_BUFFER] = {0};
-static double hz_buffer[HZ_BUFFER]   = {0};
-static double chzh_buffer[HZ_BUFFER] = {0};
-static double chze_buffer[HZ_BUFFER] = {0};
-static double ex_buffer[EX_BUFFER]   = {0};
-static double cexh_buffer[EX_BUFFER] = {0};
-static double cexe_buffer[EX_BUFFER] = {0};
-static double ey_buffer[EY_BUFFER]   = {0};
-static double ceyh_buffer[EY_BUFFER] = {0};
-static double ceye_buffer[EY_BUFFER] = {0};
-static double ez_buffer[EZ_BUFFER]   = {0};
-static double cezh_buffer[EZ_BUFFER] = {0};
-static double ceze_buffer[EZ_BUFFER] = {0};
+static float hx_buffer[HX_BUFFER]   = {0};
+static float chxh_buffer[HX_BUFFER] = {0};
+static float chxe_buffer[HX_BUFFER] = {0};
+static float hy_buffer[HY_BUFFER]   = {0};
+static float chyh_buffer[HY_BUFFER] = {0};
+static float chye_buffer[HY_BUFFER] = {0};
+static float hz_buffer[HZ_BUFFER]   = {0};
+static float chzh_buffer[HZ_BUFFER] = {0};
+static float chze_buffer[HZ_BUFFER] = {0};
+static float ex_buffer[EX_BUFFER]   = {0};
+static float cexh_buffer[EX_BUFFER] = {0};
+static float cexe_buffer[EX_BUFFER] = {0};
+static float ey_buffer[EY_BUFFER]   = {0};
+static float ceyh_buffer[EY_BUFFER] = {0};
+static float ceye_buffer[EY_BUFFER] = {0};
+static float ez_buffer[EZ_BUFFER]   = {0};
+static float cezh_buffer[EZ_BUFFER] = {0};
+static float ceze_buffer[EZ_BUFFER] = {0};
 
 void updateH(Grid *g) {
   for (int mm = 0; mm < NX_0; mm++) {
@@ -103,7 +87,6 @@ void updateH(Grid *g) {
     }
   }
 }
-
 void updateE(Grid *g) {
   for (int mm = 0; mm < NX_1; mm++) {
     for (int nn = 1; nn < NY_1; nn++) {
@@ -183,10 +166,6 @@ int main(void) {
   };
   // clang-format on
 
-  GridExtern   external  = {NX_0, NY_0, NZ_0, CDTDS, IMP0, 0};
-  static float coeff_div = CDTDS / IMP0;
-  static float coeff_mul = CDTDS * IMP0;
-
   for (int i = 0; i < NX_0; ++i) {
 #pragma HLS PIPELINE II = 1
     internal.chxh[i] = 1.0;
@@ -211,9 +190,9 @@ int main(void) {
     internal.cezh[i] = coeff_mul;
   }
 
-  Grid g = {ThreeDimension, external, internal};
+  Grid g = {ThreeDimension, 0, internal};
 
-  for (g.external.time = 0; g.external.time < MAX_TIME; g.external.time++) {
+  for (g.time = 0; g.time < MAX_TIME; g.time++) {
 #pragma HLS PIPELINE II = 1
     updateH(&g);
     updateE(&g);

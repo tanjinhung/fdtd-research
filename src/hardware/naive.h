@@ -1,20 +1,36 @@
 #ifndef NAIVE_H
 #define NAIVE_H
 
+#define MAX_TIME  300
+#define IMP0      377.0
+#define CDTDS     0.57735026918962576 // Precomputed value of 1/sqrt(3)
+#define NX_0      42
+#define NY_0      42
+#define NZ_0      42
+#define NX_1      (NX_0 - 1)
+#define NY_1      (NY_0 - 1)
+#define NZ_1      (NZ_0 - 1)
+#define HX_BUFFER (NX_0 * NY_1 * NZ_1)
+#define HY_BUFFER (NX_1 * NY_0 * NZ_1)
+#define HZ_BUFFER (NX_1 * NY_1 * NZ_0)
+#define EX_BUFFER (NX_1 * NY_0 * NZ_0)
+#define EY_BUFFER (NX_0 * NY_1 * NZ_0)
+#define EZ_BUFFER (NX_0 * NY_0 * NZ_1)
+
 typedef struct {
-  double *hx, *chxh, *chxe;
-  double *hy, *chyh, *chye;
-  double *hz, *chzh, *chze;
-  double *ex, *cexe, *cexh;
-  double *ey, *ceye, *ceyh;
-  double *ez, *ceze, *cezh;
+  float *hx, *chxh, *chxe;
+  float *hy, *chyh, *chye;
+  float *hz, *chzh, *chze;
+  float *ex, *cexe, *cexh;
+  float *ey, *ceye, *ceyh;
+  float *ez, *ceze, *cezh;
 } GridIntern;
 
 typedef struct {
-  int sizeX, sizeY, sizeZ;
+  int    sizeX, sizeY, sizeZ;
   double cdtds;
   double imp0;
-  int time;
+  int    time;
 } GridExtern;
 
 typedef enum {
@@ -22,9 +38,12 @@ typedef enum {
 } GridType;
 
 typedef struct {
-  GridType type;
-  GridExtern external;
+  GridType   type;
+  int        time;
   GridIntern internal;
 } Grid;
+
+static float coeff_div = CDTDS / IMP0;
+static float coeff_mul = CDTDS * IMP0;
 
 #endif // NAIVE_H
