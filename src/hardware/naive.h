@@ -18,12 +18,12 @@
 #define EZ_BUFFER (NX_0 * NY_0 * NZ_1)
 
 typedef struct {
-  float *hx, *chxh, *chxe;
-  float *hy, *chyh, *chye;
-  float *hz, *chzh, *chze;
-  float *ex, *cexe, *cexh;
-  float *ey, *ceye, *ceyh;
-  float *ez, *ceze, *cezh;
+  float *hx;
+  float *hy;
+  float *hz;
+  float *ex;
+  float *ey;
+  float *ez;
 } GridIntern;
 
 typedef struct {
