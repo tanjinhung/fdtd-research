@@ -1,7 +1,4 @@
 #include "naive.h"
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
 // #include <ap_fixed.h>
 
 static float hx_buffer[HX_BUFFER] = {0};
@@ -134,9 +131,7 @@ void updateE(Grid *g) {
   }
 }
 
-int main(void) {
-  printf("Naive hardware module initialized successfully.\n");
-
+void fdtd_kernal(void) {
   GridIntern internal = {
       hx_buffer, hy_buffer, hz_buffer, ex_buffer, ey_buffer, ez_buffer,
   };
@@ -144,10 +139,8 @@ int main(void) {
   Grid g = {ThreeDimension, 0, internal};
 
   for (g.time = 0; g.time < MAX_TIME; g.time++) {
-#pragma HLS PIPELINE II = 1
+#pragma HLS PIPELINE
     updateH(&g);
     updateE(&g);
   }
-
-  return EXIT_SUCCESS;
 }
