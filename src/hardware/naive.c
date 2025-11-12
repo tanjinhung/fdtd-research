@@ -8,10 +8,11 @@ static float ex_buffer[EX_BUFFER] = {0};
 static float ey_buffer[EY_BUFFER] = {0};
 static float ez_buffer[EZ_BUFFER] = {0};
 
-void updateH(Grid *g) {
-  for (int mm = 0; mm < NX_0; mm++) {
-    for (int nn = 0; nn < NY_1; nn++) {
-      for (int pp = 0; pp < NZ_1; pp++) {
+void updateH(float *hx, float *hy, float *hz, float *ex, float *ey, float *ez) {
+  int mm, nn, pp;
+  for (mm = 0; mm < NX_0; mm++) {
+    for (nn = 0; nn < NY_1; nn++) {
+      for (pp = 0; pp < NZ_1; pp++) {
 #pragma HLS PIPELINE
         int n1       = nn + 1;
         int p1       = pp + 1;
@@ -21,17 +22,15 @@ void updateH(Grid *g) {
         int idx_ez_n = (mm * NY_0 + n1) * NZ_1 + pp;
         int idx_ez   = (mm * NY_0 + nn) * NZ_1 + pp;
 
-        g->internal.hx[idx] =
-            1.0 * g->internal.hx[idx] +
-            coeff_div * ((g->internal.ey[idx_ey_p] - g->internal.ey[idx_ey]) -
-                         (g->internal.ez[idx_ez_n] - g->internal.ez[idx_ez]));
+        hx[idx] = 1.0 * hx[idx] + coeff_div * ((ey[idx_ey_p] - ey[idx_ey]) -
+                                               (ez[idx_ez_n] - ez[idx_ez]));
       }
     }
   }
 
-  for (int mm = 0; mm < NX_1; mm++) {
-    for (int nn = 0; nn < NY_0; nn++) {
-      for (int pp = 0; pp < NZ_1; pp++) {
+  for (mm = 0; mm < NX_1; mm++) {
+    for (nn = 0; nn < NY_0; nn++) {
+      for (pp = 0; pp < NZ_1; pp++) {
 #pragma HLS PIPELINE
         int m1       = mm + 1;
         int p1       = pp + 1;
@@ -41,17 +40,15 @@ void updateH(Grid *g) {
         int idx_ex_p = (mm * NY_0 + nn) * NZ_0 + p1;
         int idx_ex   = (mm * NY_0 + nn) * NZ_0 + pp;
 
-        g->internal.hy[idx] =
-            1.0 * g->internal.hy[idx] +
-            coeff_div * ((g->internal.ez[idx_ez_m] - g->internal.ez[idx_ez]) -
-                         (g->internal.ex[idx_ex_p] - g->internal.ex[idx_ex]));
+        hy[idx] = 1.0 * hy[idx] + coeff_div * ((ez[idx_ez_m] - ez[idx_ez]) -
+                                               (ex[idx_ex_p] - ex[idx_ex]));
       }
     }
   }
 
-  for (int mm = 0; mm < NX_1; mm++) {
-    for (int nn = 0; nn < NY_1; nn++) {
-      for (int pp = 0; pp < NZ_0; pp++) {
+  for (mm = 0; mm < NX_1; mm++) {
+    for (nn = 0; nn < NY_1; nn++) {
+      for (pp = 0; pp < NZ_0; pp++) {
 #pragma HLS PIPELINE
         int n1       = nn + 1;
         int m1       = mm + 1;
@@ -61,18 +58,18 @@ void updateH(Grid *g) {
         int idx_ey_m = (m1 * NY_1 + nn) * NZ_0 + pp;
         int idx_ey   = (mm * NY_1 + nn) * NZ_0 + pp;
 
-        g->internal.hz[idx] =
-            1.0 * g->internal.hz[idx] +
-            coeff_div * ((g->internal.ex[idx_ex_n] - g->internal.ex[idx_ex]) -
-                         (g->internal.ey[idx_ey_m] - g->internal.ey[idx_ey]));
+        hz[idx] = 1.0 * hz[idx] + coeff_div * ((ex[idx_ex_n] - ex[idx_ex]) -
+                                               (ey[idx_ey_m] - ey[idx_ey]));
       }
     }
   }
 }
-void updateE(Grid *g) {
-  for (int mm = 0; mm < NX_1; mm++) {
-    for (int nn = 1; nn < NY_1; nn++) {
-      for (int pp = 1; pp < NZ_1; pp++) {
+
+void updateE(float *hx, float *hy, float *hz, float *ex, float *ey, float *ez) {
+  int mm, nn, pp;
+  for (mm = 0; mm < NX_1; mm++) {
+    for (nn = 1; nn < NY_1; nn++) {
+      for (pp = 1; pp < NZ_1; pp++) {
 #pragma HLS PIPELINE
         int _n       = nn - 1;
         int _p       = pp - 1;
@@ -82,17 +79,15 @@ void updateE(Grid *g) {
         int idx_hy   = (mm * NY_0 + nn) * NZ_1 + pp;
         int idx_hy_p = (mm * NY_0 + nn) * NZ_1 + _p;
 
-        g->internal.ex[idx] =
-            1.0 * g->internal.ex[idx] +
-            coeff_mul * ((g->internal.hz[idx_hz] - g->internal.hz[idx_hz_n]) -
-                         (g->internal.hy[idx_hy] - g->internal.hy[idx_hy_p]));
+        ex[idx] = 1.0 * ex[idx] + coeff_mul * ((hz[idx_hz] - hz[idx_hz_n]) -
+                                               (hy[idx_hy] - hy[idx_hy_p]));
       }
     }
   }
 
-  for (int mm = 1; mm < NX_1; mm++) {
-    for (int nn = 0; nn < NY_1; nn++) {
-      for (int pp = 1; pp < NZ_1; pp++) {
+  for (mm = 1; mm < NX_1; mm++) {
+    for (nn = 0; nn < NY_1; nn++) {
+      for (pp = 1; pp < NZ_1; pp++) {
 #pragma HLS PIPELINE
         int _p       = pp - 1;
         int _m       = mm - 1;
@@ -102,17 +97,15 @@ void updateE(Grid *g) {
         int idx_hz   = (mm * NY_1 + nn) * NZ_0 + pp;
         int idx_hz_m = (_m * NY_1 + nn) * NZ_0 + pp;
 
-        g->internal.ey[idx] =
-            1.0 * g->internal.ey[idx] +
-            coeff_mul * ((g->internal.hx[idx_hx] - g->internal.hx[idx_hx_m]) -
-                         (g->internal.hz[idx_hz] - g->internal.hz[idx_hz_m]));
+        ey[idx] = 1.0 * ey[idx] + coeff_mul * ((hx[idx_hx] - hx[idx_hx_m]) -
+                                               (hz[idx_hz] - hz[idx_hz_m]));
       }
     }
   }
 
-  for (int mm = 1; mm < NX_1; mm++) {
-    for (int nn = 1; nn < NY_1; nn++) {
-      for (int pp = 0; pp < NZ_1; pp++) {
+  for (mm = 1; mm < NX_1; mm++) {
+    for (nn = 1; nn < NY_1; nn++) {
+      for (pp = 0; pp < NZ_1; pp++) {
 #pragma HLS PIPELINE
         int _m       = mm - 1;
         int _n       = nn - 1;
@@ -122,25 +115,17 @@ void updateE(Grid *g) {
         int idx_hx   = (mm * NY_1 + nn) * NZ_1 + pp;
         int idx_hx_n = (mm * NY_1 + _n) * NZ_1 + pp;
 
-        g->internal.ez[idx] =
-            1.0 * g->internal.ez[idx] +
-            coeff_mul * ((g->internal.hy[idx_hy] - g->internal.hy[idx_hy_m]) -
-                         (g->internal.hx[idx_hx] - g->internal.hx[idx_hx_n]));
+        ez[idx] = 1.0 * ez[idx] + coeff_mul * ((hy[idx_hy] - hy[idx_hy_m]) -
+                                               (hx[idx_hx] - hx[idx_hx_n]));
       }
     }
   }
 }
 
-void fdtd_kernal(void) {
-  GridIntern internal = {
-      hx_buffer, hy_buffer, hz_buffer, ex_buffer, ey_buffer, ez_buffer,
-  };
-
-  Grid g = {ThreeDimension, 0, internal};
-
-  for (g.time = 0; g.time < MAX_TIME; g.time++) {
+void fdtd_kernal() {
+  for (int t = 0; t < MAX_TIME; t++) {
 #pragma HLS PIPELINE
-    updateH(&g);
-    updateE(&g);
+    updateH(hx_buffer, hy_buffer, hz_buffer, ex_buffer, ey_buffer, ez_buffer);
+    updateE(hx_buffer, hy_buffer, hz_buffer, ex_buffer, ey_buffer, ez_buffer);
   }
 }
