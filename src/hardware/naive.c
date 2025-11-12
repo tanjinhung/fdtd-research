@@ -15,7 +15,7 @@ void updateH(Grid *g) {
   for (int mm = 0; mm < NX_0; mm++) {
     for (int nn = 0; nn < NY_1; nn++) {
       for (int pp = 0; pp < NZ_1; pp++) {
-#pragma HLS PIPELINE II = 1
+#pragma HLS PIPELINE
         int n1       = nn + 1;
         int p1       = pp + 1;
         int idx      = (mm * NY_1 + nn) * NZ_1 + pp;
@@ -35,7 +35,7 @@ void updateH(Grid *g) {
   for (int mm = 0; mm < NX_1; mm++) {
     for (int nn = 0; nn < NY_0; nn++) {
       for (int pp = 0; pp < NZ_1; pp++) {
-#pragma HLS PIPELINE II = 1
+#pragma HLS PIPELINE
         int m1       = mm + 1;
         int p1       = pp + 1;
         int idx      = (mm * NY_0 + nn) * NZ_1 + pp;
@@ -55,7 +55,7 @@ void updateH(Grid *g) {
   for (int mm = 0; mm < NX_1; mm++) {
     for (int nn = 0; nn < NY_1; nn++) {
       for (int pp = 0; pp < NZ_0; pp++) {
-#pragma HLS PIPELINE II = 1
+#pragma HLS PIPELINE
         int n1       = nn + 1;
         int m1       = mm + 1;
         int idx      = (mm * NY_1 + nn) * NZ_0 + pp;
@@ -76,7 +76,7 @@ void updateE(Grid *g) {
   for (int mm = 0; mm < NX_1; mm++) {
     for (int nn = 1; nn < NY_1; nn++) {
       for (int pp = 1; pp < NZ_1; pp++) {
-#pragma HLS PIPELINE II = 1
+#pragma HLS PIPELINE
         int _n       = nn - 1;
         int _p       = pp - 1;
         int idx      = (mm * NY_0 + nn) * NZ_0 + pp;
@@ -96,7 +96,7 @@ void updateE(Grid *g) {
   for (int mm = 1; mm < NX_1; mm++) {
     for (int nn = 0; nn < NY_1; nn++) {
       for (int pp = 1; pp < NZ_1; pp++) {
-#pragma HLS PIPELINE II = 1
+#pragma HLS PIPELINE
         int _p       = pp - 1;
         int _m       = mm - 1;
         int idx      = (mm * NY_1 + nn) * NZ_0 + pp;
@@ -116,7 +116,7 @@ void updateE(Grid *g) {
   for (int mm = 1; mm < NX_1; mm++) {
     for (int nn = 1; nn < NY_1; nn++) {
       for (int pp = 0; pp < NZ_1; pp++) {
-#pragma HLS PIPELINE II = 1
+#pragma HLS PIPELINE
         int _m       = mm - 1;
         int _n       = nn - 1;
         int idx      = (mm * NY_0 + nn) * NZ_1 + pp;

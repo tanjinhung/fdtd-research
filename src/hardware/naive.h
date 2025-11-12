@@ -4,9 +4,9 @@
 #define MAX_TIME  300
 #define IMP0      377.0
 #define CDTDS     0.57735026918962576 // Precomputed value of 1/sqrt(3)
-#define NX_0      42
-#define NY_0      42
-#define NZ_0      42
+#define NX_0      16
+#define NY_0      16
+#define NZ_0      16
 #define NX_1      (NX_0 - 1)
 #define NY_1      (NY_0 - 1)
 #define NZ_1      (NZ_0 - 1)
