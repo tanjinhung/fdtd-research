@@ -6,4 +6,5 @@ AlignAfterOpenBracket: true
 AlignArrayOfStructures: Right
 AlignEscapedNewlines: Right
 AlignOperands: true
-# AllowShortBlocksOnASingleLine: Always
+AllowShortBlocksOnASingleLine: Always
+AllowShortIfStatementsOnASingleLine: WithoutElse

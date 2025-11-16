@@ -1,11 +1,12 @@
 #include "naive.c"
 #include <cmath>
+#include <cstdio>
 #include <cstdlib>
 #include <matplot/matplot.h>
 #include <stdlib.h>
 
 extern void fdtd(float *hx, float *hy, float *hz, float *ex, float *ey,
-                 float *ez, int max_time);
+                 float *ez, int max_time, int current_time);
 
 static float hx_buffer[HX_BUFFER] = {0};
 static float hy_buffer[HY_BUFFER] = {0};
@@ -13,6 +14,7 @@ static float hz_buffer[HZ_BUFFER] = {0};
 static float ex_buffer[EX_BUFFER] = {0};
 static float ey_buffer[EY_BUFFER] = {0};
 static float ez_buffer[EZ_BUFFER] = {0};
+static int   time_step            = {0};
 
 void show_slice_ez(float *ez) {
   using namespace matplot;
@@ -44,9 +46,12 @@ void show_slice_ez(float *ez) {
 }
 
 int main(int argc, char *argv[]) {
-  fdtd(hx_buffer, hy_buffer, hz_buffer, ex_buffer, ey_buffer, ez_buffer, 50);
+  fdtd(hx_buffer, hy_buffer, hz_buffer, ex_buffer, ey_buffer, ez_buffer, 100,
+       time_step);
 
-  show_slice_ez(ez_buffer);
+  std::printf("%d ", time_step);
+
+  // show_slice_ez(ez_buffer);
 
   return EXIT_SUCCESS;
 }
