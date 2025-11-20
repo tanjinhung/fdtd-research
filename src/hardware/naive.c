@@ -222,7 +222,7 @@ void addExcitation(float *__restrict__ ez, int t_step) {
 }
 
 void fdtd(float *hx, float *hy, float *hz, float *ex, float *ey, float *ez,
-          int max_time, int *current_time) {
+          int max_time) {
 #pragma HLS INTERFACE m_axi port = hx offset = slave bundle = gmem0
 #pragma HLS INTERFACE m_axi port = hy offset = slave bundle = gmem1
 #pragma HLS INTERFACE m_axi port = hz offset = slave bundle = gmem2
@@ -240,7 +240,6 @@ void fdtd(float *hx, float *hy, float *hz, float *ex, float *ey, float *ez,
 
   for (int t_step = 0; t_step < max_time; t_step++) {
 #pragma HLS PIPELINE
-    *current_time = t_step;
     updateH(hx, hy, hz, ex, ey, ez);
     updateE(hx, hy, hz, ex, ey, ez);
     addExcitation(ez, t_step);
