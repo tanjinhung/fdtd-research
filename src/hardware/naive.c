@@ -5,7 +5,7 @@
 #define CDTDS     0.57735026918962576 // Precomputed value of 1/sqrt(3)
 #define NX_0      32
 #define NY_0      32
-#define NZ_0      32
+#define NZ_0      70
 #define NX_1      (NX_0 - 1)
 #define NY_1      (NY_0 - 1)
 #define NZ_1      (NZ_0 - 1)
@@ -50,6 +50,7 @@ void updateHx(float *__restrict__ hx, float *__restrict__ ey,
   for (mm = 0; mm < NX_0; mm++) {
     for (nn = 0; nn < NY_1; nn++) {
       for (pp = 0; pp < NZ_1; pp++) {
+#pragma HLS DEPENDENCE class=array dependent=true direction=raw distance=1 type=inter
 #pragma HLS PIPELINE II = 1
         int n1       = nn + 1;
         int p1       = pp + 1;
@@ -73,6 +74,7 @@ void updateHy(float *__restrict__ hy, float *__restrict__ ez,
   for (mm = 0; mm < NX_1; mm++) {
     for (nn = 0; nn < NY_0; nn++) {
       for (pp = 0; pp < NZ_1; pp++) {
+#pragma HLS DEPENDENCE class=array dependent=true direction=raw distance=1 type=inter
 #pragma HLS PIPELINE II = 1
         int m1       = mm + 1;
         int p1       = pp + 1;
@@ -96,6 +98,7 @@ void updateHz(float *__restrict__ hz, float *__restrict__ ex,
   for (mm = 0; mm < NX_1; mm++) {
     for (nn = 0; nn < NY_1; nn++) {
       for (pp = 0; pp < NZ_0; pp++) {
+#pragma HLS DEPENDENCE class=array dependent=true direction=raw distance=1 type=inter
 #pragma HLS PIPELINE II = 1
         int n1       = nn + 1;
         int m1       = mm + 1;
@@ -119,6 +122,7 @@ void updateEx(float *__restrict__ ex, float *__restrict__ hz,
   for (mm = 0; mm < NX_1; mm++) {
     for (nn = 1; nn < NY_1; nn++) {
       for (pp = 1; pp < NZ_1; pp++) {
+#pragma HLS DEPENDENCE class=array dependent=true direction=raw distance=1 type=inter
 #pragma HLS PIPELINE II = 1
         int idx = (mm * NY_0 + nn) * NZ_0 + pp;
         if (isDipole(mm, nn, pp)) {
@@ -147,6 +151,7 @@ void updateEy(float *__restrict__ ey, float *__restrict__ hx,
   for (mm = 1; mm < NX_1; mm++) {
     for (nn = 0; nn < NY_1; nn++) {
       for (pp = 1; pp < NZ_1; pp++) {
+#pragma HLS DEPENDENCE class=array dependent=true direction=raw distance=1 type=inter
 #pragma HLS PIPELINE II = 1
         int idx = (mm * NY_1 + nn) * NZ_0 + pp;
         if (isDipole(mm, nn, pp)) {
@@ -175,6 +180,7 @@ void updateEz(float *__restrict__ ez, float *__restrict__ hy,
   for (mm = 1; mm < NX_1; mm++) {
     for (nn = 1; nn < NY_1; nn++) {
       for (pp = 0; pp < NZ_1; pp++) {
+#pragma HLS DEPENDENCE class=array dependent=true direction=raw distance=1 type=inter
 #pragma HLS PIPELINE II = 1
         int _m       = mm - 1;
         int _n       = nn - 1;
@@ -194,7 +200,6 @@ void updateEz(float *__restrict__ ez, float *__restrict__ hy,
 void updateH(float *__restrict__ hx, float *__restrict__ hy,
              float *__restrict__ hz, float *__restrict__ ex,
              float *__restrict__ ey, float *__restrict__ ez) {
-#pragma HLS DATAFLOW
   updateHx(hx, ey, ez);
   updateHy(hy, ez, ex);
   updateHz(hz, ex, ey);
@@ -203,7 +208,6 @@ void updateH(float *__restrict__ hx, float *__restrict__ hy,
 void updateE(float *__restrict__ hx, float *__restrict__ hy,
              float *__restrict__ hz, float *__restrict__ ex,
              float *__restrict__ ey, float *__restrict__ ez) {
-#pragma HLS DATAFLOW
   updateEx(ex, hz, hy);
   updateEy(ey, hx, hz);
   updateEz(ez, hy, hx);
@@ -222,7 +226,9 @@ void addExcitation(float *__restrict__ ez, int t_step) {
 }
 
 void fdtd(float *hx, float *hy, float *hz, float *ex, float *ey, float *ez,
-          int max_time, int *current_time) {
+          int max_time) {
+#pragma HLS DATAFLOW
+
 #pragma HLS INTERFACE m_axi port = hx offset = slave bundle = gmem0
 #pragma HLS INTERFACE m_axi port = hy offset = slave bundle = gmem1
 #pragma HLS INTERFACE m_axi port = hz offset = slave bundle = gmem2
@@ -236,11 +242,8 @@ void fdtd(float *hx, float *hy, float *hz, float *ex, float *ey, float *ez,
 #pragma HLS INTERFACE s_axilite port = ex bundle = control
 #pragma HLS INTERFACE s_axilite port = ey bundle = control
 #pragma HLS INTERFACE s_axilite port = ez bundle = control
-#pragma HLS INTERFACE s_axilite port = n_time bundle = control
 
   for (int t_step = 0; t_step < max_time; t_step++) {
-#pragma HLS PIPELINE
-    *current_time = t_step;
     updateH(hx, hy, hz, ex, ey, ez);
     updateE(hx, hy, hz, ex, ey, ez);
     addExcitation(ez, t_step);
