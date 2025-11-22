@@ -244,6 +244,7 @@ void fdtd(float *hx, float *hy, float *hz, float *ex, float *ey, float *ez,
 #pragma HLS INTERFACE s_axilite port = ez bundle = control
 
   for (int t_step = 0; t_step < max_time; t_step++) {
+#pragma HLS PIPELINE
     updateH(hx, hy, hz, ex, ey, ez);
     updateE(hx, hy, hz, ex, ey, ez);
     addExcitation(ez, t_step);

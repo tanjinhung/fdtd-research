@@ -1,4 +1,5 @@
-\documentclass[12pt,a4paper,draft,twocolumns]{article}
+\documentclass[12pt,a4paper,draft]{article}
+\usepackage{amsmath}
 
 \begin{document}
 
@@ -10,6 +11,25 @@
 \end{abstract}
 
 \section{Introduction}
-\subsection{Background}
+Current age of technology had allowed the use computers to simulate our understanding of the world.
+However, such simulations are computational intensive for real-life application.
+While the advancement of technology had decrease the time needed to compute simple context simulations.
+Complex context of simulations that mimics real-life application still requires an significant amount of time to complete.
+One such application of simulation is Finite-Difference Time-Domain (FDTD).
+
+FDTD is a commonly used numerical method for analyzing antennas, design microelectronic devices, and solve other electromagnetic field problems.
+This is a type of stencil computation which updates the electric and magnetic field components of a cell in the time domain to compute the electromagnetic function.
+This method is derived from Maxwell's equations and discretized by Yee's method.
+The main equations that FDTD operated on are Faraday's law and Ampere-Maxwell's law.
+
+\begin{align}
+  \nabla \times E &= - \mu \frac{\delta H}{\delta t} \\
+  \nabla \times H &= \varepsilon \frac{\delta E}{\delta t} + \sigma E
+\end{align}
+
+Equation (1) denotes Faraday's law and is the equation governing the Electric components.
+Equation (2) denotes Ampere-Maxwell's law and is the equation govering the Magnetic components.
+
+\section{Background}
 
 \end{document}
