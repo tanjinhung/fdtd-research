@@ -23,10 +23,12 @@ void addExcitation(float *__restrict__ ez, int t_step) {
 }
 
 int main(int argc, char *argv[]) {
+
   for (int t_step = 0; t_step < 100; t_step++) {
     fdtd(hx_buffer, hy_buffer, hz_buffer, ex_buffer, ey_buffer, ez_buffer);
     addExcitation(ez_buffer, t_step);
     if (t_step % 10 == 0) {}
   }
+
   return EXIT_SUCCESS;
 }
