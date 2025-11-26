@@ -197,14 +197,14 @@ void updateE(float *__restrict__ hx, float *__restrict__ hy,
 }
 
 void fdtd(float *hx, float *hy, float *hz, float *ex, float *ey, float *ez) {
-#pragma HLS DATAFLOW
+// #pragma HLS DATAFLOW
 
-#pragma HLS INTERFACE m_axi port = hx offset = slave bundle = gmem0
-#pragma HLS INTERFACE m_axi port = hy offset = slave bundle = gmem1
-#pragma HLS INTERFACE m_axi port = hz offset = slave bundle = gmem2
-#pragma HLS INTERFACE m_axi port = ex offset = slave bundle = gmem3
-#pragma HLS INTERFACE m_axi port = ey offset = slave bundle = gmem4
-#pragma HLS INTERFACE m_axi port = ez offset = slave bundle = gmem5
+#pragma HLS INTERFACE m_axi port = hx offset = slave bundle = gmem0 depth=HX_BUFFER
+#pragma HLS INTERFACE m_axi port = hy offset = slave bundle = gmem1 depth=HY_BUFFER
+#pragma HLS INTERFACE m_axi port = hz offset = slave bundle = gmem2 depth=HZ_BUFFER
+#pragma HLS INTERFACE m_axi port = ex offset = slave bundle = gmem3 depth=EX_BUFFER
+#pragma HLS INTERFACE m_axi port = ey offset = slave bundle = gmem4 depth=EY_BUFFER
+#pragma HLS INTERFACE m_axi port = ez offset = slave bundle = gmem5 depth=EZ_BUFFER
 
 #pragma HLS INTERFACE s_axilite port = hx bundle = control
 #pragma HLS INTERFACE s_axilite port = hy bundle = control
