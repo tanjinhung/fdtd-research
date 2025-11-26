@@ -191,6 +191,7 @@ void updateEz(float *__restrict__ ez, float *__restrict__ hy,
 void updateH(float *__restrict__ hx, float *__restrict__ hy,
              float *__restrict__ hz, float *__restrict__ ex,
              float *__restrict__ ey, float *__restrict__ ez) {
+#pragma HLS DATAFLOW
   updateHx(hx, ey, ez);
   updateHy(hy, ez, ex);
   updateHz(hz, ex, ey);
@@ -199,6 +200,7 @@ void updateH(float *__restrict__ hx, float *__restrict__ hy,
 void updateE(float *__restrict__ hx, float *__restrict__ hy,
              float *__restrict__ hz, float *__restrict__ ex,
              float *__restrict__ ey, float *__restrict__ ez) {
+#pragma HLS DATAFLOW
   updateEx(ex, hz, hy);
   updateEy(ey, hx, hz);
   updateEz(ez, hy, hx);
