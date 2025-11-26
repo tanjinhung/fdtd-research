@@ -53,7 +53,7 @@ void updateHy(float *__restrict__ hy, float *__restrict__ ez,
   for (mm = 0; mm < NX_1; mm++) {
     for (nn = 0; nn < NY_0; nn++) {
       for (pp = 0; pp < NZ_1; pp++) {
-#pragma HLS DEPENDENCE variable = hx class = array inter false
+#pragma HLS DEPENDENCE variable = hy class = array inter false
 // #pragma HLS DEPENDENCE class = array dependent = true direction = \
 //     raw                              distance = 1 type = inter
 #pragma HLS PIPELINE II = 1
@@ -79,7 +79,7 @@ void updateHz(float *__restrict__ hz, float *__restrict__ ex,
   for (mm = 0; mm < NX_1; mm++) {
     for (nn = 0; nn < NY_1; nn++) {
       for (pp = 0; pp < NZ_0; pp++) {
-#pragma HLS DEPENDENCE variable = hx class = array inter false
+#pragma HLS DEPENDENCE variable = hz class = array inter false
 // #pragma HLS DEPENDENCE class = array dependent = true direction = \
 //     raw                              distance = 1 type = inter
 #pragma HLS PIPELINE II = 1
@@ -105,7 +105,7 @@ void updateEx(float *__restrict__ ex, float *__restrict__ hz,
   for (mm = 0; mm < NX_1; mm++) {
     for (nn = 1; nn < NY_1; nn++) {
       for (pp = 1; pp < NZ_1; pp++) {
-#pragma HLS DEPENDENCE variable = hx class = array inter false
+#pragma HLS DEPENDENCE variable = ex class = array inter false
 // #pragma HLS DEPENDENCE class = array dependent = true direction = \
 //     raw                              distance = 1 type = inter
 #pragma HLS PIPELINE II = 1
@@ -137,7 +137,7 @@ void updateEy(float *__restrict__ ey, float *__restrict__ hx,
   for (mm = 1; mm < NX_1; mm++) {
     for (nn = 0; nn < NY_1; nn++) {
       for (pp = 1; pp < NZ_1; pp++) {
-#pragma HLS DEPENDENCE variable = hx class = array inter false
+#pragma HLS DEPENDENCE variable = ey class = array inter false
 // #pragma HLS DEPENDENCE class = array dependent = true direction = \
 //     raw                              distance = 1 type = inter
 #pragma HLS PIPELINE II = 1
@@ -169,7 +169,7 @@ void updateEz(float *__restrict__ ez, float *__restrict__ hy,
   for (mm = 1; mm < NX_1; mm++) {
     for (nn = 1; nn < NY_1; nn++) {
       for (pp = 0; pp < NZ_1; pp++) {
-#pragma HLS DEPENDENCE variable = hx class = array inter false
+#pragma HLS DEPENDENCE variable = ez class = array inter false
 // #pragma HLS DEPENDENCE class = array dependent = true direction = \
 //     raw                              distance = 1 type = inter
 #pragma HLS PIPELINE II = 1
