@@ -109,21 +109,22 @@ void updateEx(float *__restrict__ ex, float *__restrict__ hz,
 // #pragma HLS DEPENDENCE class = array dependent = true direction = \
 //     raw                              distance = 1 type = inter
 #pragma HLS PIPELINE II = 1
-        int idx = (mm * NY_0 + nn) * NZ_0 + pp;
-        if (isDipole(mm, nn, pp)) {
-          ex[idx] = 0.0f;
-          continue;
+        float updateVal = 0;
+        int   idx       = (mm * NY_0 + nn) * NZ_0 + pp;
+
+        if (!isDipole(mm, nn, pp)) {
+          int _n       = nn - 1;
+          int _p       = pp - 1;
+          int idx_hz   = (mm * NY_1 + nn) * NZ_0 + pp;
+          int idx_hz_n = (mm * NY_1 + _n) * NZ_0 + pp;
+          int idx_hy   = (mm * NY_0 + nn) * NZ_1 + pp;
+          int idx_hy_p = (mm * NY_0 + nn) * NZ_1 + _p;
+
+          updateVal = ex[idx] + coeff_mul * ((hz[idx_hz] - hz[idx_hz_n]) -
+                                             (hy[idx_hy] - hy[idx_hy_p]));
         }
 
-        int _n       = nn - 1;
-        int _p       = pp - 1;
-        int idx_hz   = (mm * NY_1 + nn) * NZ_0 + pp;
-        int idx_hz_n = (mm * NY_1 + _n) * NZ_0 + pp;
-        int idx_hy   = (mm * NY_0 + nn) * NZ_1 + pp;
-        int idx_hy_p = (mm * NY_0 + nn) * NZ_1 + _p;
-
-        ex[idx] = ex[idx] + coeff_mul * ((hz[idx_hz] - hz[idx_hz_n]) -
-                                         (hy[idx_hy] - hy[idx_hy_p]));
+        ex[idx] = updateVal;
       }
     }
   }
@@ -140,21 +141,22 @@ void updateEy(float *__restrict__ ey, float *__restrict__ hx,
 // #pragma HLS DEPENDENCE class = array dependent = true direction = \
 //     raw                              distance = 1 type = inter
 #pragma HLS PIPELINE II = 1
-        int idx = (mm * NY_1 + nn) * NZ_0 + pp;
-        if (isDipole(mm, nn, pp)) {
-          ey[idx] = 0.0f;
-          continue;
+        float updateVal = 0;
+        int   idx       = (mm * NY_1 + nn) * NZ_0 + pp;
+
+        if (!isDipole(mm, nn, pp)) {
+          int _p       = pp - 1;
+          int _m       = mm - 1;
+          int idx_hx   = (mm * NY_1 + nn) * NZ_1 + pp;
+          int idx_hx_m = (mm * NY_1 + nn) * NZ_1 + _p;
+          int idx_hz   = (mm * NY_1 + nn) * NZ_0 + pp;
+          int idx_hz_m = (_m * NY_1 + nn) * NZ_0 + pp;
+
+          updateVal = ey[idx] + coeff_mul * ((hx[idx_hx] - hx[idx_hx_m]) -
+                                             (hz[idx_hz] - hz[idx_hz_m]));
         }
 
-        int _p       = pp - 1;
-        int _m       = mm - 1;
-        int idx_hx   = (mm * NY_1 + nn) * NZ_1 + pp;
-        int idx_hx_m = (mm * NY_1 + nn) * NZ_1 + _p;
-        int idx_hz   = (mm * NY_1 + nn) * NZ_0 + pp;
-        int idx_hz_m = (_m * NY_1 + nn) * NZ_0 + pp;
-
-        ey[idx] = ey[idx] + coeff_mul * ((hx[idx_hx] - hx[idx_hx_m]) -
-                                         (hz[idx_hz] - hz[idx_hz_m]));
+        ey[idx] = updateVal;
       }
     }
   }
