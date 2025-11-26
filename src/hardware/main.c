@@ -18,12 +18,12 @@ void addExcitation(float *__restrict__ ez, int t_step) {
 
 int main(int argc, char *argv[]) {
 
-	static float hx_buffer[HX_BUFFER] = {0};
-	static float hy_buffer[HY_BUFFER] = {0};
-	static float hz_buffer[HZ_BUFFER] = {0};
-	static float ex_buffer[EX_BUFFER] = {0};
-	static float ey_buffer[EY_BUFFER] = {0};
-	static float ez_buffer[EZ_BUFFER] = {0};
+  static float hx_buffer[HX_BUFFER] = {0};
+  static float hy_buffer[HY_BUFFER] = {0};
+  static float hz_buffer[HZ_BUFFER] = {0};
+  static float ex_buffer[EX_BUFFER] = {0};
+  static float ey_buffer[EY_BUFFER] = {0};
+  static float ez_buffer[EZ_BUFFER] = {0};
 
   for (int t_step = 0; t_step < 100; t_step++) {
     fdtd(hx_buffer, hy_buffer, hz_buffer, ex_buffer, ey_buffer, ez_buffer);

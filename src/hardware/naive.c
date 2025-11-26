@@ -27,9 +27,10 @@ void updateHx(float *__restrict__ hx, float *__restrict__ ey,
   for (mm = 0; mm < NX_0; mm++) {
     for (nn = 0; nn < NY_1; nn++) {
       for (pp = 0; pp < NZ_1; pp++) {
-#pragma HLS DEPENDENCE class = array dependent = true direction =              \
-    raw                              distance = 1 type = inter
-#pragma HLS PIPELINE                 II                = 1
+#pragma HLS DEPENDENCE variable = hx class = array inter false
+// #pragma HLS DEPENDENCE class = array dependent = true direction = \
+//     raw                              distance = 1 type = inter
+#pragma HLS PIPELINE II = 1
         int n1       = nn + 1;
         int p1       = pp + 1;
         int idx      = (mm * NY_1 + nn) * NZ_1 + pp;
@@ -52,9 +53,10 @@ void updateHy(float *__restrict__ hy, float *__restrict__ ez,
   for (mm = 0; mm < NX_1; mm++) {
     for (nn = 0; nn < NY_0; nn++) {
       for (pp = 0; pp < NZ_1; pp++) {
-#pragma HLS DEPENDENCE class = array dependent = true direction =              \
-    raw                              distance = 1 type = inter
-#pragma HLS PIPELINE                 II                = 1
+#pragma HLS DEPENDENCE variable = hx class = array inter false
+// #pragma HLS DEPENDENCE class = array dependent = true direction = \
+//     raw                              distance = 1 type = inter
+#pragma HLS PIPELINE II = 1
         int m1       = mm + 1;
         int p1       = pp + 1;
         int idx      = (mm * NY_0 + nn) * NZ_1 + pp;
@@ -77,9 +79,10 @@ void updateHz(float *__restrict__ hz, float *__restrict__ ex,
   for (mm = 0; mm < NX_1; mm++) {
     for (nn = 0; nn < NY_1; nn++) {
       for (pp = 0; pp < NZ_0; pp++) {
-#pragma HLS DEPENDENCE class = array dependent = true direction =              \
-    raw                              distance = 1 type = inter
-#pragma HLS PIPELINE                 II                = 1
+#pragma HLS DEPENDENCE variable = hx class = array inter false
+// #pragma HLS DEPENDENCE class = array dependent = true direction = \
+//     raw                              distance = 1 type = inter
+#pragma HLS PIPELINE II = 1
         int n1       = nn + 1;
         int m1       = mm + 1;
         int idx      = (mm * NY_1 + nn) * NZ_0 + pp;
@@ -102,9 +105,10 @@ void updateEx(float *__restrict__ ex, float *__restrict__ hz,
   for (mm = 0; mm < NX_1; mm++) {
     for (nn = 1; nn < NY_1; nn++) {
       for (pp = 1; pp < NZ_1; pp++) {
-#pragma HLS DEPENDENCE class = array dependent = true direction =              \
-    raw                              distance = 1 type = inter
-#pragma HLS PIPELINE                 II                = 1
+#pragma HLS DEPENDENCE variable = hx class = array inter false
+// #pragma HLS DEPENDENCE class = array dependent = true direction = \
+//     raw                              distance = 1 type = inter
+#pragma HLS PIPELINE II = 1
         int idx = (mm * NY_0 + nn) * NZ_0 + pp;
         if (isDipole(mm, nn, pp)) {
           ex[idx] = 0.0f;
@@ -132,9 +136,10 @@ void updateEy(float *__restrict__ ey, float *__restrict__ hx,
   for (mm = 1; mm < NX_1; mm++) {
     for (nn = 0; nn < NY_1; nn++) {
       for (pp = 1; pp < NZ_1; pp++) {
-#pragma HLS DEPENDENCE class = array dependent = true direction =              \
-    raw                              distance = 1 type = inter
-#pragma HLS PIPELINE                 II                = 1
+#pragma HLS DEPENDENCE variable = hx class = array inter false
+// #pragma HLS DEPENDENCE class = array dependent = true direction = \
+//     raw                              distance = 1 type = inter
+#pragma HLS PIPELINE II = 1
         int idx = (mm * NY_1 + nn) * NZ_0 + pp;
         if (isDipole(mm, nn, pp)) {
           ey[idx] = 0.0f;
@@ -162,9 +167,10 @@ void updateEz(float *__restrict__ ez, float *__restrict__ hy,
   for (mm = 1; mm < NX_1; mm++) {
     for (nn = 1; nn < NY_1; nn++) {
       for (pp = 0; pp < NZ_1; pp++) {
-#pragma HLS DEPENDENCE class = array dependent = true direction =              \
-    raw                              distance = 1 type = inter
-#pragma HLS PIPELINE                 II                = 1
+#pragma HLS DEPENDENCE variable = hx class = array inter false
+// #pragma HLS DEPENDENCE class = array dependent = true direction = \
+//     raw                              distance = 1 type = inter
+#pragma HLS PIPELINE II = 1
         int _m       = mm - 1;
         int _n       = nn - 1;
         int idx      = (mm * NY_0 + nn) * NZ_1 + pp;
@@ -197,14 +203,20 @@ void updateE(float *__restrict__ hx, float *__restrict__ hy,
 }
 
 void fdtd(float *hx, float *hy, float *hz, float *ex, float *ey, float *ez) {
-// #pragma HLS DATAFLOW
+  // #pragma HLS DATAFLOW
 
-#pragma HLS INTERFACE m_axi port = hx offset = slave bundle = gmem0 depth=HX_BUFFER
-#pragma HLS INTERFACE m_axi port = hy offset = slave bundle = gmem1 depth=HY_BUFFER
-#pragma HLS INTERFACE m_axi port = hz offset = slave bundle = gmem2 depth=HZ_BUFFER
-#pragma HLS INTERFACE m_axi port = ex offset = slave bundle = gmem3 depth=EX_BUFFER
-#pragma HLS INTERFACE m_axi port = ey offset = slave bundle = gmem4 depth=EY_BUFFER
-#pragma HLS INTERFACE m_axi port = ez offset = slave bundle = gmem5 depth=EZ_BUFFER
+#pragma HLS INTERFACE m_axi port = hx offset = slave bundle = gmem0 depth =    \
+    HX_BUFFER
+#pragma HLS INTERFACE m_axi port = hy offset = slave bundle = gmem1 depth =    \
+    HY_BUFFER
+#pragma HLS INTERFACE m_axi port = hz offset = slave bundle = gmem2 depth =    \
+    HZ_BUFFER
+#pragma HLS INTERFACE m_axi port = ex offset = slave bundle = gmem3 depth =    \
+    EX_BUFFER
+#pragma HLS INTERFACE m_axi port = ey offset = slave bundle = gmem4 depth =    \
+    EY_BUFFER
+#pragma HLS INTERFACE m_axi port = ez offset = slave bundle = gmem5 depth =    \
+    EZ_BUFFER
 
 #pragma HLS INTERFACE s_axilite port = hx bundle = control
 #pragma HLS INTERFACE s_axilite port = hy bundle = control
