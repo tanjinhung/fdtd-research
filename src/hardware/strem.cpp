@@ -1,4 +1,5 @@
 #include "naive.h"
+#include <hls_stream.h>
 // #include <ap_fixed.h>
 
 static float coeff_div = CDTDS / IMP0;
