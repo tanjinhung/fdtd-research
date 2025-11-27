@@ -8,3 +8,4 @@ AlignEscapedNewlines: Right
 AlignOperands: true
 AllowShortBlocksOnASingleLine: Always
 AllowShortIfStatementsOnASingleLine: WithoutElse
+IndentPPDirectives: BeforeHash
