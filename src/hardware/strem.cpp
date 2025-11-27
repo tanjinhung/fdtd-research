@@ -1,5 +1,5 @@
-#include "naive.h"
-#include <hls_stream.h>
+#include "def.h"
+#include "hls_stream.h"
 // #include <ap_fixed.h>
 
 static float coeff_div = CDTDS / IMP0;
@@ -207,29 +207,124 @@ void updateE(float *__restrict__ hx, float *__restrict__ hy,
   updateEz(ez, hy, hx);
 }
 
-void fdtd(float *hx, float *hy, float *hz, float *ex, float *ey, float *ez) {
-  // #pragma HLS DATAFLOW
+void read_to_stream(float *__restrict__ hx_gmem, float *__restrict__ hy_gmem,
+                    float *__restrict__ hz_gmem, float *__restrict__ ex_gmem,
+                    float *__restrict__ ey_gmem, float *__restrict__ ez_gmem,
+                    hls::stream<float> &hx_strm, hls::stream<float> &hy_strm,
+                    hls::stream<float> &hz_strm, hls::stream<float> &ex_strm,
+                    hls::stream<float> &ey_strm, hls::stream<float> &ez_strm) {
+#pragma HLS INLINE off
+#pragma HLS PIPELINE II = 1
+#pragma HLS DATAFLOW
 
-#pragma HLS INTERFACE m_axi port = hx offset = slave bundle = gmem0 depth =    \
-    HX_BUFFER
-#pragma HLS INTERFACE m_axi port = hy offset = slave bundle = gmem1 depth =    \
-    HY_BUFFER
-#pragma HLS INTERFACE m_axi port = hz offset = slave bundle = gmem2 depth =    \
-    HZ_BUFFER
-#pragma HLS INTERFACE m_axi port = ex offset = slave bundle = gmem3 depth =    \
-    EX_BUFFER
-#pragma HLS INTERFACE m_axi port = ey offset = slave bundle = gmem4 depth =    \
-    EY_BUFFER
-#pragma HLS INTERFACE m_axi port = ez offset = slave bundle = gmem5 depth =    \
-    EZ_BUFFER
+  for (int i = 0; i < HX_BUFFER; i++) {
+#pragma HLS LOOP_TRIPCOUNT min = HX_BUFFER max = HX_BUFFER
+    hx_strm.write(hx_gmem[i]);
+  }
 
-#pragma HLS INTERFACE s_axilite port = hx bundle = control
-#pragma HLS INTERFACE s_axilite port = hy bundle = control
-#pragma HLS INTERFACE s_axilite port = hz bundle = control
-#pragma HLS INTERFACE s_axilite port = ex bundle = control
-#pragma HLS INTERFACE s_axilite port = ey bundle = control
-#pragma HLS INTERFACE s_axilite port = ez bundle = control
+  for (int i = 0; i < HY_BUFFER; i++) {
+#pragma HLS LOOP_TRIPCOUNT min = HY_BUFFER max = HY_BUFFER
+    hy_strm.write(hy_gmem[i]);
+  }
 
-  updateH(hx, hy, hz, ex, ey, ez);
-  updateE(hx, hy, hz, ex, ey, ez);
+  for (int i = 0; i < HZ_BUFFER; i++) {
+#pragma HLS LOOP_TRIPCOUNT min = HZ_BUFFER max = HZ_BUFFER
+    hz_strm.write(hz_gmem[i]);
+  }
+
+  for (int i = 0; i < EX_BUFFER; i++) {
+#pragma HLS LOOP_TRIPCOUNT min = EX_BUFFER max = EX_BUFFER
+    ex_strm.write(ex_gmem[i]);
+  }
+
+  for (int i = 0; i < EY_BUFFER; i++) {
+#pragma HLS LOOP_TRIPCOUNT min = EY_BUFFER max = EY_BUFFER
+    ey_strm.write(ey_gmem[i]);
+  }
+
+  for (int i = 0; i < EZ_BUFFER; i++) {
+#pragma HLS LOOP_TRIPCOUNT min = EZ_BUFFER max = EZ_BUFFER
+    ez_strm.write(ez_gmem[i]);
+  }
+}
+
+void write_to_gmem(float *__restrict__ hx_gmem, float *__restrict__ hy_gmem,
+                   float *__restrict__ hz_gmem, float *__restrict__ ex_gmem,
+                   float *__restrict__ ey_gmem, float *__restrict__ ez_gmem,
+                   hls::stream<float> &hx_strm, hls::stream<float> &hy_strm,
+                   hls::stream<float> &hz_strm, hls::stream<float> &ex_strm,
+                   hls::stream<float> &ey_strm, hls::stream<float> &ez_strm) {
+#pragma HLS INLINE off
+#pragma HLS PIPELINE II = 1
+#pragma HLS DATAFLOW
+
+  for (int i = 0; i < HX_BUFFER; i++) {
+#pragma HLS LOOP_TRIPCOUNT min = HX_BUFFER max = HX_BUFFER
+    hx_gmem[i] = hx_strm.read();
+  }
+
+  for (int i = 0; i < HY_BUFFER; i++) {
+#pragma HLS LOOP_TRIPCOUNT min = HY_BUFFER max = HY_BUFFER
+    hy_gmem[i] = hy_strm.read();
+  }
+
+  for (int i = 0; i < HZ_BUFFER; i++) {
+#pragma HLS LOOP_TRIPCOUNT min = HZ_BUFFER max = HZ_BUFFER
+    hz_gmem[i] = hz_strm.read();
+  }
+
+  for (int i = 0; i < EX_BUFFER; i++) {
+#pragma HLS LOOP_TRIPCOUNT min = EX_BUFFER max = EX_BUFFER
+    ex_gmem[i] = ex_strm.read();
+  }
+
+  for (int i = 0; i < EY_BUFFER; i++) {
+#pragma HLS LOOP_TRIPCOUNT min = EY_BUFFER max = EY_BUFFER
+    ey_gmem[i] = ey_strm.read();
+  }
+
+  for (int i = 0; i < EZ_BUFFER; i++) {
+#pragma HLS LOOP_TRIPCOUNT min = EZ_BUFFER max = EZ_BUFFER
+    ez_gmem[i] = ez_strm.read();
+  }
+}
+
+void fdtd(float *hx_gmem, float *hy_gmem, float *hz_gmem, float *ex_gmem,
+          float *ey_gmem, float *ez_gmem) {
+#pragma HLS DATAFLOW
+
+  hls::stream<float, 128> hx_init_strm("hx_init_strm");
+  hls::stream<float, 128> hy_init_strm("hy_init_strm");
+  hls::stream<float, 128> hz_init_strm("hz_init_strm");
+  hls::stream<float, 128> ex_init_strm("ex_init_strm");
+  hls::stream<float, 128> ey_init_strm("ey_init_strm");
+  hls::stream<float, 128> ez_init_strm("ez_init_strm");
+  hls::stream<float, 128> hx_t_ex_strm("hx_t_ex_strm");
+  hls::stream<float, 128> hy_t_ey_strm("hy_t_ey_strm");
+  hls::stream<float, 128> hz_t_ez_strm("hz_t_ez_strm");
+  hls::stream<float, 128> ex_out__strm("ex_out__strm");
+  hls::stream<float, 128> ey_out__strm("ey_out__strm");
+  hls::stream<float, 128> ez_out__strm("ez_out__strm");
+
+  // clang-format off
+#pragma HLS INTERFACE m_axi port = hx_gmem offset = slave bundle = gmem0 depth = HX_BUFFER
+#pragma HLS INTERFACE m_axi port = hy_gmem offset = slave bundle = gmem1 depth = HY_BUFFER
+#pragma HLS INTERFACE m_axi port = hz_gmem offset = slave bundle = gmem2 depth = HZ_BUFFER
+#pragma HLS INTERFACE m_axi port = ex_gmem offset = slave bundle = gmem3 depth = EX_BUFFER
+#pragma HLS INTERFACE m_axi port = ey_gmem offset = slave bundle = gmem4 depth = EY_BUFFER
+#pragma HLS INTERFACE m_axi port = ez_gmem offset = slave bundle = gmem5 depth = EZ_BUFFER
+  // clang-format on
+
+#pragma HLS INTERFACE s_axilite port = hx_gmem bundle = control
+#pragma HLS INTERFACE s_axilite port = hy_gmem bundle = control
+#pragma HLS INTERFACE s_axilite port = hz_gmem bundle = control
+#pragma HLS INTERFACE s_axilite port = ex_gmem bundle = control
+#pragma HLS INTERFACE s_axilite port = ey_gmem bundle = control
+#pragma HLS INTERFACE s_axilite port = ez_gmem bundle = control
+
+#pragma HLS INTERFACE s_axilite port = return bundle = control
+
+  read_to_stream(hx_gmem, hy_gmem, hz_gmem, ex_gmem, ey_gmem, ez_gmem,
+                 hx_init_strm, hy_init_strm, hz_init_strm, ex_init_strm,
+                 ey_init_strm, ez_init_strm);
 }
