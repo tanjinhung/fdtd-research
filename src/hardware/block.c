@@ -191,7 +191,10 @@ void updateEz(float *__restrict__ ez, float *__restrict__ hy,
 void updateH(float *__restrict__ hx, float *__restrict__ hy,
              float *__restrict__ hz, float *__restrict__ ex,
              float *__restrict__ ey, float *__restrict__ ez) {
-  // #pragma HLS DATAFLOW
+#pragma HLS ARRAY_PARTITION variable = ex type = block factor = 2
+#pragma HLS ARRAY_PARTITION variable = ey type = block factor = 2
+#pragma HLS ARRAY_PARTITION variable = ez type = block factor = 2
+#pragma HLS DATAFLOW
   updateHx(hx, ey, ez);
   updateHy(hy, ez, ex);
   updateHz(hz, ex, ey);
@@ -200,15 +203,16 @@ void updateH(float *__restrict__ hx, float *__restrict__ hy,
 void updateE(float *__restrict__ hx, float *__restrict__ hy,
              float *__restrict__ hz, float *__restrict__ ex,
              float *__restrict__ ey, float *__restrict__ ez) {
-  // #pragma HLS DATAFLOW
+#pragma HLS ARRAY_PARTITION variable = hx type = block factor = 2
+#pragma HLS ARRAY_PARTITION variable = hy type = block factor = 2
+#pragma HLS ARRAY_PARTITION variable = hz type = block factor = 2
+#pragma HLS DATAFLOW
   updateEx(ex, hz, hy);
   updateEy(ey, hx, hz);
   updateEz(ez, hy, hx);
 }
 
 void fdtd(float *hx, float *hy, float *hz, float *ex, float *ey, float *ez) {
-  // #pragma HLS DATAFLOW
-
 #pragma HLS INTERFACE m_axi port = hx offset = slave bundle = gmem0 depth =    \
     HX_BUFFER
 #pragma HLS INTERFACE m_axi port = hy offset = slave bundle = gmem1 depth =    \
@@ -229,6 +233,14 @@ void fdtd(float *hx, float *hy, float *hz, float *ex, float *ey, float *ez) {
 #pragma HLS INTERFACE s_axilite port = ey bundle = control
 #pragma HLS INTERFACE s_axilite port = ez bundle = control
 
+#pragma HLS ARRAY_PARTITION variable = hx type = block factor = 6
+#pragma HLS ARRAY_PARTITION variable = hy type = block factor = 6
+#pragma HLS ARRAY_PARTITION variable = hz type = block factor = 6
+#pragma HLS ARRAY_PARTITION variable = ex type = block factor = 6
+#pragma HLS ARRAY_PARTITION variable = ey type = block factor = 6
+#pragma HLS ARRAY_PARTITION variable = ez type = block factor = 6
+
+#pragma HLS DATAFLOW
   updateH(hx, hy, hz, ex, ey, ez);
   updateE(hx, hy, hz, ex, ey, ez);
 }
