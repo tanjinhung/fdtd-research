@@ -207,6 +207,38 @@ void updateE(float *__restrict__ hx, float *__restrict__ hy,
   updateEz(ez, hy, hx);
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// HLS::stream implementations
+///////////////////////////////////////////////////////////////////////////////
+const char bundle_name_0[] = "gmem0";
+const char bundle_name_1[] = "gmem1";
+const char bundle_name_2[] = "gmem2";
+const char bundle_name_3[] = "gmem3";
+const char bundle_name_4[] = "gmem4";
+const char bundle_name_5[] = "gmem5";
+
+template <typename T, const char *BundleName, int Size>
+void                        gmem_to_stream_template(T *__restrict__ gmem_ptr,
+                                                    hls::stream<T> &strm_ptr) {
+#pragma HLS PIPELINE        II   = 1
+#pragma HLS INTERFACE m_axi port = gmem_ptr offset = slave bundle = BundleName
+  for (int i = 0; i < Size; i++) {
+#pragma HLS LOOP_TRIPCOUNT min = Size max = Size
+    strm_ptr.write(gmem_ptr[i]);
+  }
+}
+
+template <typename T, const char *BundleName, int Size>
+void                        stream_to_gmem_template(T *__restrict__ gmem_ptr,
+                                                    hls::stream<T> &strm_ptr) {
+#pragma HLS PIPELINE        II   = 1
+#pragma HLS INTERFACE m_axi port = gmem_ptr offset = slave bundle = BundleName
+  for (int i = 0; i < Size; i++) {
+#pragma HLS LOOP_TRIPCOUNT min = Size max = Size
+    gmem_ptr[i] = strm_ptr.read();
+  }
+}
+
 void read_to_stream(float *__restrict__ hx_gmem, float *__restrict__ hy_gmem,
                     float *__restrict__ hz_gmem, float *__restrict__ ex_gmem,
                     float *__restrict__ ey_gmem, float *__restrict__ ez_gmem,
@@ -214,97 +246,51 @@ void read_to_stream(float *__restrict__ hx_gmem, float *__restrict__ hy_gmem,
                     hls::stream<float> &hz_strm, hls::stream<float> &ex_strm,
                     hls::stream<float> &ey_strm, hls::stream<float> &ez_strm) {
 #pragma HLS INLINE off
-#pragma HLS PIPELINE II = 1
 #pragma HLS DATAFLOW
 
-  for (int i = 0; i < HX_BUFFER; i++) {
-#pragma HLS LOOP_TRIPCOUNT min = HX_BUFFER max = HX_BUFFER
-    hx_strm.write(hx_gmem[i]);
-  }
-
-  for (int i = 0; i < HY_BUFFER; i++) {
-#pragma HLS LOOP_TRIPCOUNT min = HY_BUFFER max = HY_BUFFER
-    hy_strm.write(hy_gmem[i]);
-  }
-
-  for (int i = 0; i < HZ_BUFFER; i++) {
-#pragma HLS LOOP_TRIPCOUNT min = HZ_BUFFER max = HZ_BUFFER
-    hz_strm.write(hz_gmem[i]);
-  }
-
-  for (int i = 0; i < EX_BUFFER; i++) {
-#pragma HLS LOOP_TRIPCOUNT min = EX_BUFFER max = EX_BUFFER
-    ex_strm.write(ex_gmem[i]);
-  }
-
-  for (int i = 0; i < EY_BUFFER; i++) {
-#pragma HLS LOOP_TRIPCOUNT min = EY_BUFFER max = EY_BUFFER
-    ey_strm.write(ey_gmem[i]);
-  }
-
-  for (int i = 0; i < EZ_BUFFER; i++) {
-#pragma HLS LOOP_TRIPCOUNT min = EZ_BUFFER max = EZ_BUFFER
-    ez_strm.write(ez_gmem[i]);
-  }
+  gmem_to_stream_template<float, bundle_name_0, HX_BUFFER>(hx_gmem, hx_strm);
+  gmem_to_stream_template<float, bundle_name_1, HY_BUFFER>(hy_gmem, hy_strm);
+  gmem_to_stream_template<float, bundle_name_2, HZ_BUFFER>(hz_gmem, hz_strm);
+  gmem_to_stream_template<float, bundle_name_3, EX_BUFFER>(ex_gmem, ex_strm);
+  gmem_to_stream_template<float, bundle_name_4, EY_BUFFER>(ey_gmem, ey_strm);
+  gmem_to_stream_template<float, bundle_name_5, EZ_BUFFER>(ez_gmem, ez_strm);
 }
 
-void write_to_gmem(float *__restrict__ hx_gmem, float *__restrict__ hy_gmem,
-                   float *__restrict__ hz_gmem, float *__restrict__ ex_gmem,
-                   float *__restrict__ ey_gmem, float *__restrict__ ez_gmem,
-                   hls::stream<float> &hx_strm, hls::stream<float> &hy_strm,
-                   hls::stream<float> &hz_strm, hls::stream<float> &ex_strm,
-                   hls::stream<float> &ey_strm, hls::stream<float> &ez_strm) {
+void write_to_gmemd(float *__restrict__ hx_gmem, float *__restrict__ hy_gmem,
+                    float *__restrict__ hz_gmem, float *__restrict__ ex_gmem,
+                    float *__restrict__ ey_gmem, float *__restrict__ ez_gmem,
+                    hls::stream<float> &hx_strm, hls::stream<float> &hy_strm,
+                    hls::stream<float> &hz_strm, hls::stream<float> &ex_strm,
+                    hls::stream<float> &ey_strm, hls::stream<float> &ez_strm) {
 #pragma HLS INLINE off
-#pragma HLS PIPELINE II = 1
 #pragma HLS DATAFLOW
-
-  for (int i = 0; i < HX_BUFFER; i++) {
-#pragma HLS LOOP_TRIPCOUNT min = HX_BUFFER max = HX_BUFFER
-    hx_gmem[i] = hx_strm.read();
-  }
-
-  for (int i = 0; i < HY_BUFFER; i++) {
-#pragma HLS LOOP_TRIPCOUNT min = HY_BUFFER max = HY_BUFFER
-    hy_gmem[i] = hy_strm.read();
-  }
-
-  for (int i = 0; i < HZ_BUFFER; i++) {
-#pragma HLS LOOP_TRIPCOUNT min = HZ_BUFFER max = HZ_BUFFER
-    hz_gmem[i] = hz_strm.read();
-  }
-
-  for (int i = 0; i < EX_BUFFER; i++) {
-#pragma HLS LOOP_TRIPCOUNT min = EX_BUFFER max = EX_BUFFER
-    ex_gmem[i] = ex_strm.read();
-  }
-
-  for (int i = 0; i < EY_BUFFER; i++) {
-#pragma HLS LOOP_TRIPCOUNT min = EY_BUFFER max = EY_BUFFER
-    ey_gmem[i] = ey_strm.read();
-  }
-
-  for (int i = 0; i < EZ_BUFFER; i++) {
-#pragma HLS LOOP_TRIPCOUNT min = EZ_BUFFER max = EZ_BUFFER
-    ez_gmem[i] = ez_strm.read();
-  }
+  stream_to_gmem_template<float, bundle_name_0, HX_BUFFER>(hx_gmem, hx_strm);
+  stream_to_gmem_template<float, bundle_name_1, HY_BUFFER>(hy_gmem, hy_strm);
+  stream_to_gmem_template<float, bundle_name_2, HZ_BUFFER>(hz_gmem, hz_strm);
+  stream_to_gmem_template<float, bundle_name_3, EX_BUFFER>(ex_gmem, ex_strm);
+  stream_to_gmem_template<float, bundle_name_4, EY_BUFFER>(ey_gmem, ey_strm);
+  stream_to_gmem_template<float, bundle_name_5, EZ_BUFFER>(ez_gmem, ez_strm);
 }
 
 void fdtd(float *hx_gmem, float *hy_gmem, float *hz_gmem, float *ex_gmem,
           float *ey_gmem, float *ez_gmem) {
 #pragma HLS DATAFLOW
 
-  hls::stream<float, 128> hx_init_strm("hx_init_strm");
-  hls::stream<float, 128> hy_init_strm("hy_init_strm");
-  hls::stream<float, 128> hz_init_strm("hz_init_strm");
-  hls::stream<float, 128> ex_init_strm("ex_init_strm");
-  hls::stream<float, 128> ey_init_strm("ey_init_strm");
-  hls::stream<float, 128> ez_init_strm("ez_init_strm");
-  hls::stream<float, 128> hx_t_ex_strm("hx_t_ex_strm");
-  hls::stream<float, 128> hy_t_ey_strm("hy_t_ey_strm");
-  hls::stream<float, 128> hz_t_ez_strm("hz_t_ez_strm");
-  hls::stream<float, 128> ex_out__strm("ex_out__strm");
-  hls::stream<float, 128> ey_out__strm("ey_out__strm");
-  hls::stream<float, 128> ez_out__strm("ez_out__strm");
+  hls::stream<float, 64> hx_initial_stream("hx_initial_stream");
+  hls::stream<float, 64> hy_initial_stream("hy_initial_stream");
+  hls::stream<float, 64> hz_initial_stream("hz_initial_stream");
+  hls::stream<float, 64> ex_initial_stream("ex_initial_stream");
+  hls::stream<float, 64> ey_initial_stream("ey_initial_stream");
+  hls::stream<float, 64> ez_initial_stream("ez_initial_stream");
+  hls::stream<float, 64> hx_to_ex_stream("hx_to_ex_stream");
+  hls::stream<float, 64> hy_to_ey_stream("hy_to_ey_stream");
+  hls::stream<float, 64> hz_to_ez_stream("hz_to_ez_stream");
+  hls::stream<float, 64> hx_output_stream("hx_output_stream");
+  hls::stream<float, 64> hy_output_stream("hy_output_stream");
+  hls::stream<float, 64> hz_output_stream("hz_output_stream");
+  hls::stream<float, 64> ex_output_stream("ex_output_stream");
+  hls::stream<float, 64> ey_output_stream("ey_output_stream");
+  hls::stream<float, 64> ez_output_stream("ez_output_stream");
 
   // clang-format off
 #pragma HLS INTERFACE m_axi port = hx_gmem offset = slave bundle = gmem0 depth = HX_BUFFER
@@ -325,6 +311,10 @@ void fdtd(float *hx_gmem, float *hy_gmem, float *hz_gmem, float *ex_gmem,
 #pragma HLS INTERFACE s_axilite port = return bundle = control
 
   read_to_stream(hx_gmem, hy_gmem, hz_gmem, ex_gmem, ey_gmem, ez_gmem,
-                 hx_init_strm, hy_init_strm, hz_init_strm, ex_init_strm,
-                 ey_init_strm, ez_init_strm);
+                 hx_initial_stream, hy_initial_stream, hz_initial_stream,
+                 ex_initial_stream, ey_initial_stream, ez_initial_stream);
+
+  write_to_gmemd(hx_gmem, hy_gmem, hz_gmem, ex_gmem, ey_gmem, ez_gmem,
+                 hx_output_stream, hy_output_stream, hz_output_stream,
+                 ex_output_stream, ey_output_stream, ez_output_stream);
 }
