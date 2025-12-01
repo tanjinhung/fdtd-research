@@ -3,8 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-extern void fdtd(float *hx, float *hy, float *hz, float *ex, float *ey,
-                 float *ez);
+extern void fdtd(float *hx_gmem, float *hy_gmem, float *hz_gmem, float *ex_gmem,
+                 float *ey_gmem, float *ez_gmem);
 
 void addExcitation(float *__restrict__ ez, int t_step) {
   // float t0     = 20.0f;
