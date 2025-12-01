@@ -7,10 +7,6 @@ extern void fdtd(float *hx_gmem, float *hy_gmem, float *hz_gmem, float *ex_gmem,
                  float *ey_gmem, float *ez_gmem);
 
 void addExcitation(float *__restrict__ ez, int t_step) {
-  // float t0     = 20.0f;
-  // float spread = 10.0f;
-  // float t_norm = (float)t_step - t0;
-  // float source = expf(-0.5f * (t_norm / spread) * (t_norm / spread));
   float amplitude = 1.0f;
   float frequency = 0.1f;
   float phase     = 0.0f;

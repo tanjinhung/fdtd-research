@@ -275,21 +275,12 @@ void fdtd(float *hx_gmem, float *hy_gmem, float *hz_gmem, float *ex_gmem,
           float *ey_gmem, float *ez_gmem) {
 #pragma HLS DATAFLOW
 
-  hls::stream<float> hx_initial_stream("hx_initial_stream");
-  hls::stream<float> hy_initial_stream("hy_initial_stream");
-  hls::stream<float> hz_initial_stream("hz_initial_stream");
-  hls::stream<float> ex_initial_stream("ex_initial_stream");
-  hls::stream<float> ey_initial_stream("ey_initial_stream");
-  hls::stream<float> ez_initial_stream("ez_initial_stream");
-  hls::stream<float> hx_to_ex_stream("hx_to_ex_stream");
-  hls::stream<float> hy_to_ey_stream("hy_to_ey_stream");
-  hls::stream<float> hz_to_ez_stream("hz_to_ez_stream");
-  hls::stream<float> hx_output_stream("hx_output_stream");
-  hls::stream<float> hy_output_stream("hy_output_stream");
-  hls::stream<float> hz_output_stream("hz_output_stream");
-  hls::stream<float> ex_output_stream("ex_output_stream");
-  hls::stream<float> ey_output_stream("ey_output_stream");
-  hls::stream<float> ez_output_stream("ez_output_stream");
+  hls::stream<float, 32> hx_initial_stream("hx_initial_stream");
+  hls::stream<float, 32> hy_initial_stream("hy_initial_stream");
+  hls::stream<float, 32> hz_initial_stream("hz_initial_stream");
+  hls::stream<float, 32> ex_initial_stream("ex_initial_stream");
+  hls::stream<float, 32> ey_initial_stream("ey_initial_stream");
+  hls::stream<float, 32> ez_initial_stream("ez_initial_stream");
 
   // clang-format off
 #pragma HLS INTERFACE m_axi port = hx_gmem offset = slave bundle = gmem0 depth = HX_BUFFER
@@ -314,6 +305,6 @@ void fdtd(float *hx_gmem, float *hy_gmem, float *hz_gmem, float *ex_gmem,
                  ex_initial_stream, ey_initial_stream, ez_initial_stream);
 
   write_to_gmemd(hx_gmem, hy_gmem, hz_gmem, ex_gmem, ey_gmem, ez_gmem,
-                 hx_output_stream, hy_output_stream, hz_output_stream,
-                 ex_output_stream, ey_output_stream, ez_output_stream);
+                 hx_initial_stream, hy_initial_stream, hz_initial_stream,
+                 ex_initial_stream, ey_initial_stream, ez_initial_stream);
 }
