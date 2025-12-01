@@ -1,5 +1,4 @@
 #include "def.h"
-// #include <ap_fixed.h>
 
 static float coeff_div = CDTDS / IMP0;
 static float coeff_mul = CDTDS * IMP0;

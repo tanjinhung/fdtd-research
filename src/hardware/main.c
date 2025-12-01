@@ -7,10 +7,15 @@ extern void fdtd(float *hx, float *hy, float *hz, float *ex, float *ey,
                  float *ez);
 
 void addExcitation(float *__restrict__ ez, int t_step) {
-  float t0     = 20.0f;
-  float spread = 10.0f;
-  float t_norm = (float)t_step - t0;
-  float source = expf(-0.5f * (t_norm / spread) * (t_norm / spread));
+  // float t0     = 20.0f;
+  // float spread = 10.0f;
+  // float t_norm = (float)t_step - t0;
+  // float source = expf(-0.5f * (t_norm / spread) * (t_norm / spread));
+  float amplitude = 1.0f;
+  float frequency = 0.1f;
+  float phase     = 0.0f;
+  float source =
+      amplitude * sinf(2.0f * M_PI * frequency * (float)t_step + phase);
 
   int idx = (DIPOLE_CENTER_X * NY_0 + DIPOLE_CENTER_Y) * NZ_1 + DIPOLE_CENTER_Z;
   ez[idx] += source;
@@ -34,7 +39,7 @@ int main(int argc, char *argv[]) {
           int            idx      = (mm * NY_0 + nn) * NZ_1 + pp;
           float          point    = ez_buffer[idx];
           unsigned char *byte_ptr = (unsigned char *)&point;
-          printf("[%d, %d, %d] float: %lf byte: ", mm, nn, pp, point);
+          printf("[%2d, %2d, %2d] float: %9.6lf byte: ", mm, nn, pp, point);
           for (size_t i = 0; i < sizeof(float); i++) {
             printf("%02X ", byte_ptr[i]);
           }
