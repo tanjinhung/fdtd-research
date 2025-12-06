@@ -161,7 +161,7 @@ static void update_E_tail(float *__restrict__ ex_plane,
 }
 
 void fdtd(float *hx_gmem, float *hy_gmem, float *hz_gmem, float *ex_gmem,
-          float *ey_gmem, float *ez_gmem, int timestep) {
+          float *ey_gmem, float *ez_gmem) {
 
   // clang-format off
 #pragma HLS INTERFACE m_axi port = hx_gmem offset = slave bundle= gmem0 depth = TOTAL_BUF
@@ -171,7 +171,6 @@ void fdtd(float *hx_gmem, float *hy_gmem, float *hz_gmem, float *ex_gmem,
 #pragma HLS INTERFACE m_axi port = ey_gmem offset = slave bundle= gmem0 depth = TOTAL_BUF
 #pragma HLS INTERFACE m_axi port = ez_gmem offset = slave bundle= gmem0 depth = TOTAL_BUF
 
-#pragma HLS INTERFACE s_axilite port = timestep bundle = control
 #pragma HLS INTERFACE s_axilite port = return   bundle = control
   // clang-format on
 
@@ -198,69 +197,67 @@ void fdtd(float *hx_gmem, float *hy_gmem, float *hz_gmem, float *ex_gmem,
 #pragma HLS BIND_STORAGE variable = hx_prev1 type = ram_2p impl = bram
 #pragma HLS BIND_STORAGE variable = hy_prev1 type = ram_2p impl = bram
 
-  for (int t = 0; t < timestep; ++t) {
+  for (int i = 0; i < HX_PLANER; ++i) {
+#pragma HLS PIPELINE II = 1
+    hx_prev1[i] = 0.0f;
+  }
+
+  for (int i = 0; i < HY_PLANER; ++i) {
+#pragma HLS PIPELINE II = 1
+    hy_prev1[i] = 0.0f;
+  }
+
+  for (int z = 0; z < NZ_1; ++z) {
+    // #pragma HLS DATAFLOW
+    rd_plane(ex_gmem, ex_plane, z, EX_PLANER);
+    rd_plane(ey_gmem, ey_plane, z, EY_PLANER);
+    rd_plane(ez_gmem, ez_plane, z, EZ_PLANER);
+    rd_plane(ex_gmem, ex_plus1, z + 1, EX_PLANER);
+    rd_plane(ey_gmem, ey_plus1, z + 1, EY_PLANER);
+
+    rd_plane(hx_gmem, hx_plane, z, HX_PLANER);
+    rd_plane(hy_gmem, hy_plane, z, HY_PLANER);
+    rd_plane(hz_gmem, hz_plane, z, HZ_PLANER);
+
+    update_H_crit(hx_plane, hy_plane, hz_plane, ex_plane, ey_plane, ez_plane,
+                  ex_plus1, ey_plus1);
+
+    wr_plane(hx_gmem, hx_plane, z, HX_PLANER);
+    wr_plane(hy_gmem, hy_plane, z, HY_PLANER);
+    wr_plane(hz_gmem, hz_plane, z, HZ_PLANER);
+
+    update_E_crit(ex_plane, ey_plane, ez_plane, hx_plane, hy_plane, hz_plane,
+                  hx_prev1, hy_prev1);
+
+    wr_plane(ex_gmem, ex_plane, z, EX_PLANER);
+    wr_plane(ey_gmem, ey_plane, z, EY_PLANER);
+    wr_plane(ez_gmem, ez_plane, z, EZ_PLANER);
+
     for (int i = 0; i < HX_PLANER; ++i) {
 #pragma HLS PIPELINE II = 1
-      hx_prev1[i] = 0.0f;
+      hx_prev1[i] = hx_plane[i];
     }
 
     for (int i = 0; i < HY_PLANER; ++i) {
 #pragma HLS PIPELINE II = 1
-      hy_prev1[i] = 0.0f;
+      hy_prev1[i] = hy_plane[i];
     }
+  }
 
-    for (int z = 0; z < NZ_1; ++z) {
-      // #pragma HLS DATAFLOW
-      rd_plane(ex_gmem, ex_plane, z, EX_PLANER);
-      rd_plane(ey_gmem, ey_plane, z, EY_PLANER);
-      rd_plane(ez_gmem, ez_plane, z, EZ_PLANER);
-      rd_plane(ex_gmem, ex_plus1, z + 1, EX_PLANER);
-      rd_plane(ey_gmem, ey_plus1, z + 1, EY_PLANER);
+  {
+    const int z = NZ_1;
 
-      rd_plane(hx_gmem, hx_plane, z, HX_PLANER);
-      rd_plane(hy_gmem, hy_plane, z, HY_PLANER);
-      rd_plane(hz_gmem, hz_plane, z, HZ_PLANER);
+    rd_plane(ex_gmem, ex_plane, z, EX_PLANER);
+    rd_plane(ey_gmem, ey_plane, z, EY_PLANER);
+    rd_plane(hz_gmem, hz_plane, z, HZ_PLANER);
 
-      update_H_crit(hx_plane, hy_plane, hz_plane, ex_plane, ey_plane, ez_plane,
-                    ex_plus1, ey_plus1);
+    update_H_tail(hz_plane, ex_plane, ey_plane);
 
-      wr_plane(hx_gmem, hx_plane, z, HX_PLANER);
-      wr_plane(hy_gmem, hy_plane, z, HY_PLANER);
-      wr_plane(hz_gmem, hz_plane, z, HZ_PLANER);
+    wr_plane(hz_gmem, hz_plane, z, HZ_PLANER);
 
-      update_E_crit(ex_plane, ey_plane, ez_plane, hx_plane, hy_plane, hz_plane,
-                    hx_prev1, hy_prev1);
+    update_E_tail(ex_plane, ey_plane, hz_plane, hx_prev1, hy_prev1);
 
-      wr_plane(ex_gmem, ex_plane, z, EX_PLANER);
-      wr_plane(ey_gmem, ey_plane, z, EY_PLANER);
-      wr_plane(ez_gmem, ez_plane, z, EZ_PLANER);
-
-      for (int i = 0; i < HX_PLANER; ++i) {
-#pragma HLS PIPELINE II = 1
-        hx_prev1[i] = hx_plane[i];
-      }
-
-      for (int i = 0; i < HY_PLANER; ++i) {
-#pragma HLS PIPELINE II = 1
-        hy_prev1[i] = hy_plane[i];
-      }
-    }
-
-    {
-      const int z = NZ_1;
-
-      rd_plane(ex_gmem, ex_plane, z, EX_PLANER);
-      rd_plane(ey_gmem, ey_plane, z, EY_PLANER);
-      rd_plane(hz_gmem, hz_plane, z, HZ_PLANER);
-
-      update_H_tail(hz_plane, ex_plane, ey_plane);
-
-      wr_plane(hz_gmem, hz_plane, z, HZ_PLANER);
-
-      update_E_tail(ex_plane, ey_plane, hz_plane, hx_prev1, hy_prev1);
-
-      wr_plane(ex_gmem, ex_plane, z, EX_PLANER);
-      wr_plane(ey_gmem, ey_plane, z, EY_PLANER);
-    }
+    wr_plane(ex_gmem, ex_plane, z, EX_PLANER);
+    wr_plane(ey_gmem, ey_plane, z, EY_PLANER);
   }
 }
