@@ -1,7 +1,6 @@
 #include "def.h"
 #include <math.h>
 #include <stdio.h>
-#include <stdlib.h>
 
 extern void fdtd(float *hx_gmem, float *hy_gmem, float *hz_gmem, float *ex_gmem,
                  float *ey_gmem, float *ez_gmem);

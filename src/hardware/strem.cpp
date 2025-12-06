@@ -209,31 +209,122 @@ static float coeff_mul = CDTDS * IMP0;
 ///////////////////////////////////////////////////////////////////////////////
 // HLS::stream implementations
 ///////////////////////////////////////////////////////////////////////////////
-const char bundle_name_0[] = "gmem0";
-const char bundle_name_1[] = "gmem1";
-const char bundle_name_2[] = "gmem2";
-const char bundle_name_3[] = "gmem3";
-const char bundle_name_4[] = "gmem4";
-const char bundle_name_5[] = "gmem5";
-
-template <typename T, const char *BundleName, int Size>
-void                        gmem_to_stream_template(T *__restrict__ gmem_ptr,
-                                                    hls::stream<T> &strm_ptr) {
+void                        gmem0_to_stream(float *__restrict__ gmem_ptr,
+                                            hls::stream<float> &strm_ptr) {
 #pragma HLS PIPELINE        II   = 1
-#pragma HLS INTERFACE m_axi port = gmem_ptr offset = slave bundle = BundleName
-  for (int i = 0; i < Size; i++) {
-#pragma HLS LOOP_TRIPCOUNT min = Size max = Size
+#pragma HLS INTERFACE m_axi port = gmem_ptr offset = slave bundle = gmem0
+  for (int i = 0; i < HX_BUFFER; i++) {
+#pragma HLS UNROLL factor = 32
     strm_ptr.write(gmem_ptr[i]);
   }
 }
 
-template <typename T, const char *BundleName, int Size>
-void                        stream_to_gmem_template(T *__restrict__ gmem_ptr,
-                                                    hls::stream<T> &strm_ptr) {
+void                        gmem1_to_stream(float *__restrict__ gmem_ptr,
+                                            hls::stream<float> &strm_ptr) {
 #pragma HLS PIPELINE        II   = 1
-#pragma HLS INTERFACE m_axi port = gmem_ptr offset = slave bundle = BundleName
-  for (int i = 0; i < Size; i++) {
-#pragma HLS LOOP_TRIPCOUNT min = Size max = Size
+#pragma HLS INTERFACE m_axi port = gmem_ptr offset = slave bundle = gmem1
+  for (int i = 0; i < HY_BUFFER; i++) {
+#pragma HLS UNROLL factor = 32
+    strm_ptr.write(gmem_ptr[i]);
+  }
+}
+
+void                        gmem2_to_stream(float *__restrict__ gmem_ptr,
+                                            hls::stream<float> &strm_ptr) {
+#pragma HLS PIPELINE        II   = 1
+#pragma HLS INTERFACE m_axi port = gmem_ptr offset = slave bundle = gmem2
+  for (int i = 0; i < HZ_BUFFER; i++) {
+#pragma HLS UNROLL factor = 32
+    strm_ptr.write(gmem_ptr[i]);
+  }
+}
+
+void                        gmem3_to_stream(float *__restrict__ gmem_ptr,
+                                            hls::stream<float> &strm_ptr) {
+#pragma HLS PIPELINE        II   = 1
+#pragma HLS INTERFACE m_axi port = gmem_ptr offset = slave bundle = gmem3
+  for (int i = 0; i < EX_BUFFER; i++) {
+#pragma HLS UNROLL factor = 32
+    strm_ptr.write(gmem_ptr[i]);
+  }
+}
+
+void                        gmem4_to_stream(float *__restrict__ gmem_ptr,
+                                            hls::stream<float> &strm_ptr) {
+#pragma HLS PIPELINE        II   = 1
+#pragma HLS INTERFACE m_axi port = gmem_ptr offset = slave bundle = gmem4
+  for (int i = 0; i < EY_BUFFER; i++) {
+#pragma HLS UNROLL factor = 32
+    strm_ptr.write(gmem_ptr[i]);
+  }
+}
+
+void                        gmem5_to_stream(float *__restrict__ gmem_ptr,
+                                            hls::stream<float> &strm_ptr) {
+#pragma HLS PIPELINE        II   = 1
+#pragma HLS INTERFACE m_axi port = gmem_ptr offset = slave bundle = gmem5
+  for (int i = 0; i < EZ_BUFFER; i++) {
+#pragma HLS UNROLL factor = 32
+    strm_ptr.write(gmem_ptr[i]);
+  }
+}
+
+void                        stream_to_gmem0(float *__restrict__ gmem_ptr,
+                                            hls::stream<float> &strm_ptr) {
+#pragma HLS PIPELINE        II   = 1
+#pragma HLS INTERFACE m_axi port = gmem_ptr offset = slave bundle = gmem0
+  for (int i = 0; i < HX_BUFFER; i++) {
+#pragma HLS UNROLL factor = 32
+    gmem_ptr[i] = strm_ptr.read();
+  }
+}
+
+void                        stream_to_gmem1(float *__restrict__ gmem_ptr,
+                                            hls::stream<float> &strm_ptr) {
+#pragma HLS PIPELINE        II   = 1
+#pragma HLS INTERFACE m_axi port = gmem_ptr offset = slave bundle = gmem1
+  for (int i = 0; i < HY_BUFFER; i++) {
+#pragma HLS UNROLL factor = 32
+    gmem_ptr[i] = strm_ptr.read();
+  }
+}
+
+void                        stream_to_gmem2(float *__restrict__ gmem_ptr,
+                                            hls::stream<float> &strm_ptr) {
+#pragma HLS PIPELINE        II   = 1
+#pragma HLS INTERFACE m_axi port = gmem_ptr offset = slave bundle = gmem2
+  for (int i = 0; i < HZ_BUFFER; i++) {
+#pragma HLS UNROLL factor = 32
+    gmem_ptr[i] = strm_ptr.read();
+  }
+}
+
+void                        stream_to_gmem3(float *__restrict__ gmem_ptr,
+                                            hls::stream<float> &strm_ptr) {
+#pragma HLS PIPELINE        II   = 1
+#pragma HLS INTERFACE m_axi port = gmem_ptr offset = slave bundle = gmem3
+  for (int i = 0; i < EX_BUFFER; i++) {
+#pragma HLS UNROLL factor = 32
+    gmem_ptr[i] = strm_ptr.read();
+  }
+}
+
+void                        stream_to_gmem4(float *__restrict__ gmem_ptr,
+                                            hls::stream<float> &strm_ptr) {
+#pragma HLS PIPELINE        II   = 1
+#pragma HLS INTERFACE m_axi port = gmem_ptr offset = slave bundle = gmem4
+  for (int i = 0; i < EY_BUFFER; i++) {
+#pragma HLS UNROLL factor = 32
+    gmem_ptr[i] = strm_ptr.read();
+  }
+}
+
+void                        stream_to_gmem5(float *__restrict__ gmem_ptr,
+                                            hls::stream<float> &strm_ptr) {
+#pragma HLS PIPELINE        II   = 1
+#pragma HLS INTERFACE m_axi port = gmem_ptr offset = slave bundle = gmem5
+  for (int i = 0; i < EZ_BUFFER; i++) {
+#pragma HLS UNROLL factor = 32
     gmem_ptr[i] = strm_ptr.read();
   }
 }
@@ -247,12 +338,12 @@ void read_to_stream(float *__restrict__ hx_gmem, float *__restrict__ hy_gmem,
 #pragma HLS INLINE off
 #pragma HLS DATAFLOW
 
-  gmem_to_stream_template<float, bundle_name_0, HX_BUFFER>(hx_gmem, hx_strm);
-  gmem_to_stream_template<float, bundle_name_1, HY_BUFFER>(hy_gmem, hy_strm);
-  gmem_to_stream_template<float, bundle_name_2, HZ_BUFFER>(hz_gmem, hz_strm);
-  gmem_to_stream_template<float, bundle_name_3, EX_BUFFER>(ex_gmem, ex_strm);
-  gmem_to_stream_template<float, bundle_name_4, EY_BUFFER>(ey_gmem, ey_strm);
-  gmem_to_stream_template<float, bundle_name_5, EZ_BUFFER>(ez_gmem, ez_strm);
+  gmem0_to_stream(hx_gmem, hx_strm);
+  gmem1_to_stream(hy_gmem, hy_strm);
+  gmem2_to_stream(hz_gmem, hz_strm);
+  gmem3_to_stream(ex_gmem, ex_strm);
+  gmem4_to_stream(ey_gmem, ey_strm);
+  gmem5_to_stream(ez_gmem, ez_strm);
 }
 
 void write_to_gmemd(float *__restrict__ hx_gmem, float *__restrict__ hy_gmem,
@@ -263,12 +354,13 @@ void write_to_gmemd(float *__restrict__ hx_gmem, float *__restrict__ hy_gmem,
                     hls::stream<float> &ey_strm, hls::stream<float> &ez_strm) {
 #pragma HLS INLINE off
 #pragma HLS DATAFLOW
-  stream_to_gmem_template<float, bundle_name_0, HX_BUFFER>(hx_gmem, hx_strm);
-  stream_to_gmem_template<float, bundle_name_1, HY_BUFFER>(hy_gmem, hy_strm);
-  stream_to_gmem_template<float, bundle_name_2, HZ_BUFFER>(hz_gmem, hz_strm);
-  stream_to_gmem_template<float, bundle_name_3, EX_BUFFER>(ex_gmem, ex_strm);
-  stream_to_gmem_template<float, bundle_name_4, EY_BUFFER>(ey_gmem, ey_strm);
-  stream_to_gmem_template<float, bundle_name_5, EZ_BUFFER>(ez_gmem, ez_strm);
+
+  stream_to_gmem0(hx_gmem, hx_strm);
+  stream_to_gmem1(hy_gmem, hy_strm);
+  stream_to_gmem2(hz_gmem, hz_strm);
+  stream_to_gmem3(ex_gmem, ex_strm);
+  stream_to_gmem4(ey_gmem, ey_strm);
+  stream_to_gmem5(ez_gmem, ez_strm);
 }
 
 void fdtd(float *hx_gmem, float *hy_gmem, float *hz_gmem, float *ex_gmem,
@@ -290,13 +382,6 @@ void fdtd(float *hx_gmem, float *hy_gmem, float *hz_gmem, float *ex_gmem,
 #pragma HLS INTERFACE m_axi port = ey_gmem offset = slave bundle = gmem4 depth = EY_BUFFER
 #pragma HLS INTERFACE m_axi port = ez_gmem offset = slave bundle = gmem5 depth = EZ_BUFFER
   // clang-format on
-
-#pragma HLS INTERFACE s_axilite port = hx_gmem bundle = control
-#pragma HLS INTERFACE s_axilite port = hy_gmem bundle = control
-#pragma HLS INTERFACE s_axilite port = hz_gmem bundle = control
-#pragma HLS INTERFACE s_axilite port = ex_gmem bundle = control
-#pragma HLS INTERFACE s_axilite port = ey_gmem bundle = control
-#pragma HLS INTERFACE s_axilite port = ez_gmem bundle = control
 
 #pragma HLS INTERFACE s_axilite port = return bundle = control
 
