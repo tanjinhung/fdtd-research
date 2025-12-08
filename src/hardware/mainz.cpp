@@ -1,4 +1,3 @@
-
 #include "def.h"
 #include <math.h>
 #include <stdio.h>

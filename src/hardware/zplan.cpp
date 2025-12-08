@@ -164,14 +164,14 @@ void fdtd(float *hx_gmem, float *hy_gmem, float *hz_gmem, float *ex_gmem,
           float *ey_gmem, float *ez_gmem) {
 
   // clang-format off
-#pragma HLS INTERFACE m_axi port = hx_gmem offset = slave bundle= gmem0 depth = TOTAL_BUF
-#pragma HLS INTERFACE m_axi port = hy_gmem offset = slave bundle= gmem0 depth = TOTAL_BUF 
-#pragma HLS INTERFACE m_axi port = hz_gmem offset = slave bundle= gmem0 depth = TOTAL_BUF
-#pragma HLS INTERFACE m_axi port = ex_gmem offset = slave bundle= gmem0 depth = TOTAL_BUF
-#pragma HLS INTERFACE m_axi port = ey_gmem offset = slave bundle= gmem0 depth = TOTAL_BUF
-#pragma HLS INTERFACE m_axi port = ez_gmem offset = slave bundle= gmem0 depth = TOTAL_BUF
+#pragma HLS INTERFACE m_axi port = hx_gmem offset = slave bundle= gmemH depth = TOTAL_BUF
+#pragma HLS INTERFACE m_axi port = hy_gmem offset = slave bundle= gmemH depth = TOTAL_BUF 
+#pragma HLS INTERFACE m_axi port = hz_gmem offset = slave bundle= gmemH depth = TOTAL_BUF
+#pragma HLS INTERFACE m_axi port = ex_gmem offset = slave bundle= gmemE depth = TOTAL_BUF
+#pragma HLS INTERFACE m_axi port = ey_gmem offset = slave bundle= gmemE depth = TOTAL_BUF
+#pragma HLS INTERFACE m_axi port = ez_gmem offset = slave bundle= gmemE depth = TOTAL_BUF
 
-#pragma HLS INTERFACE s_axilite port = return   bundle = control
+#pragma HLS INTERFACE s_axilite port = return bundle = control
   // clang-format on
 
   static float hx_plane[HX_PLANER];
