@@ -1,5 +1,4 @@
 #include "def.h"
-// #include <cmath>
 
 constexpr float ce = CDTDS * IMP0;
 constexpr float ch = CDTDS / IMP0;
@@ -207,7 +206,6 @@ void fdtd(float *__restrict__ hx_gmem, float *__restrict__ hy_gmem,
   }
 
   for (int z = 0; z < NZ_1; ++z) {
-    // #pragma HLS DATAFLOW
     rd_plane(ex_gmem, &ex_plane[0][0], z, EX_PLANER);
     rd_plane(ey_gmem, &ey_plane[0][0], z, EY_PLANER);
     rd_plane(ez_gmem, &ez_plane[0][0], z, EZ_PLANER);
