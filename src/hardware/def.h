@@ -1,14 +1,15 @@
 #ifndef NAIVE_H_
 #define NAIVE_H_
 
-#define IMP0  377.0
-#define CDTDS 0.57735026918962576 // Precomputed value of 1/sqrt(3)
-#define NX_0  32
-#define NY_0  32
-#define NZ_0  70
-#define NX_1  (NX_0 - 1)
-#define NY_1  (NY_0 - 1)
-#define NZ_1  (NZ_0 - 1)
+#define IMP0   377.0
+#define CDTDS  0.57735026918962576 // Precomputed value of 1/sqrt(3)
+#define TIME_M 50
+#define NX_0   32
+#define NY_0   32
+#define NZ_0   70
+#define NX_1   (NX_0 - 1)
+#define NY_1   (NY_0 - 1)
+#define NZ_1   (NZ_0 - 1)
 
 #define HX_PLANER (NX_0 * NY_1)
 #define HY_PLANER (NX_1 * NY_0)
@@ -36,5 +37,7 @@
 #define DIPOLE_LENGTH   12
 #define DIPOLE_RADIUS   2
 #define FEED_GAP        2
+
+#define PAR_FACTOR 4
 
 #endif // !NAIVE_H_
