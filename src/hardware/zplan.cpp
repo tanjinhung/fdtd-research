@@ -7,6 +7,7 @@ static void rd_plane(const float *g, float *p, int z, int len) {
 #pragma HLS INLINE off
   const int base = z * len;
   for (int i = 0; i < len; ++i) {
+#pragma HLS loop_tripcount min=961 max=1024
 #pragma HLS PIPELINE II = 1
     p[i] = g[base + i];
   }
@@ -16,6 +17,8 @@ static void wr_plane(float *g, const float *p, int z, int len) {
 #pragma HLS INLINE off
   const int base = z * len;
   for (int i = 0; i < len; ++i) {
+#pragma HLS loop_tripcount min=961 max=1024
+#pragma HLS PIPELINE II = 1
     g[base + i] = p[i];
   }
 }
