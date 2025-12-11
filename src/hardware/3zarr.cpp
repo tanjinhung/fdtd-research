@@ -3,6 +3,22 @@
 constexpr float ce = CDTDS * IMP0;
 constexpr float ch = CDTDS / IMP0;
 
+static inline int isDipole(int x, int y, int z) {
+#pragma HLS INLINE
+  int dx = x - DIPOLE_CENTER_X;
+  int dy = y - DIPOLE_CENTER_Y;
+  int dz = z - DIPOLE_CENTER_Z;
+
+  if (dx * dx + dy * dy > DIPOLE_RADIUS * DIPOLE_RADIUS) return 0;
+
+  int half_length = DIPOLE_LENGTH / 2;
+  if (dz >= -half_length && dz <= half_length &&
+      (dz < -FEED_GAP / 2 || dz > FEED_GAP / 2))
+    return 1;
+
+  return 0;
+}
+
 static void rd_plane(const float *g, float *p, int z, int len) {
 #pragma HLS INLINE off
   const int base = z * len;
@@ -225,6 +241,13 @@ void fdtd(float *__restrict__ hx_gmem, float *__restrict__ hy_gmem,
 
     update_E_crit(ex_plane, ey_plane, ez_plane, hx_plane, hy_plane, hz_plane,
                   hx_prev1, hy_prev1);
+
+    for (int y = 1; y < NY_1; ++y) {
+      for (int x = 1; x < NX_1; ++x) {
+#pragma HLS PIPELINE II = 1
+        if (isDipole(x, y, z)) { ez_plane[y][x] = 0.0f; }
+      }
+    }
 
     wr_plane(ex_gmem, &ex_plane[0][0], z, EX_PLANER);
     wr_plane(ey_gmem, &ey_plane[0][0], z, EY_PLANER);
