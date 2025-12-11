@@ -11,7 +11,7 @@ static inline void addExcitation(float ez[NZ_1][NY_0][NX_0], int t_step) {
   const float phase_sin = 0.0f;
   const float sourceing =
       amplitude *
-      std::sinf(2.0f * (float)M_PI * frequency * (float)t_step + phase_sin);
+      sinf(2.0f * (float)M_PI * frequency * (float)t_step + phase_sin);
 
   ez[DIPOLE_CENTER_Z][DIPOLE_CENTER_Y][DIPOLE_CENTER_X] = sourceing;
 }
