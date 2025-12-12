@@ -245,7 +245,7 @@ void fdtd(float *__restrict__ hx_gmem, float *__restrict__ hy_gmem,
     for (int y = 1; y < NY_1; ++y) {
       for (int x = 1; x < NX_1; ++x) {
 #pragma HLS PIPELINE II = 1
-        if (isDipole(x, y, z)) { ez_plane[y][x] = 0.0f; }
+        if (isDipole(x, y, z)) { ex_plane[y][x] = 0.0f; ey_plane[y][x] = 0.0f; }
       }
     }
 
