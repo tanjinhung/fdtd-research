@@ -1,0 +1,405 @@
+================================================================
+== Vivado Place & Route Results
+================================================================
++ General Information:
+    * Date:            Wed Dec 10 10:33:24 JST 2025
+    * Version:         2024.2 (Build 5238294 on Nov  8 2024)
+    * Project:         hls_component
+    * Solution:        hls (Vivado IP Flow Target)
+    * Product family:  kintexuplus
+    * Target device:   xcku5p-ffvb676-2-e
+
+
+================================================================
+== Run Constraints & Options
+================================================================
++ Design Constraints & Options:
+    * Place & Route target clock:  10 ns
+    * C-Synthesis uncertainty:     27%
+
++ RTL Synthesis Options:
+    * config_export -vivado_synth_strategy:     default
+    * config_export -vivado_synth_design_args:  -directive sdx_optimization_effort_high
+
++ Place & Route Options:
+    * config_export -vivado_impl_strategy:  default
+    * config_export -vivado_phys_opt:       auto
+
++ Reporting Options:
+    * config_export -vivado_report_level:      2
+    * config_export -vivado_max_timing_paths:  10
+
+
+================================================================
+== Place & Route Resource Summary
+================================================================
+LUT:              6204
+FF:               8151
+DSP:              13
+BRAM:             24
+URAM:             0
+SRL:              463
+
+
+================================================================
+== Place & Route Timing Summary
+================================================================
+* Timing was met
++----------------+-------------+
+| Timing         | Period (ns) |
++----------------+-------------+
+| Target         | 10.000      |
+| Post-Synthesis | 3.848       |
+| Post-Route     | 4.631       |
++----------------+-------------+
+
+
+================================================================
+== Place & Route Resources
+================================================================
++----------------------------------------------------------------------------+------+------+-----+------+------+-----+--------+------+---------+----------+--------+
+| Name                                                                       | LUT  | FF   | DSP | BRAM | URAM | SRL | Pragma | Impl | Latency | Variable | Source |
++----------------------------------------------------------------------------+------+------+-----+------+------+-----+--------+------+---------+----------+--------+
+| inst                                                                       | 6204 | 8151 | 13  | 24   |      |     |        |      |         |          |        |
+|   (inst)                                                                   | 5    | 461  |     |      |      |     |        |      |         |          |        |
+|   control_r_s_axi_U                                                        | 343  | 426  |     |      |      |     |        |      |         |          |        |
+|   control_s_axi_U                                                          | 24   | 25   |     |      |      |     |        |      |         |          |        |
+|   ex_plane_U                                                               | 34   |      |     | 2    |      |     |        |      |         |          |        |
+|   ex_plus1_U                                                               |      |      |     | 2    |      |     |        |      |         |          |        |
+|   ey_plane_U                                                               | 32   |      |     | 2    |      |     |        |      |         |          |        |
+|   ey_plus1_U                                                               |      |      |     | 2    |      |     |        |      |         |          |        |
+|   ez_plane_U                                                               |      |      |     | 2    |      |     |        |      |         |          |        |
+|   fadd_32ns_32ns_32_4_full_dsp_1_U164                                      | 173  | 199  | 2   |      |      |     |        |      |         |          |        |
+|     (fadd_32ns_32ns_32_4_full_dsp_1_U164)                                  |      | 64   |     |      |      |     |        |      |         |          |        |
+|   faddfsub_32ns_32ns_32_4_full_dsp_1_U162                                  | 174  | 200  | 2   |      |      |     |        |      |         |          |        |
+|     (faddfsub_32ns_32ns_32_4_full_dsp_1_U162)                              |      | 65   |     |      |      |     |        |      |         |          |        |
+|   faddfsub_32ns_32ns_32_4_full_dsp_1_U163                                  | 174  | 200  | 2   |      |      |     |        |      |         |          |        |
+|     (faddfsub_32ns_32ns_32_4_full_dsp_1_U163)                              | 1    | 65   |     |      |      |     |        |      |         |          |        |
+|   fmul_32ns_32ns_32_3_max_dsp_1_U165                                       | 60   | 66   | 3   |      |      |     |        |      |         |          |        |
+|     (fmul_32ns_32ns_32_3_max_dsp_1_U165)                                   | 1    | 34   |     |      |      |     |        |      |         |          |        |
+|   fsub_32ns_32ns_32_4_full_dsp_1_U161                                      | 174  | 199  | 2   |      |      |     |        |      |         |          |        |
+|     (fsub_32ns_32ns_32_4_full_dsp_1_U161)                                  |      | 64   |     |      |      |     |        |      |         |          |        |
+|   gmemE_m_axi_U                                                            | 1176 | 1733 |     | 2    |      |     |        |      |         |          |        |
+|   gmemH_m_axi_U                                                            | 1204 | 1735 |     | 2    |      |     |        |      |         |          |        |
+|   grp_fdtd_Pipeline_VITIS_LOOP_203_1_fu_178                                | 28   | 12   |     |      |      |     |        |      |         |          |        |
+|     (grp_fdtd_Pipeline_VITIS_LOOP_203_1_fu_178)                            |      | 10   |     |      |      |     |        |      |         |          |        |
+|   grp_fdtd_Pipeline_VITIS_LOOP_208_2_fu_184                                | 27   | 12   |     |      |      |     |        |      |         |          |        |
+|     (grp_fdtd_Pipeline_VITIS_LOOP_208_2_fu_184)                            |      | 10   |     |      |      |     |        |      |         |          |        |
+|   grp_fdtd_Pipeline_VITIS_LOOP_239_4_fu_303                                | 24   | 23   |     |      |      |     |        |      |         |          |        |
+|     (grp_fdtd_Pipeline_VITIS_LOOP_239_4_fu_303)                            | 3    | 21   |     |      |      |     |        |      |         |          |        |
+|   grp_fdtd_Pipeline_VITIS_LOOP_244_5_fu_311                                | 27   | 23   |     |      |      |     |        |      |         |          |        |
+|     (grp_fdtd_Pipeline_VITIS_LOOP_244_5_fu_311)                            | 3    | 21   |     |      |      |     |        |      |         |          |        |
+|   grp_rd_plane_1_fu_227                                                    | 106  | 143  |     |      |      |     |        |      |         |          |        |
+|     (grp_rd_plane_1_fu_227)                                                | 74   | 74   |     |      |      |     |        |      |         |          |        |
+|   grp_rd_plane_2_fu_216                                                    | 61   | 142  | 1   |      |      |     |        |      |         |          |        |
+|     (grp_rd_plane_2_fu_216)                                                | 22   | 74   |     |      |      |     |        |      |         |          |        |
+|     mul_7ns_11ns_17_1_1_U20                                                | 4    |      | 1   |      |      |     |        |      |         |          |        |
+|   grp_rd_plane_fu_190                                                      | 142  | 142  |     |      |      |     |        |      |         |          |        |
+|     (grp_rd_plane_fu_190)                                                  | 91   | 74   |     |      |      |     |        |      |         |          |        |
+|     grp_rd_plane_Pipeline_VITIS_LOOP_9_1_fu_81                             | 52   | 68   |     |      |      |     |        |      |         |          |        |
+|       (grp_rd_plane_Pipeline_VITIS_LOOP_9_1_fu_81)                         | 31   | 66   |     |      |      |     |        |      |         |          |        |
+|       flow_control_loop_pipe_sequential_init_U                             | 21   | 2    |     |      |      |     |        |      |         |          |        |
+|   grp_rd_plane_fu_205                                                      | 47   | 142  |     |      |      |     |        |      |         |          |        |
+|     (grp_rd_plane_fu_205)                                                  | 20   | 74   |     |      |      |     |        |      |         |          |        |
+|     grp_rd_plane_Pipeline_VITIS_LOOP_9_1_fu_81                             | 27   | 68   |     |      |      |     |        |      |         |          |        |
+|       (grp_rd_plane_Pipeline_VITIS_LOOP_9_1_fu_81)                         | 7    | 66   |     |      |      |     |        |      |         |          |        |
+|       flow_control_loop_pipe_sequential_init_U                             | 20   | 2    |     |      |      |     |        |      |         |          |        |
+|   grp_update_E_crit_fu_283                                                 | 499  | 572  |     |      |      |     |        |      |         |          |        |
+|     (grp_update_E_crit_fu_283)                                             | 9    | 9    |     |      |      |     |        |      |         |          |        |
+|     grp_update_E_crit_Pipeline_VITIS_LOOP_103_5_VITIS_LOOP_104_6_fu_54     | 120  | 145  |     |      |      |     |        |      |         |          |        |
+|       (grp_update_E_crit_Pipeline_VITIS_LOOP_103_5_VITIS_LOOP_104_6_fu_54) | 32   | 143  |     |      |      |     |        |      |         |          |        |
+|       flow_control_loop_pipe_sequential_init_U                             | 88   | 2    |     |      |      |     |        |      |         |          |        |
+|     grp_update_E_crit_Pipeline_VITIS_LOOP_80_1_VITIS_LOOP_81_2_fu_30       | 267  | 209  |     |      |      |     |        |      |         |          |        |
+|       (grp_update_E_crit_Pipeline_VITIS_LOOP_80_1_VITIS_LOOP_81_2_fu_30)   | 194  | 207  |     |      |      |     |        |      |         |          |        |
+|       flow_control_loop_pipe_sequential_init_U                             | 74   | 2    |     |      |      |     |        |      |         |          |        |
+|     grp_update_E_crit_Pipeline_VITIS_LOOP_91_3_VITIS_LOOP_92_4_fu_42       | 103  | 209  |     |      |      |     |        |      |         |          |        |
+|       (grp_update_E_crit_Pipeline_VITIS_LOOP_91_3_VITIS_LOOP_92_4_fu_42)   | 34   | 207  |     |      |      |     |        |      |         |          |        |
+|       flow_control_loop_pipe_sequential_init_U                             | 69   | 2    |     |      |      |     |        |      |         |          |        |
+|   grp_update_E_tail_fu_339                                                 | 411  | 418  |     |      |      |     |        |      |         |          |        |
+|     (grp_update_E_tail_fu_339)                                             | 2    | 6    |     |      |      |     |        |      |         |          |        |
+|     grp_update_E_tail_Pipeline_VITIS_LOOP_143_1_VITIS_LOOP_144_2_fu_22     | 168  | 222  |     |      |      |     |        |      |         |          |        |
+|       (grp_update_E_tail_Pipeline_VITIS_LOOP_143_1_VITIS_LOOP_144_2_fu_22) | 105  | 220  |     |      |      |     |        |      |         |          |        |
+|       flow_control_loop_pipe_sequential_init_U                             | 63   | 2    |     |      |      |     |        |      |         |          |        |
+|     grp_update_E_tail_Pipeline_VITIS_LOOP_154_3_VITIS_LOOP_155_4_fu_32     | 243  | 190  |     |      |      |     |        |      |         |          |        |
+|       (grp_update_E_tail_Pipeline_VITIS_LOOP_154_3_VITIS_LOOP_155_4_fu_32) | 170  | 188  |     |      |      |     |        |      |         |          |        |
+|       flow_control_loop_pipe_sequential_init_U                             | 73   | 2    |     |      |      |     |        |      |         |          |        |
+|   grp_update_H_crit_fu_237                                                 | 540  | 711  |     |      |      |     |        |      |         |          |        |
+|     (grp_update_H_crit_fu_237)                                             | 7    | 9    |     |      |      |     |        |      |         |          |        |
+|     grp_update_H_crit_Pipeline_VITIS_LOOP_33_1_VITIS_LOOP_34_2_fu_30       | 291  | 315  |     |      |      |     |        |      |         |          |        |
+|       (grp_update_H_crit_Pipeline_VITIS_LOOP_33_1_VITIS_LOOP_34_2_fu_30)   | 249  | 313  |     |      |      |     |        |      |         |          |        |
+|       flow_control_loop_pipe_sequential_init_U                             | 43   | 2    |     |      |      |     |        |      |         |          |        |
+|     grp_update_H_crit_Pipeline_VITIS_LOOP_45_3_VITIS_LOOP_46_4_fu_42       | 125  | 178  |     |      |      |     |        |      |         |          |        |
+|       (grp_update_H_crit_Pipeline_VITIS_LOOP_45_3_VITIS_LOOP_46_4_fu_42)   | 59   | 176  |     |      |      |     |        |      |         |          |        |
+|       flow_control_loop_pipe_sequential_init_U                             | 66   | 2    |     |      |      |     |        |      |         |          |        |
+|     grp_update_H_crit_Pipeline_VITIS_LOOP_58_5_VITIS_LOOP_59_6_fu_54       | 118  | 209  |     |      |      |     |        |      |         |          |        |
+|       (grp_update_H_crit_Pipeline_VITIS_LOOP_58_5_VITIS_LOOP_59_6_fu_54)   | 30   | 207  |     |      |      |     |        |      |         |          |        |
+|       flow_control_loop_pipe_sequential_init_U                             | 88   | 2    |     |      |      |     |        |      |         |          |        |
+|   grp_update_H_tail_fu_329                                                 | 266  | 209  |     |      |      |     |        |      |         |          |        |
+|     (grp_update_H_tail_fu_329)                                             | 184  | 207  |     |      |      |     |        |      |         |          |        |
+|     flow_control_loop_pipe_sequential_init_U                               | 82   | 2    |     |      |      |     |        |      |         |          |        |
+|   grp_wr_plane_3_fu_272                                                    | 125  | 119  | 1   |      |      |     |        |      |         |          |        |
+|     (grp_wr_plane_3_fu_272)                                                | 89   | 72   |     |      |      |     |        |      |         |          |        |
+|     grp_wr_plane_3_Pipeline_VITIS_LOOP_19_1_fu_78                          | 32   | 47   |     |      |      |     |        |      |         |          |        |
+|       (grp_wr_plane_3_Pipeline_VITIS_LOOP_19_1_fu_78)                      | 6    | 45   |     |      |      |     |        |      |         |          |        |
+|       flow_control_loop_pipe_sequential_init_U                             | 26   | 2    |     |      |      |     |        |      |         |          |        |
+|     mul_7ns_11ns_17_1_1_U75                                                | 4    |      | 1   |      |      |     |        |      |         |          |        |
+|   grp_wr_plane_4_fu_319                                                    | 46   | 120  |     |      |      |     |        |      |         |          |        |
+|     (grp_wr_plane_4_fu_319)                                                | 15   | 72   |     |      |      |     |        |      |         |          |        |
+|     grp_wr_plane_4_Pipeline_VITIS_LOOP_19_1_fu_76                          | 31   | 48   |     |      |      |     |        |      |         |          |        |
+|       (grp_wr_plane_4_Pipeline_VITIS_LOOP_19_1_fu_76)                      | 6    | 46   |     |      |      |     |        |      |         |          |        |
+|       flow_control_loop_pipe_sequential_init_U                             | 25   | 2    |     |      |      |     |        |      |         |          |        |
+|   grp_wr_plane_fu_257                                                      | 258  | 119  |     |      |      |     |        |      |         |          |        |
+|     (grp_wr_plane_fu_257)                                                  | 154  | 72   |     |      |      |     |        |      |         |          |        |
+|     grp_wr_plane_Pipeline_VITIS_LOOP_19_1_fu_84                            | 104  | 47   |     |      |      |     |        |      |         |          |        |
+|       (grp_wr_plane_Pipeline_VITIS_LOOP_19_1_fu_84)                        | 70   | 45   |     |      |      |     |        |      |         |          |        |
+|       flow_control_loop_pipe_sequential_init_U                             | 34   | 2    |     |      |      |     |        |      |         |          |        |
+|   hx_plane_U                                                               | 16   |      |     | 2    |      |     |        |      |         |          |        |
+|   hx_prev1_U                                                               |      |      |     | 2    |      |     |        |      |         |          |        |
+|   hy_plane_U                                                               | 16   |      |     | 2    |      |     |        |      |         |          |        |
+|   hy_prev1_U                                                               |      |      |     | 2    |      |     |        |      |         |          |        |
+|   hz_plane_U                                                               | 3    |      |     | 2    |      |     |        |      |         |          |        |
++----------------------------------------------------------------------------+------+------+-----+------+------+-----+--------+------+---------+----------+--------+
+
+
+================================================================
+== Place & Route Fail Fast
+================================================================
++-----------------------------------------------------------+-----------+--------+--------+
+| Criteria                                                  | Guideline | Actual | Status |
++-----------------------------------------------------------+-----------+--------+--------+
+| LUT                                                       | 70%       | 2.86%  | OK     |
+| FD                                                        | 50%       | 1.88%  | OK     |
+| LUTRAM+SRL                                                | 25%       | 0.46%  | OK     |
+| CARRY8                                                    | 25%       | 0.73%  | OK     |
+| MUXF7                                                     | 15%       | 0.00%  | OK     |
+| DSP                                                       | 80%       | 0.71%  | OK     |
+| RAMB/FIFO                                                 | 80%       | 2.50%  | OK     |
+| URAM                                                      | 80%       | 0.00%  | OK     |
+| DSP+RAMB+URAM (Avg)                                       | 70%       | 1.60%  | OK     |
+| BUFGCE* + BUFGCTRL                                        | 24        | 0      | OK     |
+| DONT_TOUCH (cells/nets)                                   | 0         | 0      | OK     |
+| MARK_DEBUG (nets)                                         | 0         | 0      | OK     |
+| Control Sets                                              | 4068      | 218    | OK     |
+| Average Fanout for modules > 100k cells                   | 4         | 1.95   | OK     |
+| Max Average Fanout for modules > 100k cells               | 4         | 0      | OK     |
+| Non-FD high fanout nets > 10k loads                       | 0         | 0      | OK     |
++-----------------------------------------------------------+-----------+--------+--------+
+| TIMING-6 (No common primary clock between related clocks) | 0         | 0      | OK     |
+| TIMING-7 (No common node between related clocks)          | 0         | 0      | OK     |
+| TIMING-8 (No common period between related clocks)        | 0         | 0      | OK     |
+| TIMING-14 (LUT on the clock tree)                         | 0         | 0      | OK     |
+| TIMING-35 (No common node in paths with the same clock)   | 0         | 0      | OK     |
++-----------------------------------------------------------+-----------+--------+--------+
+| Number of paths above max LUT budgeting (0.300ns)         | 0         | 0      | OK     |
+| Number of paths above max Net budgeting (0.208ns)         | 0         | 0      | OK     |
++-----------------------------------------------------------+-----------+--------+--------+
+
+
+================================================================
+== Place & Route Timing Paths
+================================================================
+* Timing was met
++-------+-------+---------------------+-----------------------------------------------------------------------+--------------+------------+----------------+----------------+--------------+
+| Path  | SLACK | STARTPOINT PIN      | ENDPOINT PIN                                                          | LOGIC LEVELS | MAX FANOUT | DATAPATH DELAY | DATAPATH LOGIC | DATAPATH NET |
+|       |       |                     |                                                                       |              |            |                |          DELAY |        DELAY |
++-------+-------+---------------------+-----------------------------------------------------------------------+--------------+------------+----------------+----------------+--------------+
+| Path1 | 5.369 | ap_CS_fsm_reg[40]/C | gmemH_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][45]_srl6/D |            4 |        130 |          4.535 |          0.548 |        3.987 |
+| Path2 | 5.465 | ap_CS_fsm_reg[40]/C | gmemH_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][44]_srl6/D |            4 |        130 |          4.436 |          0.487 |        3.949 |
+| Path3 | 5.510 | ap_CS_fsm_reg[40]/C | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][43]_srl6/D |            4 |        130 |          4.393 |          0.438 |        3.955 |
+| Path4 | 5.514 | ap_CS_fsm_reg[40]/C | gmemH_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][60]_srl6/D |            4 |        130 |          4.386 |          0.497 |        3.889 |
+| Path5 | 5.532 | ap_CS_fsm_reg[40]/C | gmemH_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][55]_srl6/D |            4 |        130 |          4.388 |          0.497 |        3.891 |
++-------+-------+---------------------+-----------------------------------------------------------------------+--------------+------------+----------------+----------------+--------------+
+
+    +----------------------------------------------------------------------------+-------------------+
+    | Path1 Cells                                                                | Primitive Type    |
+    +----------------------------------------------------------------------------+-------------------+
+    | ap_CS_fsm_reg[40]                                                          | REGISTER.SDR.FDRE |
+    | ey_plane_U/ram_reg_bram_0_i_60__4                                          | CLB.LUT.LUT2      |
+    | gmemE_m_axi_U/store_unit_0/user_resp/ap_CS_fsm[8]_i_2__0                   | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/ap_CS_fsm[2]_i_2           | CLB.LUT.LUT4      |
+    | grp_wr_plane_3_fu_272/mem_reg[5][45]_srl6_i_1__1                           | CLB.LUT.LUT6      |
+    | gmemH_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][45]_srl6        | CLB.SRL.SRL16E    |
+    | ap_CS_fsm_reg[40]                                                          | REGISTER.SDR.FDRE |
+    | ey_plane_U/ram_reg_bram_0_i_60__4                                          | CLB.LUT.LUT2      |
+    | gmemE_m_axi_U/store_unit_0/user_resp/ap_CS_fsm[8]_i_2__0                   | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/ap_CS_fsm[2]_i_2           | CLB.LUT.LUT4      |
+    | grp_wr_plane_3_fu_272/mem_reg[5][44]_srl6_i_1__1                           | CLB.LUT.LUT6      |
+    | gmemH_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][44]_srl6        | CLB.SRL.SRL16E    |
+    | ap_CS_fsm_reg[40]                                                          | REGISTER.SDR.FDRE |
+    | ey_plane_U/ram_reg_bram_0_i_60__4                                          | CLB.LUT.LUT2      |
+    | gmemE_m_axi_U/store_unit_0/user_resp/ap_CS_fsm[8]_i_2__0                   | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/ap_CS_fsm[2]_i_2           | CLB.LUT.LUT4      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][43]_srl6_i_1__2 | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][43]_srl6        | CLB.SRL.SRL16E    |
+    | ap_CS_fsm_reg[40]                                                          | REGISTER.SDR.FDRE |
+    | ey_plane_U/ram_reg_bram_0_i_60__4                                          | CLB.LUT.LUT2      |
+    | gmemE_m_axi_U/store_unit_0/user_resp/ap_CS_fsm[8]_i_2__0                   | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/ap_CS_fsm[2]_i_2           | CLB.LUT.LUT4      |
+    | grp_wr_plane_3_fu_272/mem_reg[5][60]_srl6_i_1__1                           | CLB.LUT.LUT6      |
+    | gmemH_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][60]_srl6        | CLB.SRL.SRL16E    |
+    | ap_CS_fsm_reg[40]                                                          | REGISTER.SDR.FDRE |
+    | ey_plane_U/ram_reg_bram_0_i_60__4                                          | CLB.LUT.LUT2      |
+    | gmemE_m_axi_U/store_unit_0/user_resp/ap_CS_fsm[8]_i_2__0                   | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/ap_CS_fsm[2]_i_2           | CLB.LUT.LUT4      |
+    | grp_wr_plane_3_fu_272/mem_reg[5][55]_srl6_i_1__1                           | CLB.LUT.LUT6      |
+    | gmemH_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][55]_srl6        | CLB.SRL.SRL16E    |
+    +----------------------------------------------------------------------------+-------------------+
+
+    +----------------------------------------------------------------------------+-------------------+
+    | Path2 Cells                                                                | Primitive Type    |
+    +----------------------------------------------------------------------------+-------------------+
+    | ap_CS_fsm_reg[40]                                                          | REGISTER.SDR.FDRE |
+    | ey_plane_U/ram_reg_bram_0_i_60__4                                          | CLB.LUT.LUT2      |
+    | gmemE_m_axi_U/store_unit_0/user_resp/ap_CS_fsm[8]_i_2__0                   | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/ap_CS_fsm[2]_i_2           | CLB.LUT.LUT4      |
+    | grp_wr_plane_3_fu_272/mem_reg[5][45]_srl6_i_1__1                           | CLB.LUT.LUT6      |
+    | gmemH_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][45]_srl6        | CLB.SRL.SRL16E    |
+    | ap_CS_fsm_reg[40]                                                          | REGISTER.SDR.FDRE |
+    | ey_plane_U/ram_reg_bram_0_i_60__4                                          | CLB.LUT.LUT2      |
+    | gmemE_m_axi_U/store_unit_0/user_resp/ap_CS_fsm[8]_i_2__0                   | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/ap_CS_fsm[2]_i_2           | CLB.LUT.LUT4      |
+    | grp_wr_plane_3_fu_272/mem_reg[5][44]_srl6_i_1__1                           | CLB.LUT.LUT6      |
+    | gmemH_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][44]_srl6        | CLB.SRL.SRL16E    |
+    | ap_CS_fsm_reg[40]                                                          | REGISTER.SDR.FDRE |
+    | ey_plane_U/ram_reg_bram_0_i_60__4                                          | CLB.LUT.LUT2      |
+    | gmemE_m_axi_U/store_unit_0/user_resp/ap_CS_fsm[8]_i_2__0                   | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/ap_CS_fsm[2]_i_2           | CLB.LUT.LUT4      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][43]_srl6_i_1__2 | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][43]_srl6        | CLB.SRL.SRL16E    |
+    | ap_CS_fsm_reg[40]                                                          | REGISTER.SDR.FDRE |
+    | ey_plane_U/ram_reg_bram_0_i_60__4                                          | CLB.LUT.LUT2      |
+    | gmemE_m_axi_U/store_unit_0/user_resp/ap_CS_fsm[8]_i_2__0                   | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/ap_CS_fsm[2]_i_2           | CLB.LUT.LUT4      |
+    | grp_wr_plane_3_fu_272/mem_reg[5][60]_srl6_i_1__1                           | CLB.LUT.LUT6      |
+    | gmemH_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][60]_srl6        | CLB.SRL.SRL16E    |
+    | ap_CS_fsm_reg[40]                                                          | REGISTER.SDR.FDRE |
+    | ey_plane_U/ram_reg_bram_0_i_60__4                                          | CLB.LUT.LUT2      |
+    | gmemE_m_axi_U/store_unit_0/user_resp/ap_CS_fsm[8]_i_2__0                   | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/ap_CS_fsm[2]_i_2           | CLB.LUT.LUT4      |
+    | grp_wr_plane_3_fu_272/mem_reg[5][55]_srl6_i_1__1                           | CLB.LUT.LUT6      |
+    | gmemH_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][55]_srl6        | CLB.SRL.SRL16E    |
+    +----------------------------------------------------------------------------+-------------------+
+
+    +----------------------------------------------------------------------------+-------------------+
+    | Path3 Cells                                                                | Primitive Type    |
+    +----------------------------------------------------------------------------+-------------------+
+    | ap_CS_fsm_reg[40]                                                          | REGISTER.SDR.FDRE |
+    | ey_plane_U/ram_reg_bram_0_i_60__4                                          | CLB.LUT.LUT2      |
+    | gmemE_m_axi_U/store_unit_0/user_resp/ap_CS_fsm[8]_i_2__0                   | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/ap_CS_fsm[2]_i_2           | CLB.LUT.LUT4      |
+    | grp_wr_plane_3_fu_272/mem_reg[5][45]_srl6_i_1__1                           | CLB.LUT.LUT6      |
+    | gmemH_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][45]_srl6        | CLB.SRL.SRL16E    |
+    | ap_CS_fsm_reg[40]                                                          | REGISTER.SDR.FDRE |
+    | ey_plane_U/ram_reg_bram_0_i_60__4                                          | CLB.LUT.LUT2      |
+    | gmemE_m_axi_U/store_unit_0/user_resp/ap_CS_fsm[8]_i_2__0                   | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/ap_CS_fsm[2]_i_2           | CLB.LUT.LUT4      |
+    | grp_wr_plane_3_fu_272/mem_reg[5][44]_srl6_i_1__1                           | CLB.LUT.LUT6      |
+    | gmemH_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][44]_srl6        | CLB.SRL.SRL16E    |
+    | ap_CS_fsm_reg[40]                                                          | REGISTER.SDR.FDRE |
+    | ey_plane_U/ram_reg_bram_0_i_60__4                                          | CLB.LUT.LUT2      |
+    | gmemE_m_axi_U/store_unit_0/user_resp/ap_CS_fsm[8]_i_2__0                   | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/ap_CS_fsm[2]_i_2           | CLB.LUT.LUT4      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][43]_srl6_i_1__2 | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][43]_srl6        | CLB.SRL.SRL16E    |
+    | ap_CS_fsm_reg[40]                                                          | REGISTER.SDR.FDRE |
+    | ey_plane_U/ram_reg_bram_0_i_60__4                                          | CLB.LUT.LUT2      |
+    | gmemE_m_axi_U/store_unit_0/user_resp/ap_CS_fsm[8]_i_2__0                   | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/ap_CS_fsm[2]_i_2           | CLB.LUT.LUT4      |
+    | grp_wr_plane_3_fu_272/mem_reg[5][60]_srl6_i_1__1                           | CLB.LUT.LUT6      |
+    | gmemH_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][60]_srl6        | CLB.SRL.SRL16E    |
+    | ap_CS_fsm_reg[40]                                                          | REGISTER.SDR.FDRE |
+    | ey_plane_U/ram_reg_bram_0_i_60__4                                          | CLB.LUT.LUT2      |
+    | gmemE_m_axi_U/store_unit_0/user_resp/ap_CS_fsm[8]_i_2__0                   | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/ap_CS_fsm[2]_i_2           | CLB.LUT.LUT4      |
+    | grp_wr_plane_3_fu_272/mem_reg[5][55]_srl6_i_1__1                           | CLB.LUT.LUT6      |
+    | gmemH_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][55]_srl6        | CLB.SRL.SRL16E    |
+    +----------------------------------------------------------------------------+-------------------+
+
+    +----------------------------------------------------------------------------+-------------------+
+    | Path4 Cells                                                                | Primitive Type    |
+    +----------------------------------------------------------------------------+-------------------+
+    | ap_CS_fsm_reg[40]                                                          | REGISTER.SDR.FDRE |
+    | ey_plane_U/ram_reg_bram_0_i_60__4                                          | CLB.LUT.LUT2      |
+    | gmemE_m_axi_U/store_unit_0/user_resp/ap_CS_fsm[8]_i_2__0                   | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/ap_CS_fsm[2]_i_2           | CLB.LUT.LUT4      |
+    | grp_wr_plane_3_fu_272/mem_reg[5][45]_srl6_i_1__1                           | CLB.LUT.LUT6      |
+    | gmemH_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][45]_srl6        | CLB.SRL.SRL16E    |
+    | ap_CS_fsm_reg[40]                                                          | REGISTER.SDR.FDRE |
+    | ey_plane_U/ram_reg_bram_0_i_60__4                                          | CLB.LUT.LUT2      |
+    | gmemE_m_axi_U/store_unit_0/user_resp/ap_CS_fsm[8]_i_2__0                   | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/ap_CS_fsm[2]_i_2           | CLB.LUT.LUT4      |
+    | grp_wr_plane_3_fu_272/mem_reg[5][44]_srl6_i_1__1                           | CLB.LUT.LUT6      |
+    | gmemH_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][44]_srl6        | CLB.SRL.SRL16E    |
+    | ap_CS_fsm_reg[40]                                                          | REGISTER.SDR.FDRE |
+    | ey_plane_U/ram_reg_bram_0_i_60__4                                          | CLB.LUT.LUT2      |
+    | gmemE_m_axi_U/store_unit_0/user_resp/ap_CS_fsm[8]_i_2__0                   | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/ap_CS_fsm[2]_i_2           | CLB.LUT.LUT4      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][43]_srl6_i_1__2 | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][43]_srl6        | CLB.SRL.SRL16E    |
+    | ap_CS_fsm_reg[40]                                                          | REGISTER.SDR.FDRE |
+    | ey_plane_U/ram_reg_bram_0_i_60__4                                          | CLB.LUT.LUT2      |
+    | gmemE_m_axi_U/store_unit_0/user_resp/ap_CS_fsm[8]_i_2__0                   | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/ap_CS_fsm[2]_i_2           | CLB.LUT.LUT4      |
+    | grp_wr_plane_3_fu_272/mem_reg[5][60]_srl6_i_1__1                           | CLB.LUT.LUT6      |
+    | gmemH_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][60]_srl6        | CLB.SRL.SRL16E    |
+    | ap_CS_fsm_reg[40]                                                          | REGISTER.SDR.FDRE |
+    | ey_plane_U/ram_reg_bram_0_i_60__4                                          | CLB.LUT.LUT2      |
+    | gmemE_m_axi_U/store_unit_0/user_resp/ap_CS_fsm[8]_i_2__0                   | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/ap_CS_fsm[2]_i_2           | CLB.LUT.LUT4      |
+    | grp_wr_plane_3_fu_272/mem_reg[5][55]_srl6_i_1__1                           | CLB.LUT.LUT6      |
+    | gmemH_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][55]_srl6        | CLB.SRL.SRL16E    |
+    +----------------------------------------------------------------------------+-------------------+
+
+    +----------------------------------------------------------------------------+-------------------+
+    | Path5 Cells                                                                | Primitive Type    |
+    +----------------------------------------------------------------------------+-------------------+
+    | ap_CS_fsm_reg[40]                                                          | REGISTER.SDR.FDRE |
+    | ey_plane_U/ram_reg_bram_0_i_60__4                                          | CLB.LUT.LUT2      |
+    | gmemE_m_axi_U/store_unit_0/user_resp/ap_CS_fsm[8]_i_2__0                   | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/ap_CS_fsm[2]_i_2           | CLB.LUT.LUT4      |
+    | grp_wr_plane_3_fu_272/mem_reg[5][45]_srl6_i_1__1                           | CLB.LUT.LUT6      |
+    | gmemH_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][45]_srl6        | CLB.SRL.SRL16E    |
+    | ap_CS_fsm_reg[40]                                                          | REGISTER.SDR.FDRE |
+    | ey_plane_U/ram_reg_bram_0_i_60__4                                          | CLB.LUT.LUT2      |
+    | gmemE_m_axi_U/store_unit_0/user_resp/ap_CS_fsm[8]_i_2__0                   | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/ap_CS_fsm[2]_i_2           | CLB.LUT.LUT4      |
+    | grp_wr_plane_3_fu_272/mem_reg[5][44]_srl6_i_1__1                           | CLB.LUT.LUT6      |
+    | gmemH_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][44]_srl6        | CLB.SRL.SRL16E    |
+    | ap_CS_fsm_reg[40]                                                          | REGISTER.SDR.FDRE |
+    | ey_plane_U/ram_reg_bram_0_i_60__4                                          | CLB.LUT.LUT2      |
+    | gmemE_m_axi_U/store_unit_0/user_resp/ap_CS_fsm[8]_i_2__0                   | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/ap_CS_fsm[2]_i_2           | CLB.LUT.LUT4      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][43]_srl6_i_1__2 | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][43]_srl6        | CLB.SRL.SRL16E    |
+    | ap_CS_fsm_reg[40]                                                          | REGISTER.SDR.FDRE |
+    | ey_plane_U/ram_reg_bram_0_i_60__4                                          | CLB.LUT.LUT2      |
+    | gmemE_m_axi_U/store_unit_0/user_resp/ap_CS_fsm[8]_i_2__0                   | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/ap_CS_fsm[2]_i_2           | CLB.LUT.LUT4      |
+    | grp_wr_plane_3_fu_272/mem_reg[5][60]_srl6_i_1__1                           | CLB.LUT.LUT6      |
+    | gmemH_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][60]_srl6        | CLB.SRL.SRL16E    |
+    | ap_CS_fsm_reg[40]                                                          | REGISTER.SDR.FDRE |
+    | ey_plane_U/ram_reg_bram_0_i_60__4                                          | CLB.LUT.LUT2      |
+    | gmemE_m_axi_U/store_unit_0/user_resp/ap_CS_fsm[8]_i_2__0                   | CLB.LUT.LUT6      |
+    | gmemE_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/ap_CS_fsm[2]_i_2           | CLB.LUT.LUT4      |
+    | grp_wr_plane_3_fu_272/mem_reg[5][55]_srl6_i_1__1                           | CLB.LUT.LUT6      |
+    | gmemH_m_axi_U/store_unit_0/fifo_wreq/U_fifo_srl/mem_reg[5][55]_srl6        | CLB.SRL.SRL16E    |
+    +----------------------------------------------------------------------------+-------------------+
+
+
+================================================================
+== Place & Route Vivado Reports
+================================================================
++--------------------------+--------------------------------------------------------------+
+| Report Type              | Report Location                                              |
++--------------------------+--------------------------------------------------------------+
+| design_analysis          | impl/verilog/report/fdtd_design_analysis_routed.rpt          |
+| failfast                 | impl/verilog/report/fdtd_failfast_routed.rpt                 |
+| power                    | impl/verilog/report/fdtd_power_routed.rpt                    |
+| status                   | impl/verilog/report/fdtd_status_routed.rpt                   |
+| timing                   | impl/verilog/report/fdtd_timing_routed.rpt                   |
+| timing_paths             | impl/verilog/report/fdtd_timing_paths_routed.rpt             |
+| utilization              | impl/verilog/report/fdtd_utilization_routed.rpt              |
+| utilization_hierarchical | impl/verilog/report/fdtd_utilization_hierarchical_routed.rpt |
++--------------------------+--------------------------------------------------------------+
+
+
