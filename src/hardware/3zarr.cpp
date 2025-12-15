@@ -195,16 +195,16 @@ void fdtd(float *__restrict__ hx_gmem, float *__restrict__ hy_gmem,
 #pragma HLS BIND_STORAGE variable = hy_prev1 type = ram_2p impl = bram
 
   // clang-format off
-#pragma HLS ARRAY_PARTITION variable = ex_plane cyclic factor = PAR_FACTOR dim = 2
-#pragma HLS ARRAY_PARTITION variable = ey_plane cyclic factor = PAR_FACTOR dim = 2
-#pragma HLS ARRAY_PARTITION variable = ez_plane cyclic factor = PAR_FACTOR dim = 2
-#pragma HLS ARRAY_PARTITION variable = hx_plane cyclic factor = PAR_FACTOR dim = 2
-#pragma HLS ARRAY_PARTITION variable = hy_plane cyclic factor = PAR_FACTOR dim = 2
-#pragma HLS ARRAY_PARTITION variable = hz_plane cyclic factor = PAR_FACTOR dim = 2
-#pragma HLS ARRAY_PARTITION variable = ex_plus1 cyclic factor = PAR_FACTOR dim = 2
-#pragma HLS ARRAY_PARTITION variable = ey_plus1 cyclic factor = PAR_FACTOR dim = 2
-#pragma HLS ARRAY_PARTITION variable = hx_prev1 cyclic factor = PAR_FACTOR dim = 2 
-#pragma HLS ARRAY_PARTITION variable = hy_prev1 cyclic factor = PAR_FACTOR dim = 2
+  // #pragma HLS ARRAY_PARTITION variable = ex_plane cyclic factor = PAR_FACTOR dim = 2
+  // #pragma HLS ARRAY_PARTITION variable = ey_plane cyclic factor = PAR_FACTOR dim = 2
+  // #pragma HLS ARRAY_PARTITION variable = ez_plane cyclic factor = PAR_FACTOR dim = 2
+  // #pragma HLS ARRAY_PARTITION variable = hx_plane cyclic factor = PAR_FACTOR dim = 2
+  // #pragma HLS ARRAY_PARTITION variable = hy_plane cyclic factor = PAR_FACTOR dim = 2
+  // #pragma HLS ARRAY_PARTITION variable = hz_plane cyclic factor = PAR_FACTOR dim = 2
+  // #pragma HLS ARRAY_PARTITION variable = ex_plus1 cyclic factor = PAR_FACTOR dim = 2
+  // #pragma HLS ARRAY_PARTITION variable = ey_plus1 cyclic factor = PAR_FACTOR dim = 2
+  // #pragma HLS ARRAY_PARTITION variable = hx_prev1 cyclic factor = PAR_FACTOR dim = 2 
+  // #pragma HLS ARRAY_PARTITION variable = hy_prev1 cyclic factor = PAR_FACTOR dim = 2
   // clang-format on
 
   {
