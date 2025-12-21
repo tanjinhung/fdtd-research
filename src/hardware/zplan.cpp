@@ -3,12 +3,28 @@
 static const float ce = CDTDS * IMP0;
 static const float ch = CDTDS / IMP0;
 
+static inline int isDipole(int x, int y, int z) {
+#pragma HLS INLINE
+  int dx = x - DIPOLE_CENTER_X;
+  int dy = y - DIPOLE_CENTER_Y;
+  int dz = z - DIPOLE_CENTER_Z;
+
+  if (dx * dx + dy * dy > DIPOLE_RADIUS * DIPOLE_RADIUS) return 0;
+
+  int half_length = DIPOLE_LENGTH / 2;
+  if (dz >= -half_length && dz <= half_length &&
+      (dz < -FEED_GAP / 2 || dz > FEED_GAP / 2))
+    return 1;
+
+  return 0;
+}
+
 static void rd_plane(const float *g, float *p, int z, int len) {
 #pragma HLS INLINE off
   const int base = z * len;
   for (int i = 0; i < len; ++i) {
-#pragma HLS loop_tripcount min=961 max=1024
-#pragma HLS PIPELINE II = 1
+#pragma HLS loop_tripcount min = 961 max = 1024
+#pragma HLS PIPELINE       II            = 1
     p[i] = g[base + i];
   }
 }
@@ -17,8 +33,8 @@ static void wr_plane(float *g, const float *p, int z, int len) {
 #pragma HLS INLINE off
   const int base = z * len;
   for (int i = 0; i < len; ++i) {
-#pragma HLS loop_tripcount min=961 max=1024
-#pragma HLS PIPELINE II = 1
+#pragma HLS loop_tripcount min = 961 max = 1024
+#pragma HLS PIPELINE       II            = 1
     g[base + i] = p[i];
   }
 }
@@ -231,6 +247,18 @@ void fdtd(float *hx_gmem, float *hy_gmem, float *hz_gmem, float *ex_gmem,
 
     update_E_crit(ex_plane, ey_plane, ez_plane, hx_plane, hy_plane, hz_plane,
                   hx_prev1, hy_prev1);
+
+    for (int y = 1; y < NY_1; ++y) {
+      for (int x = 1; x < NX_1; ++x) {
+#pragma HLS PIPELINE II = 1
+        if (isDipole(x, y, z)) {
+          const int iex = y * NX_1 + x;
+          const int iey = y * NX_0 + x;
+          ex_plane[iex] = 0.0f;
+          ey_plane[iey] = 0.0f;
+        }
+      }
+    }
 
     wr_plane(ex_gmem, ex_plane, z, EX_PLANER);
     wr_plane(ey_gmem, ey_plane, z, EY_PLANER);
