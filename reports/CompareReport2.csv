@@ -1,0 +1,52 @@
+Name,3zarray_component,3zsep_component,hls_component,naive_component
+Part,xcku5p-ffvb676-2-e,xcku5p-ffvb676-2-e,xcku5p-ffvb676-2-e,xcku5p-ffvb676-2-e
+Path,/home/users/tan/projects/fdtd-research/src/hardware/3zarray_component,/home/users/tan/projects/fdtd-research/src/hardware/3zsep_component,/home/users/tan/projects/fdtd-research/src/hardware/hls_component,/home/users/tan/projects/fdtd-research/src/hardware/naive_component
+syn: Status,completed,completed,completed,completed
+syn: Clock Target (ns),10,10,10,10
+syn: Clock Uncertainty (ns),2.7,2.7,2.7,2.7
+syn: Clock Achieved (ns),7.3,7.3,7.3,7.3
+syn: Interval (cycles),1245425,1046587,1176701,785718
+syn: Latency (cycles),1245424,1046586,1176700,785717
+syn: Latency (ns),12454000,10466000,11767000,7857000
+syn: BRAM,28,28,28,24
+syn: DSP,14,36,13,31
+syn: FF,9607,11669,8717,13460
+syn: LUT,14446,16171,12075,14670
+syn: URAM,0,0,0,0
+cosim: Status,completed,completed,completed,completed
+cosim: Interval min/max/avg (cycles),1303991/1303991/1303991,1068737/1068737/1068737,1235393/1235393/1235393,2225858/2225858/2225858
+cosim: Latency min/max/avg (cycles),1303972/1303972/1303972,1068722/1068722/1068722,1235379/1235379/1235379,2225854/2225854/2225854
+cosim: Total Time,65199609,53436909,61769709,111292957
+impl syn: Status,completed,completed,completed,completed
+impl syn: DSP,14,36,13,44
+impl syn: BRAM,24,24,24,12
+impl syn: URAM,0,0,0,0
+impl syn: FF,8867,10972,8160,16326
+impl syn: LUT,6995,8994,6697,11625
+impl syn: Clock Target (ns),10.000,10.000,10.000,10.000
+impl syn: Clock Achieved (ns),3.848,3.840,3.848,4.182
+impl pnr: Status,completed,completed,completed,completed
+impl pnr: DSP,14,36,13,44
+impl pnr: BRAM,24,24,24,12
+impl pnr: URAM,0,0,0,0
+impl pnr: FF,8858,10945,8151,16321
+impl pnr: LUT,6497,8127,6204,10507
+impl pnr: Clock Target (ns),10.000,10.000,10.000,10.000
+impl pnr: Clock Achieved (ns),4.686,4.717,4.631,5.237
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
