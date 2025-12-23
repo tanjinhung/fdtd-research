@@ -1,35 +1,69 @@
 \documentclass[12pt,a4paper,draft]{article}
 \usepackage{amsmath}
+\usepackage[numbers]{natbib}
 
 \begin{document}
 
-\title{Optimizing 3D FDTD with CPML via Temporal Blocking and Parallel Pipelines in FPGA}
+\title{Optimizing an FPGA-based 3D FDTD Accelerator through HLS}
 \author{Tan Jin Hung}
 \maketitle
 
 \begin{abstract}
 \end{abstract}
 
-\section{Introduction}
-Current age of technology had allowed the use computers to simulate our understanding of the world.
-However, such simulations are computational intensive for real-life application.
-While the advancement of technology had decrease the time needed to compute simple context simulations.
-Complex context of simulations that mimics real-life application still requires an significant amount of time to complete.
-One such application of simulation is Finite-Difference Time-Domain (FDTD).
+\tableofcontents{}
 
-FDTD is a commonly used numerical method for analyzing antennas, design microelectronic devices, and solve other electromagnetic field problems.
-This is a type of stencil computation which updates the electric and magnetic field components of a cell in the time domain to compute the electromagnetic function.
-This method is derived from Maxwell's equations and discretized by Yee's method.
-The main equations that FDTD operated on are Faraday's law and Ampere-Maxwell's law.
+\section{Introduction}
+The current technological era has enabled the use of computers to simulate our complex understanding of the physical world.
+However, simulations that accurately mimic real-life phenomena remain computationally intensive for many practical applications.
+To manage this complexity, these simulations are often decomposed down into their fundamental physical components.
+Among these fundamentals, the simulation of electromagnetic waves remains at the forefront of modern research.
+
+A primary method for simulating electromagnetic waves is the Finite-Difference Time-Domain (FDTD) method. \cite{yee-1138693}
+While FDTD is a cornerstone of computational electromagnetics, providing a robust foundation for analysis, it faces significant challenges in three-dimensional space.
+Specifically, the iterative nature of the method creates bottleneck in memory bandwidth and data throughput.
+Traditionally, these simulations have been offloaded to Graphics Processing Units (GPUs).
+However, Field-Programmable Gate Arrays (FPGAs) have emerged as a compelling alternative.
+FPGAs offer distinct advantages over GPUs, including deterministic latency, superior energy efficiency, and the ability to implement highly customizable memory architectures for parallelism.
+
+Despite these advantages, FPGAs are traditionally difficult to program using low-level Hardware Description Language (HDLs).
+Implementing an FDTD simulation in HDL is tedious and requires the manual design of standard components that are better suited for automation
+High-Level Synthesis (HLS) addresses these challenges by allowing designers to describe complex hardware architectures using high-level languages such as C/C++, which is the focus of this paper.
+
+This paper presents an optimized 3D FDTD accelerator designed via HLS, exploring several architectural optimization strategies, including:
+
+\begin{description}
+  \item[Spatial Tiling] Maximizing memory bandwidth by utilizing on-chip Block RAMs (BRAMs) to store local stencil and reduce external memory access.
+  \item[HLS Directives] Leveraging compiler pragmas to optimize loop pipelining and unrolling, thereby improving the latency of the kernel.
+  \item[Task-Level Parallelism] Decomposing the algorithm into concurrent tasks to increase parallelism.
+\end{description}
+
+Through these optimization, we demonstrate that an HLS-driven approach can also produce a high-performance FDTD accelerator, while significantly improving code readability, maintainability, and design iteration speed compared to traditional HDL-based workflows.
+
+\section{Background}
+This section establishes the theoretical and technical foundation required to design an FPGA-based 3D FDTD accelerator.
+It begins by outlining the governing physics of electromagnetic waves propagation via Maxwell's Equations.
+Subsequently, it details the transition to the FDTD method by discretizing these equations using Yee's staggered grid and its resulting update equations.
+Finally, the section explores the architectural features of FPGAs and the optimization features provided by High-Level Synthesis (HLS) that are essential for high-performance hardware acceleration.
+
+\subsection{Maxwell's Equation}
+The underlying physics that governs electromagnetic waves are described by its electric and magnetic properties, which was theorized by J. C. Maxwell. \cite{maxwell-1873}
+Maxwell unified the independent laws discovered by Faraday, Amp\`ere, and Gauss, which ties in the field of electric and the field of magnetic, suggesting that they are co-dependent of each other.
+
 
 \begin{align}
-  \nabla \times E &= - \mu \frac{\delta H}{\delta t} \\
+  \nabla \times E &= - \mu \frac{\delta H}{\delta t} - \alpha E\\
   \nabla \times H &= \varepsilon \frac{\delta E}{\delta t} + \sigma E
 \end{align}
 
-Equation (1) denotes Faraday's law and is the equation governing the Electric components.
+Equation (1) denotes Faraday-Maxwell's law and is the equation governing the Electric components. \\
 Equation (2) denotes Ampere-Maxwell's law and is the equation govering the Magnetic components.
 
-\section{Background}
+\subsection{The FDTD Method}
+\subsubsection{Yee's staggered grid}
+\subsubsection{Temporal Update Equation}
+\subsection{FPGA \& HLS}
 
+\bibliographystyle{IEEEtranN}
+\bibliography{references}
 \end{document}
