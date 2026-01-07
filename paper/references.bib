@@ -1,41 +1,10 @@
-@article{maxwell-1873,
+@book{maxwell-1873,
   author = {James Clerk Maxwell},
   title = {A Treatise on Electricity and Magnetism},
-  journal = {Nature},
+  publisher = {Clarendon Press},
   year = {1873},
-  month = {Apr},
-  day = {01},
-  volume = {7},
-  number = {182},
-  pages = {478-480},
-  abstract = {IN his deservedly celebrated treatise on ``Sound,'' the late Sir
-              John Herschel felt himself justified in saying, ``It is vain to
-              conceal the melancholy truth. We are fast dropping behind. In
-              Mathematics we have long since drawn the rein and given over a
-              hopeless race.'' Thanks to Herschel himself, and others, the
-              reproach, if perhaps then just, did not long remain so. Even in
-              pure mathematics, a subject which till lately has not been much
-              attended to in Britain, except by a few scattered specialists, we
-              stand at this moment at the very least on a par with the {\'e}lite
-              of the enormously disproportionate remainder of the world. The
-              discoveries of Boole and Hamilton, of Cayley and Sylvester, extend
-              into limitless regions of abstract thought, of which they are as
-              yet the sole explorers. In applied mathematics no living men stand
-              higher than Adams, Stokes, and W. Thomson. Any one of these names
-              alone would assure our position in the face of the world as regards
-              triumphs already von in the grandest struggles of the human
-              intellect. But the men of the next generation---the successors of
-              these long-proved knights---are beginning to win their spurs, and
-              among them there is none of greater promise than Clerk-Maxwell. He
-              has already, as the first holder of the new chair of Experimental
-              Science in Cambridge, given the post a name which requires only the
-              stamp of antiquity to raise it almost to the level of that of
-              Newton. And among the numerous services he has done to science,
-              even taking account of his exceedingly remarkable treatise on
-              ``Heat,'' the present volumes must be regarded as pre-eminent.},
-  issn = {1476-4687},
-  doi = {10.1038/007478a0},
-  url = {https://doi.org/10.1038/007478a0},
+  address = {Oxford},
+  edition = {1st},
 }
 
 @manual{vitis-ug1399-2025,
@@ -62,4 +31,125 @@
               conditions;Electromagnetic scattering;Partial differential
               equations;EMP radiation effects;Conductors;Differential equations},
   doi = {10.1109/TAP.1966.1138693},
+}
+
+@book{taflove-2005,
+  author = {Allen Taflove and Susan C. Hagness},
+  title = {Computational Electromagnetics: The Finite-Difference Time-Domain
+           Method},
+  publisher = {Artech House},
+  year = {2005},
+  edition = {3rd},
+  address = {Boston, MA},
+  isbn = {978-1580539203},
+  note = {The definitive reference for FDTD theory and implementation.},
+}
+
+@phdthesis{kamalakkannan-2023,
+  author = {Kamalakkannan, Kamalavasan},
+  title = {High-Level {FPGA} Accelerator Design for Structured-Mesh-Based
+           Numerical Solvers},
+  school = {University of Warwick},
+  year = {2023},
+  url = {https://wrap.warwick.ac.uk/180089/},
+}
+
+@inproceedings{szafarczyk-2022,
+  author = {Szafarczyk, Robert and Nabi, Syed Waqar and Vanderbauwhede, Wim},
+  title = {Reducing {FPGA} Memory Footprint of Stencil Codes through Automatic
+           Extraction of Memory Patterns},
+  booktitle = {2022 32nd International Conference on Field-Programmable Logic
+               and Applications (FPL)},
+  year = {2022},
+  doi = {10.1109/FPL57034.2022.00033},
+}
+
+@article{zohouri-2018,
+  author = {Zohouri, Hamid Reza and others},
+  title = {High-Performance Computing with {FPGAs}: Case Study in Optimizing
+           Stencil Kernels},
+  journal = {IEEE Transactions on Parallel and Distributed Systems},
+  year = {2018},
+  volume = {29},
+  number = {5},
+  pages = {975-989},
+  doi = {10.1109/TPDS.2017.2786310},
+}
+
+@inproceedings{so-2018,
+  author = {So, Hayden Kwok-Hay and others},
+  title = {Throughput-Oriented {FPGA} Acceleration of {FDTD}},
+  booktitle = {2018 International Conference on Field-Programmable Technology
+               (FPT)},
+  year = {2018},
+  doi = {10.1109/FPT.2018.00043},
+}
+
+@article{courant-1967,
+  author = {Courant, R. and Friedrichs, K. and Lewy, H.},
+  title = {On the Partial Differential Equations of Mathematical Physics},
+  journal = {IBM Journal of Research and Development},
+  year = {1967},
+  volume = {11},
+  number = {2},
+  pages = {215-234},
+}
+
+@article{nguyen-2022,
+  author = {Nguyen, Tan and others},
+  title = {{FPGA}-based {HPC} accelerators: An evaluation on performance and
+           energy efficiency},
+  journal = {Concurrency and Computation: Practice and Experience},
+  year = {2022},
+  volume = {34},
+  number = {18},
+  doi = {10.1002/cpe.6570},
+}
+
+@article{tian-sasa-2023,
+  author = {Tian, Xingyu and Ye, Zhifan and Lu, Alec and Guo, Licheng and Chi,
+            Yuze and Fang, Zhenman},
+  title = {{SASA}: A Scalable and Automatic Stencil Acceleration Framework for
+           Optimized Hybrid Spatial and Temporal Parallelism on {HBM}-based {
+           FPGAs}},
+  journal = {ACM Transactions on Reconfigurable Technology and Systems (TRETS)},
+  year = {2023},
+  volume = {16},
+  number = {2},
+  pages = {1--33},
+  doi = {10.1145/3572547},
+  note = {Provides a framework for optimizing 3D stencils by balancing spatial
+          and temporal parallelism.},
+}
+
+@inproceedings{bai-2023,
+  author = {Bai, Yunsheng and others},
+  title = {Towards a Comprehensive Benchmark for High-Level Synthesis Targeted
+           to {FPGAs}},
+  booktitle = {37th Conference on Neural Information Processing Systems
+               (NeurIPS)},
+  year = {2023},
+}
+
+@inproceedings{rodriguez-canal-2023,
+  author = {Rodriguez-Canal, Gabriel and Brown, Nick and others},
+  title = {Stencil-HMLS: A multi-layered approach to the automatic optimisation
+           of stencil codes on {FPGA}},
+  booktitle = {Proceedings of the SC '23 Workshops},
+  year = {2023},
+  doi = {10.1145/3624062.3624543},
+}
+
+@article{kong-2016,
+  author = {Kong, Chang and Su, Tao},
+  title = {Parallel Hardware Architecture of the 3D {FDTD} Algorithm with
+           Convolutional Perfectly Matched Layer Boundary Condi- \\tion},
+  journal = {IEEE Transactions on Antennas and Propagation},
+  year = {2016},
+  volume = {64},
+  number = {9},
+  pages = {3936--3946},
+  doi = {10.1109/TAP.2016.2585141},
+  note = {Provides a comprehensive analysis of the parallel data paths required
+          for 3D FDTD.},
 }
