@@ -267,8 +267,15 @@ A designer can begin with a baseline software implementation and iteratively app
 As shown in automation frameworks such as SASA \cite{tian-sasa-2023}, overlapping computation and communication optimizations are critical for scaling FDTD accelerators to handle massive data volume of 3D electromagnetic simulations.
 
 \section{Methodology}
+The development of the 3D FDTD accelerator followed a process of stepwise refinement, transitioning the initial algorithmic model into a hardware-optimized accelerator.
+This progression was driven by the specific memory and computational bottlenecks identified during the synthesis of the 3D Yee stencil.
+The following subsections detail the evolution from a baseline implementation to an advanced streaming architecture, exploring the specific hardware-software co-design strategies, such as domain decomposition, memory partitioning, and task-level parallelism, that were employed to maximize the system's throughput.
 
 \subsection{Baseline Implementation}
+The design process began with a baseline implementation where the 3D FDTD update equations, as defined in \eqref{eq:full_fdtd_vacuum}, were ported to HLS using a standard software-based approach \cite{schneider-2010}.
+In this initial stage, the field components were represented as multidimensional arrays in global memory.
+To establish a performance baseline, basic optimizations were applied by placing the \texttt{\#pragma HLS PIPELINE II=1} directive on the inner-most loops of the update functions.
+
 \subsection{Domain Decomposition}
 \subsection{Memory Subsystem Optimization}
 \subsection{Advanced Throughput Optimization}
