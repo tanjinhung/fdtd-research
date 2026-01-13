@@ -1,11 +1,46 @@
-\documentclass[12pt,a4paper,draft]{article}
+\documentclass[12pt,a4paper]{article}
 \usepackage{amsmath}
 \usepackage[numbers]{natbib}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta}
+\usetikzlibrary{matrix}
 \usepackage{booktabs}
 \usepackage{microtype}
 \usepackage{xurl}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{rotating}
+
+\definecolor{terminal-background}{HTML}{181818}
+\definecolor{terminal-foreground}{HTML}{D4D4D4}
+\definecolor{mKeyword}{RGB}{0,0,255}
+\definecolor{mComment}{RGB}{34,139,34}
+\definecolor{mString}{RGB}{163,21,21}
+\definecolor{mPragma}{RGB}{128,0,128}
+\definecolor{mBackground}{RGB}{252,252,252}
+\definecolor{mNumber}{RGB}{128,128,128}
+
+\lstdefinestyle{CPPStyle}{
+    backgroundcolor=\color{mBackground},
+    commentstyle=\color{mComment}\itshape,
+    keywordstyle=\color{mKeyword}\bfseries,
+    numberstyle=\tiny\color{mNumber},
+    stringstyle=\color{mString},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=8pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2,
+    frame=lines,
+    rulecolor=\color{gray!30},
+    emphstyle=\color{mPragma}\bfseries
+}
 
 \begin{document}
 
@@ -16,10 +51,12 @@
 \begin{abstract}
 \end{abstract}
 
+\newpage{}
 \tableofcontents{}
 
 \newpage{}
 \section{Introduction}
+\label{section:intro}
 The current technological era has enabled the use of computers to simulate our complex understanding of the physical world.
 However, simulations that accurately mimic real-life phenomena remain computationally intensive for many practical applications.
 To manage this complexity, these simulations are often decomposed down into their fundamental physical components.
@@ -50,6 +87,7 @@ This paper presents an optimized 3D FDTD accelerator designed via HLS, exploring
 Through these optimization, we demonstrate that an HLS-driven approach can also produce a high-performance FDTD accelerator, while significantly improving code readability, maintainability, and design iteration speed compared to traditional HDL-based workflows.
 
 \section{Background}
+\label{section:bg}
 This section establishes the theoretical and technical foundation required to design and implement an FPGA-based 3D FDTD accelerator. 
 To provide a complete context for the methodology, the discussion begins with the governing physics of electromagnetic wave propagation through Maxwell’s Equations. 
 Subsequently, it details the transition from continuous calculus to a discrete numerical model using Yee’s staggered grid and the resulting leapfrog update equations. 
@@ -57,7 +95,7 @@ Finally, the section explores the architectural characteristics of Field-Program
 This hardware background is essential for understanding how algorithmic bottlenecks are addressed through spatial tiling and parallel execution, which are the primary focus of this work.
 
 \subsection{Maxwell's Equation}
-
+\label{section:maxwell}
 The underlying physics governing electromagnetic waves are described by the interaction of electric and magnetic fields, a theory unified by J. C. Maxwell \cite{maxwell-1873}.
 Maxwell consolidated the independent laws of Faraday, Amp\`ere, and Gauss, demonstrating that electric and magnetic fields are interdependent. 
 While the original theory consisted of 20 equations, it was later refined by O. Heaviside into the modern four-vector representation. 
@@ -100,12 +138,14 @@ By rearranging \eqref{eq:Maxwell-lossy} to isolate the temporal derivatives, we 
 \end{subequations}
 
 \subsection{The FDTD Method}
+\label{section:fdtd}
 To solve the coupled system of equations in \eqref{eq:Maxwell-temporal} using a digital computer, the continuous temporal and spatial derivatives must be transformed into a discrete form.
 The Finite-Difference Time-Domain (FDTD) method, first proposed by Kane S. Yee in 1966 \cite{yee-1138693}, achieves this by employing central-difference approximations.
 This approach maps the electric and magnetic fields onto a discrete staggered grid, allowing the system to be solved iteratively through a "leapfrog" time-stepping procedure.
 To ensure the numerical stability of this iterative scheme, the time step must satisfy the Courant-Friedrichs-Lewy (CFL) condition \cite{courant-1967}.
 
 \subsubsection{Yee's Staggered Grid}
+\label{section:yee}
 To numerically solve Maxwell's equations, the continuous spatial and temporal domains must be discretized.
 The FDTD method utilizes the Yee staggered grid, an arrangement where electric ($\mathbf{E}$) and magnetic ($\mathbf{H}$) field components are spatially interleaved within a unit cell, as shown in Figure \ref{fig:YeeCell}, where the $ \mathbf{E} $ field and $ \mathbf{H} $ field are staggered by half a temporal step.
 
@@ -168,6 +208,7 @@ To achieve a stable and accurate simulation, a "leapfrog" time-stepping scheme i
 As illustrated in Figure \ref{fig:YeeCell}, the magnetic fields are offset by half a temporal step relative to the electric fields, allowing the interleaved calculation of field updates.
 
 \subsubsection{Temporal Update Equations}
+\label{section:update}
 In addition to spatial staggering, the FDTD method employs temporal interleaving, commonly referred to as the "leapfrog" scheme as describe by Taflove \cite{taflove-2005}.
 Under this arrangement, the $\mathbf{E}$ components are updated at integer time steps ($n, n+1, \dots$), whereas the $\mathbf{H}$ components are updated at half-integer time steps ($n+1/2, n+3/2, \dots$). 
 
@@ -203,6 +244,7 @@ This representation reveals that the field update is a function of the previous 
 These ratios, combined with the grid spacing $\Delta s$, form the basis for the normalized coefficients used in hardware acceleration.
 
 \subsection{Field-Programmable Gate Array (FPGA) Architecture}
+\label{section:fpga}
 While the 3D FDTD algorithm possesses significant inherent symmetry and parallelism, its performance is highly dependent on the ability of the underlying hardware to exploit these features.
 Traditionally, Graphics Processing Units (GPUs) have dominated this field due to their massive SIMD (Single Instruction, Multiple Data) parallelism.
 However, FPGAs have emerged as a powerful alternative for accelerating computational electromagnetics.
@@ -239,6 +281,7 @@ A higher count of DSP slices allows for more Processing Elements (PEs) to operat
 Consequently, an optimized design must balance the utilization of these resources to maximize the throughput, measured in Millions of cells per second (Mcells/s), while remaining within the physical limits and memory bandwidth constraints of the target device.
 
 \subsection{High-Level Synthesis (HLS)}
+\label{section:hls}
 While FPGA architectures provide the necessary primitives for acceleration, manual implementation of large-scale projects in low-level Hardware Description Languages (HDLs) is labor-intensive and error-prone.
 Many hardware structures, such as memory controllers and nested loop pipelines, follow standard patterns that are better suited for automation than manual coding.
 High-Level Synthesis (HLS) addresses these challenges by acting as an abstraction layer that automates the generation of these standard structures \cite{vitis-ug1399-2025}.
@@ -267,18 +310,246 @@ A designer can begin with a baseline software implementation and iteratively app
 As shown in automation frameworks such as SASA \cite{tian-sasa-2023}, overlapping computation and communication optimizations are critical for scaling FDTD accelerators to handle massive data volume of 3D electromagnetic simulations.
 
 \section{Methodology}
+\label{section:method}
 The development of the 3D FDTD accelerator followed a process of stepwise refinement, transitioning the initial algorithmic model into a hardware-optimized accelerator.
 This progression was driven by the specific memory and computational bottlenecks identified during the synthesis of the 3D Yee stencil.
 The following subsections detail the evolution from a baseline implementation to an advanced streaming architecture, exploring the specific hardware-software co-design strategies, such as domain decomposition, memory partitioning, and task-level parallelism, that were employed to maximize the system's throughput.
 
 \subsection{Baseline Implementation}
-The design process began with a baseline implementation where the 3D FDTD update equations, as defined in \eqref{eq:full_fdtd_vacuum}, were ported to HLS using a standard software-based approach \cite{schneider-2010}.
-In this initial stage, the field components were represented as multidimensional arrays in global memory.
-To establish a performance baseline, basic optimizations were applied by placing the \texttt{\#pragma HLS PIPELINE II=1} directive on the inner-most loops of the update functions.
+\label{section:baseline}
+The design process began with a baseline implementation where the 3D FDTD update equations, as defined in Equation \eqref{eq:full_fdtd_vacuum}, were ported to HLS using a standard software-based approach \cite{schneider-2010}.
+In this initial stage, the 3D grid components were represented as flattened one-dimensional (1D) arrays in global memory to simplify the interface between the host and the accelerator.
+Accessing specific spatial coordinates $(i, j, k)$ required manual index linearization, typically in the form \texttt{idx = (i * NY + j) * NZ + k}.
+To establish a performance baseline, the \texttt{\#pragma HLS PIPELINE II=2} directive was applied to the nested loops of the update functions.
+
+While this approach is standard in software-based FDTD implementations, it introduced significant architectural overheads within the HLS environment.
+Specifically, the use of flattened 1D arrays necessitated complex index linearization, where every field access required multiple integer multiplications and additions just to calculate a memory address.
+This resulted in an inefficient allocation of hardware resources, as valuable DSP and LUT slices were consumed by indexing logic rather than the primary field update computations. 
+
+Furthermore, the 3D stencil dependency requires field values from neighboring planes at $z+1$ and $z-1$ offsets.
+In a flattened 1D array, these neighbors are stored at large address intervals, creating a non-contiguous access pattern that inherently restricts the compiler's ability to utilize efficient burst memory transactions.
+As a result, the HLS scheduler is unable to achieve single-cycle throughput, necessitating a higher Initiation Interval (II) to resolve these distant data dependencies.
+
+To circumvent these memory-mapped bottlenecks, an attempt was made to transition the design toward a streaming data paradigm.
+However, initial attempts to integrate streaming interfaces (\texttt{hls::stream}) directly into this baseline revealed significant architectural conflicts.
+Specifically, the naive integration of streaming without prior memory management led to severe resource contention.
+Synthesis reports for a simplified "pass-through" version of the kernel, designed only to read and write data, indicated a latency of upwards of 3 million clock cycles.
+The full design size report illustrating this surge is provided in Appendix \ref{appendix:baseline_rpt}.
+This unacceptably high count was a result of the compiler's inability to resolve the 3D stencil dependencies across a sequential stream.
+These results confirmed that a more sophisticated domain decomposition and memory subsystem strategy were required before high-throughput streaming could be successfully implemented.
 
 \subsection{Domain Decomposition}
+\label{section:domain}
+To resolve the architectural limitations of the 1D baseline, a domain decomposition strategy was implemented.
+This approach was inspired by the parallel hardware architecture proposed by Kong and Su \cite{kong-2016}, specifically their specialized data mapping used to resolve 3D stencil dependencies.
+While their work demonstrates an ultra-optimized 1D mapping, this design adopts an intermediate 2D Z-plane decomposition to ensure architectural clarity and more predictable synchronization within the HLS framework.
+
+The Z-dimension ($N_z=70$) was specifically selected as the primary axis of decomposition because it represents the largest spatial extent of the target grid.
+To maximize memory efficiency, the implementation was refactored to be Z-major, ensuring that entire 2D horizontal slices are stored contiguously in memory.
+This alignment allows the accelerator to perform high-speed burst reads from global memory, streaming entire planes into the FPGA's on-chip buffers with minimal addressing overhead.
+
+In this strategy, the 3D computational volume is processed as a series of these horizontal Z-planes, as illustrated in Figure \ref{fig:stencil_cells}.
+As established by the Yee algorithm in Section \ref{section:fdtd}, updating field components at a specific Z-coordinate (plane $k$) requires the values from the adjacent planes ($k-1$ and $k+1$).
+By explicitly buffering these specific planes in on-chip BRAM, the accelerator can satisfy these 3D dependencies while only interacting with a small, localized subset of the total grid at any given time.
+
+This architectural shift effectively resolved the scheduler complexity that led to the "instruction surge" documented in Appendix \ref{appendix:baseline_rpt}.
+By narrowing the HLS compiler's scope to a 2D planar update, the tool was able to synthesize an optimized state machine within the device's logic limits.
+Furthermore, the localized interaction within BRAM provided the necessary foundation for the memory partitioning and task-level throughput optimizations discussed in the subsequent sections.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[x={(0.5cm,0.5cm)}, y={(1cm,0cm)}, z={(0cm,1cm)}, scale=1, >=Stealth]
+    % Define Plane Z-offsets
+    \def\plA{0}   % Plane k-1
+    \def\plB{3.2} % Plane k
+    \def\plC{6.4} % Plane k+1
+    \def\N{4}     % Grid dimensions (0 to 3)
+
+    % Styles
+    \tikzset{
+        cell/.style={draw=gray!40, thin},
+        active/.style={fill=orange!70, draw=orange!90, thick},
+        target/.style={fill=red!70, draw=red!90, thick},
+    }
+
+    % --- DRAW PLANES ---
+    \foreach \z/\label in {\plA/k-1, \plB/k, \plC/k+1} {
+        % Label each plane
+        \node[anchor=west, gray!80] at (\N/2+0.8, \N+1.2, \z) {\footnotesize Plane $\label$};
+        % Draw the 4x4 grid of cells for each plane
+        \foreach \i in {0,...,\N} {
+            \foreach \j in {0,...,\N} {
+                % Logic to color the stencil
+                \pgfmathsetmacro{\isStencil}{
+                    (\z == \plB && ((\i==2 && \j==2) || (\i==1 && \j==2) || (\i==3 && \j==2) || (\i==2 && \j==1) || (\i==2 && \j==3))) || 
+                    (\z == \plA && \i==2 && \j==2) || 
+                    (\z == \plC && \i==2 && \j==2) ? 1 : 0
+                }
+
+                \ifnum\isStencil=1
+                    % Color specific cells orange, target red
+                    \ifdim \z pt = \plB pt
+                        \ifnum \i=2 \ifnum \j=2
+                            \filldraw[target] (\i,\j,\z) -- (\i+1,\j,\z) -- (\i+1,\j+1,\z) -- (\i,\j+1,\z) -- cycle;
+                        \else
+                            \filldraw[active] (\i,\j,\z) -- (\i+1,\j,\z) -- (\i+1,\j+1,\z) -- (\i,\j+1,\z) -- cycle;
+                        \fi \else
+                            \filldraw[active] (\i,\j,\z) -- (\i+1,\j,\z) -- (\i+1,\j+1,\z) -- (\i,\j+1,\z) -- cycle;
+                        \fi
+                    \else
+                        \filldraw[active] (\i,\j,\z) -- (\i+1,\j,\z) -- (\i+1,\j+1,\z) -- (\i,\j+1,\z) -- cycle;
+                    \fi
+                \else
+                    % Default empty cell
+                    \draw[cell] (\i,\j,\z) -- (\i+1,\j,\z) -- (\i+1,\j+1,\z) -- (\i,\j+1,\z) -- cycle;
+                \fi
+            }
+        }
+    }
+
+    % --- DRAW STENCIL DEPENDENCY LINES (Vertical) ---
+    \draw[orange, thick, dashed] (2.5,2.5,\plC) -- (2.5,2.5,\plB);
+    \draw[orange, thick, dashed] (2.5,2.5,\plA) -- (2.5,2.5,\plB);
+
+    % Legend
+    \matrix [draw, below=16pt] at (current bounding box.south east) {
+      \node [target,label={right:Target Cell $(i,j,k)$}] {}; \\ 
+      \node [active,label={right:Stencil Neighbor}] {}; \\
+    };
+
+  \end{tikzpicture}
+  \caption{Z-plane memory mapping of the FDTD 7-point stencil. The target field update (Red) requires parallel access to neighboring cells (Orange) across the current plane and the adjacent $k \pm 1$ buffers stored in BRAM.}
+  \label{fig:stencil_cells}
+\end{figure}
+
 \subsection{Memory Subsystem Optimization}
+\label{section:memory}
+While the Z-plane domain decomposition provided a structural foundation for the accelerator, the initial implementation remained limited by the physical constraints of the FPGA's on-chip memory.
+Several strategies were explored to alleviate these bottlenecks, specifically focusing on refactoring the data layout and maximizing memory port availability through hardware banking.
+
+\subsubsection{Data Layout: Flattened vs. Multidimensional Arrays}
+\label{section:1D2D}
+The initial baseline utilized flattened 1D arrays where spatial coordinates were accessed via manual index linearization, such as \texttt{ex[y * NX + x]}.
+While common in software-based implementations, this approach obscures the spatial relationship of the data from the HLS compiler.
+By transitioning to multidimensional C-arrays (\texttt{ex[y][x]}), the structural intent of the 3D stencil was made explicit.
+This clarity allowed the compiler to better infer data dependencies and enabled more sophisticated hardware-level memory manipulations, such as cyclic partitioning, that are not feasible with raw pointers and linearized offsets.
+
+\subsubsection{Memory Port Parallelism: Array Partitioning}
+\label{section:arr_part}
+As established in Section \ref{section:fdtd}, the FDTD stencil requires simultaneous access to multiple field components.
+Standard BRAM primitives, however, are physically limited to two independent access ports, which forces the HLS scheduler to serialize memory fetches and stalls the pipeline.
+To resolve this "port starvation", the \texttt{\#pragma HLS ARRAY\_PARTITION} directive was applied to the Z-plane buffers.
+This optimization splits a single logical array into multiple independent hardware memory banks.
+This provided the parallel ports necessary to retrieve all stencil operands in a single clock cycle, satisfying the throughput requirements of the update engine without necessitating complex manual memory management.
+
+\subsubsection{Task Granularity: Functional Decomposition}
+\label{section:sepfunc}
+To further refine the hardware schedule, the monolithic update loops were decomposed into modular functions, as shown in Listing \ref{lst:updateH}.
+By applying the \texttt{\#pragma HLS INLINE off} directive, the synthesis tool was directed to treat each field update as a dedicated hardware module.
+This "divide and conquer" approach allowed the HLS compiler to optimize the internal pipeline of each field independently.
+Furthermore, this modularity served as a critical prerequisite for overlapping execution, enabling the scheduler to manage the distinct computational requirements of the electric and magnetic field updates as separate processes rather than a single, oversized task.
+\vspace{16pt}
+\begin{lstlisting}[language=C++, style=CPPStyle, label={lst:updateH}, basicstyle=\ttfamily\footnotesize, caption={Implementation of the H-field update engine demonstrating Functional Decomposition}]
+static void update_HX(float hx_plane[NY_1][NX_0], 
+                      float ey_plus1[NY_1][NX_0],
+                      float ey_plane[NY_1][NX_0], 
+                      float ez_plane[NY_0][NX_0]) {
+#pragma HLS INLINE off
+
+  // HX
+  for (int y = 0; y < NY_1; ++y) {
+    for (int x = 0; x < NX_0; ++x) {
+#pragma HLS PIPELINE II = 1
+      const float dey = ey_plus1[y][x] - ey_plane[y][x];
+      const float dez = ez_plane[y + 1][x] - ez_plane[y][x];
+      hx_plane[y][x] += ch * (dey - dez);
+    }
+  }
+}
+
+static void update_HY(float hy_plane[NY_0][NX_1], 
+                      float ez_plane[NY_0][NX_0],
+                      float ex_plus1[NY_0][NX_1], 
+                      float ex_plane[NY_0][NX_1]) {
+#pragma HLS INLINE off
+
+  // HY
+  for (int y = 0; y < NY_0; ++y) {
+    for (int x = 0; x < NX_1; ++x) {
+#pragma HLS PIPELINE II = 1
+      const float dez = ez_plane[y][x + 1] - ez_plane[y][x];
+      const float dex = ex_plus1[y][x] - ex_plane[y][x];
+      hy_plane[y][x] += ch * (dez - dex);
+    }
+  }
+}
+
+static void update_HZ(float hz_plane[NY_1][NX_1], 
+                      float ex_plane[NY_0][NX_1],
+                      float ey_plane[NY_1][NX_0]) {
+#pragma HLS INLINE off
+
+  // HZ
+  for (int y = 0; y < NY_1; ++y) {
+    for (int x = 0; x < NX_1; ++x) {
+#pragma HLS PIPELINE II = 1
+      const float dex = ex_plane[y + 1][x] - ex_plane[y][x];
+      const float dey = ey_plane[y][x + 1] - ey_plane[y][x];
+      hz_plane[y][x] += ch * (dex - dey);
+    }
+  }
+}
+
+static void update_H_crit(float hx[NY_1][NX_0], 
+                          float hy[NY_0][NX_1],
+                          float hz[NY_1][NX_1], 
+                          float ex[NY_0][NX_1],
+                          float ex1[NY_0][NX_1], 
+                          float ey[NY_1][NX_0],
+                          float ey1[NY_1][NX_0], 
+                          float ez[NY_0][NX_0]) {
+#pragma HLS INLINE off
+  update_HX(hx, ey1, ey, ez);
+  update_HY(hy, ez, ex1, ex);
+  update_HZ(hz, ex, ey);
+}
+\end{lstlisting}
+
+\subsubsection{Buffer Management: Global vs. Local Scope}
+\label{section:global_vs_local}
+The final refinement in this stage involved refactoring the scope and lifecycle of the buffers.
+Initially, Z-plane buffers were declared as \texttt{static} global variables, which created rigid hardware bindings that restricted the scheduling flexibility of the compiler.
+By transitioning to local, function-scoped buffers passed explicitly as arguments between the \texttt{read}, \texttt{compute}, and \texttt{write} stages, the data dependencies were made transparent to the HLS tool.
+This shift allowed the compiler to more effectively manage the transition between external memory-mapped access and high-speed internal BRAM updates.
+
 \subsection{Advanced Throughput Optimization}
+\label{section:tls}
+While the memory optimizations described in the previous section resolved port contention and local dependencies, the accelerator still operated as a sequential state machine.
+In this model, the hardware must fully complete the reading of a plane, the computation of the update, and the write-back to external memory in a strict linear order.
+While this process is efficient when pipelined internally, significant throughput gains can be achieved by overlapping these high-level tasks.
+By utilizing task-level parallelism, the design can begin reading the next plane while the current one is still being computed.
+The following subsections detail the transition from a sequential dataflow to an advanced streaming architecture, exploring the trade-offs between point-to-point streaming and block-based synchronization.
+
+\subsubsection{Temporal Overlapping: Ping-Pong Buffers}
+\label{section:stream}
+The first attempt at task-level parallelism utilized the concept of \textbf{Ping-Pong Buffer} (double buffering) to overlap the memory access and computation stages.
+By declaring the field arrays with an additional bank dimension (\texttt{hx\_plane[2][NY][NX]}), the HLS scheduler was instructed via the \texttt{\#pragma HLS DATAFLOW} directive to process these banks concurrently.
+In this model, while the memory stage populates one bank, the compute engine could simultaneously process the other.
+This strategy aimed to obscure the high latency of global memory transfers by ensuring that the update engines were never starved of data.
+
+\subsubsection{Robust synchronization: \texttt{hls::stream\_of\_blocks}}
+\label{section:sob}
+While manual ping-pong arrays provide a theoretical throughput increase, they often introduce complex synchronization challenges and potential pointer-aliasing errors with the HLS scheduler.
+To resolve these issues, the design transitioned to the \texttt{hls::stream\_of\_blocks} paradigm.
+
+Unlike standard sequential streams, \texttt{hls::stream\_of\_blocks} allows for the transmission of an entire 2D plane as an atomic hardware block.
+This paradigm provided two specific advantages for the 3D FDTD accelerator.
+First, it enabled implicit handshaking, where the HLS framework automatically manages the ownership of the BRAM buffers between the producer and consumer functions.
+This automation eliminated the manual indexing and pointer-aliasing errors encountered in the initial ping-pong implementation.
+
+Furthermore, it ensured random access compatibility, which is crucial for the FDTD 7-point stencil.
+Because \texttt{stream\_of\_blocks} permits the compute engine to perform random-access reads within the transmitted block, the hardware could efficiently fetch the $i\pm1$ and $j\pm1$ neighbors required for the update logic.
+This capability provided the necessary data-access flexibility for the stencil math without the massive logic overhead that would be required to reconstruct spatial neighborhoods from a traditional sequential FIFO stream.
 
 \section{Evaluation}
 \subsection{Environments}
@@ -291,5 +562,42 @@ To establish a performance baseline, basic optimizations were applied by placing
 \clearpage{}
 \sloppy
 \bibliographystyle{IEEEtranN}
+\addcontentsline{toc}{section}{References}
 \bibliography{references}
+\markboth{References}{References}
+
+\clearpage{}
+\appendix
+\sloppy
+
+\addcontentsline{toc}{section}{Appendices}
+\section*{Appendices}
+\markboth{Appendices}{Appendices}
+
+\section{Extended Insight into Baseline Implementation with Streaming}
+\label{appendix:baseline_rpt}
+
+The following report illustrates the internal compiler results for the initial attempt at synthesizing a streaming-based 3D FDTD engine without memory optimization or domain decomposition.
+This implementation was designed as a "pass-through" test, focusing solely on the logic required to read from and write to global memory.
+
+As highlighted in Table \ref{appendix:design_size_rpt} the final \texttt{HW Transforms} phase, step (2) \texttt{optimizations}, the final instruction count reached a critical surge of 3,309,857.
+This count can be attributed to the HLS scheduler being forced to map the entire three-dimensional mesh simultaneously to satisfy the dataflow constraints, leading to a massive expansion of the state-machine logic.
+This diagnostic output served as the primary justification for the architectural shift toward the Z-plane domain decomposition described in Section \ref{section:domain}.
+
+\begin{sidewaystable}[tbp]
+  \centering
+  \caption{Vitis HLS Design Size Report for the Naive Dataflow implementation, exhibiting the instruction surge discussed in Section \ref{section:baseline}.}
+  \label{appendix:design_size_rpt}
+  \vspace{10pt}
+  \begin{minipage}{\textheight}
+    \lstset{
+      basicstyle=\ttfamily\fontsize{7}{8}\selectfont,
+      columns=flexible,
+      breaklines=false,
+      keepspaces=true
+    }
+    \lstinputlisting{reports/naive_dataflow_csynth_design_size.rpt}
+  \end{minipage}
+\end{sidewaystable}
+
 \end{document}
