@@ -211,48 +211,48 @@ static void
 stage_read(const float *__restrict__ hx_gmem, const float *__restrict__ hy_gmem,
            const float *__restrict__ hz_gmem, const float *__restrict__ ex_gmem,
            const float *__restrict__ ey_gmem, const float *__restrict__ ez_gmem,
-           float hx_plane[NY_1][NX_0], float hy_plane[NY_0][NX_1],
-           float hz_plane[NY_1][NX_1], float ex_plane[NY_0][NX_1],
-           float ey_plane[NY_1][NX_0], float ez_plane[NY_0][NX_0],
-           float ex_plus1[NY_0][NX_1], float ey_plus1[NY_1][NX_0],
-           const int z) {
+           float hx_plane[2][NY_1][NX_0], float hy_plane[2][NY_0][NX_1],
+           float hz_plane[2][NY_1][NX_1], float ex_plane[2][NY_0][NX_1],
+           float ey_plane[2][NY_1][NX_0], float ez_plane[2][NY_0][NX_0],
+           float ex_plus1[2][NY_0][NX_1], float ey_plus1[2][NY_1][NX_0],
+           const int idx, const int z) {
   if (z < NZ_1) {
-    rd_plane(ex_gmem, &ex_plane[0][0], z, EX_PLANER);
-    rd_plane(ey_gmem, &ey_plane[0][0], z, EY_PLANER);
-    rd_plane(ez_gmem, &ez_plane[0][0], z, EZ_PLANER);
-    rd_plane(ex_gmem, &ex_plus1[0][0], z + 1, EX_PLANER);
-    rd_plane(ey_gmem, &ey_plus1[0][0], z + 1, EY_PLANER);
+    rd_plane(ex_gmem, &ex_plane[idx][0][0], z, EX_PLANER);
+    rd_plane(ey_gmem, &ey_plane[idx][0][0], z, EY_PLANER);
+    rd_plane(ez_gmem, &ez_plane[idx][0][0], z, EZ_PLANER);
+    rd_plane(ex_gmem, &ex_plus1[idx][0][0], z + 1, EX_PLANER);
+    rd_plane(ey_gmem, &ey_plus1[idx][0][0], z + 1, EY_PLANER);
 
-    rd_plane(hx_gmem, &hx_plane[0][0], z, HX_PLANER);
-    rd_plane(hy_gmem, &hy_plane[0][0], z, HY_PLANER);
-    rd_plane(hz_gmem, &hz_plane[0][0], z, HZ_PLANER);
+    rd_plane(hx_gmem, &hx_plane[idx][0][0], z, HX_PLANER);
+    rd_plane(hy_gmem, &hy_plane[idx][0][0], z, HY_PLANER);
+    rd_plane(hz_gmem, &hz_plane[idx][0][0], z, HZ_PLANER);
   } else {
-    rd_plane(ex_gmem, &ex_plane[0][0], z, EX_PLANER);
-    rd_plane(ey_gmem, &ey_plane[0][0], z, EY_PLANER);
-    rd_plane(hz_gmem, &hz_plane[0][0], z, HZ_PLANER);
+    rd_plane(ex_gmem, &ex_plane[idx][0][0], z, EX_PLANER);
+    rd_plane(ey_gmem, &ey_plane[idx][0][0], z, EY_PLANER);
+    rd_plane(hz_gmem, &hz_plane[idx][0][0], z, HZ_PLANER);
   }
 }
 
 static void
-stage_compute(float hx_plane[NY_1][NX_0], float hy_plane[NY_0][NX_1],
-              float hz_plane[NY_1][NX_1], float ex_plane[NY_0][NX_1],
-              float ey_plane[NY_1][NX_0], float ez_plane[NY_0][NX_0],
-              float ex_plus1[NY_0][NX_1], float ey_plus1[NY_1][NX_0],
+stage_compute(float hx_plane[2][NY_1][NX_0], float hy_plane[2][NY_0][NX_1],
+              float hz_plane[2][NY_1][NX_1], float ex_plane[2][NY_0][NX_1],
+              float ey_plane[2][NY_1][NX_0], float ez_plane[2][NY_0][NX_0],
+              float ex_plus1[2][NY_0][NX_1], float ey_plus1[2][NY_1][NX_0],
               float hx_prev1[NY_1][NX_0], float hy_prev1[NY_0][NX_1],
-              const int z) {
+              const int idx, const int z) {
   if (z < 0) return;
   if (z < NZ_1) {
-    update_H_crit(hx_plane, hy_plane, hz_plane, ex_plane, ex_plus1, ey_plane,
-                  ey_plus1, ez_plane);
-    update_E_crit(ex_plane, ey_plane, ez_plane, hz_plane, hy_plane, hy_prev1,
-                  hx_plane, hx_prev1);
-    check_dipole(ex_plane, ey_plane, z);
+    update_H_crit(hx_plane[idx], hy_plane[idx], hz_plane[idx], ex_plane[idx],
+                  ex_plus1[idx], ey_plane[idx], ey_plus1[idx], ez_plane[idx]);
+    update_E_crit(ex_plane[idx], ey_plane[idx], ez_plane[idx], hz_plane[idx],
+                  hy_plane[idx], hy_prev1, hx_plane[idx], hx_prev1);
+    check_dipole(ex_plane[idx], ey_plane[idx], z);
 
     {
       float *hx_p1loc = &hx_prev1[0][0];
-      float *hx_plloc = &hx_plane[0][0];
+      float *hx_plloc = &hx_plane[idx][0][0];
       float *hy_p1loc = &hy_prev1[0][0];
-      float *hy_plloc = &hy_plane[0][0];
+      float *hy_plloc = &hy_plane[idx][0][0];
       for (int i = 0; i < HX_PLANER; ++i) {
 #pragma HLS PIPELINE II = 1
         hx_p1loc[i] = hx_plloc[i];
@@ -264,32 +264,33 @@ stage_compute(float hx_plane[NY_1][NX_0], float hy_plane[NY_0][NX_1],
     }
 
   } else {
-    update_H_tail(hz_plane, ex_plane, ey_plane);
-    update_E_tail(ex_plane, ey_plane, hz_plane, hy_prev1, hx_prev1);
+    update_H_tail(hz_plane[idx], ex_plane[idx], ey_plane[idx]);
+    update_E_tail(ex_plane[idx], ey_plane[idx], hz_plane[idx], hy_prev1,
+                  hx_prev1);
   }
 }
 
-static void
-stage_write(float *__restrict__ hx_gmem, float *__restrict__ hy_gmem,
-            float *__restrict__ hz_gmem, float *__restrict__ ex_gmem,
-            float *__restrict__ ey_gmem, float *__restrict__ ez_gmem,
-            const float hx_plane[NY_1][NX_0], const float hy_plane[NY_0][NX_1],
-            const float hz_plane[NY_1][NX_1], const float ex_plane[NY_0][NX_1],
-            const float ey_plane[NY_1][NX_0], const float ez_plane[NY_0][NX_0],
-            const float ex_plus1[NY_0][NX_1], const float ey_plus1[NY_1][NX_0],
-            const int z) {
+static void stage_write(
+    float *__restrict__ hx_gmem, float *__restrict__ hy_gmem,
+    float *__restrict__ hz_gmem, float *__restrict__ ex_gmem,
+    float *__restrict__ ey_gmem, float *__restrict__ ez_gmem,
+    const float hx_plane[2][NY_1][NX_0], const float hy_plane[2][NY_0][NX_1],
+    const float hz_plane[2][NY_1][NX_1], const float ex_plane[2][NY_0][NX_1],
+    const float ey_plane[2][NY_1][NX_0], const float ez_plane[2][NY_0][NX_0],
+    const float ex_plus1[2][NY_0][NX_1], const float ey_plus1[2][NY_1][NX_0],
+    const int idx, const int z) {
   if (z < 0) return;
   if (z < NZ_1) {
-    wr_plane(hx_gmem, &hx_plane[0][0], z, HX_PLANER);
-    wr_plane(hy_gmem, &hy_plane[0][0], z, HY_PLANER);
-    wr_plane(hz_gmem, &hz_plane[0][0], z, HZ_PLANER);
-    wr_plane(ex_gmem, &ex_plane[0][0], z, EX_PLANER);
-    wr_plane(ey_gmem, &ey_plane[0][0], z, EY_PLANER);
-    wr_plane(ez_gmem, &ez_plane[0][0], z, EZ_PLANER);
+    wr_plane(hx_gmem, &hx_plane[idx][0][0], z, HX_PLANER);
+    wr_plane(hy_gmem, &hy_plane[idx][0][0], z, HY_PLANER);
+    wr_plane(hz_gmem, &hz_plane[idx][0][0], z, HZ_PLANER);
+    wr_plane(ex_gmem, &ex_plane[idx][0][0], z, EX_PLANER);
+    wr_plane(ey_gmem, &ey_plane[idx][0][0], z, EY_PLANER);
+    wr_plane(ez_gmem, &ez_plane[idx][0][0], z, EZ_PLANER);
   } else {
-    wr_plane(hz_gmem, &hz_plane[0][0], z, HZ_PLANER);
-    wr_plane(ex_gmem, &ex_plane[0][0], z, EX_PLANER);
-    wr_plane(ey_gmem, &ey_plane[0][0], z, EY_PLANER);
+    wr_plane(hz_gmem, &hz_plane[idx][0][0], z, HZ_PLANER);
+    wr_plane(ex_gmem, &ex_plane[idx][0][0], z, EX_PLANER);
+    wr_plane(ey_gmem, &ey_plane[idx][0][0], z, EY_PLANER);
   }
 }
 
@@ -307,29 +308,37 @@ void fdtd(float *__restrict__ hx_gmem, float *__restrict__ hy_gmem,
 #pragma HLS INTERFACE s_axilite port = return bundle = control
   // clang-format on
 
-  float hx_plane[NY_1][NX_0];
-  float hy_plane[NY_0][NX_1];
-  float hz_plane[NY_1][NX_1];
-  float ex_plane[NY_0][NX_1];
-  float ey_plane[NY_1][NX_0];
-  float ez_plane[NY_0][NX_0];
-  float ex_plus1[NY_0][NX_1];
-  float ey_plus1[NY_1][NX_0];
+  float hx_plane[2][NY_1][NX_0];
+  float hy_plane[2][NY_0][NX_1];
+  float hz_plane[2][NY_1][NX_1];
+  float ex_plane[2][NY_0][NX_1];
+  float ey_plane[2][NY_1][NX_0];
+  float ez_plane[2][NY_0][NX_0];
+  float ex_plus1[2][NY_0][NX_1];
+  float ey_plus1[2][NY_1][NX_0];
 
   static float hx_prev1[NY_1][NX_0];
   static float hy_prev1[NY_0][NX_1];
 
   // clang-format off
-#pragma HLS ARRAY_PARTITION variable = ex_plane cyclic factor = PAR_FACTOR dim = 2
-#pragma HLS ARRAY_PARTITION variable = ey_plane cyclic factor = PAR_FACTOR dim = 2
-#pragma HLS ARRAY_PARTITION variable = ez_plane cyclic factor = PAR_FACTOR dim = 2
-#pragma HLS ARRAY_PARTITION variable = hx_plane cyclic factor = PAR_FACTOR dim = 2
-#pragma HLS ARRAY_PARTITION variable = hy_plane cyclic factor = PAR_FACTOR dim = 2
-#pragma HLS ARRAY_PARTITION variable = hz_plane cyclic factor = PAR_FACTOR dim = 2
-#pragma HLS ARRAY_PARTITION variable = ex_plus1 cyclic factor = PAR_FACTOR dim = 2
-#pragma HLS ARRAY_PARTITION variable = ey_plus1 cyclic factor = PAR_FACTOR dim = 2
-#pragma HLS ARRAY_PARTITION variable = hx_prev1 cyclic factor = PAR_FACTOR dim = 2
-#pragma HLS ARRAY_PARTITION variable = hy_prev1 cyclic factor = PAR_FACTOR dim = 2
+// #pragma HLS ARRAY_PARTITION variable = ex_plane cyclic factor = PAR_FACTOR dim = 2
+// #pragma HLS ARRAY_PARTITION variable = ey_plane cyclic factor = PAR_FACTOR dim = 2
+// #pragma HLS ARRAY_PARTITION variable = ez_plane cyclic factor = PAR_FACTOR dim = 2
+// #pragma HLS ARRAY_PARTITION variable = hx_plane cyclic factor = PAR_FACTOR dim = 2
+// #pragma HLS ARRAY_PARTITION variable = hy_plane cyclic factor = PAR_FACTOR dim = 2
+// #pragma HLS ARRAY_PARTITION variable = hz_plane cyclic factor = PAR_FACTOR dim = 2
+// #pragma HLS ARRAY_PARTITION variable = ex_plus1 cyclic factor = PAR_FACTOR dim = 2
+// #pragma HLS ARRAY_PARTITION variable = ey_plus1 cyclic factor = PAR_FACTOR dim = 2
+// #pragma HLS ARRAY_PARTITION variable = hx_prev1 cyclic factor = PAR_FACTOR dim = 2
+// #pragma HLS ARRAY_PARTITION variable = hy_prev1 cyclic factor = PAR_FACTOR dim = 2
+#pragma HLS ARRAY_PARTITION variable=hx_plane complete dim=1
+#pragma HLS ARRAY_PARTITION variable=hy_plane complete dim=1
+#pragma HLS ARRAY_PARTITION variable=hz_plane complete dim=1
+#pragma HLS ARRAY_PARTITION variable=ex_plane complete dim=1
+#pragma HLS ARRAY_PARTITION variable=ey_plane complete dim=1
+#pragma HLS ARRAY_PARTITION variable=ez_plane complete dim=1
+#pragma HLS ARRAY_PARTITION variable=ex_plus1 complete dim=1
+#pragma HLS ARRAY_PARTITION variable=ey_plus1 complete dim=1
   // clang-format on
 
   {
@@ -350,11 +359,11 @@ void fdtd(float *__restrict__ hx_gmem, float *__restrict__ hy_gmem,
 #pragma HLS DATAFLOW
     stage_read(hx_gmem, hy_gmem, hz_gmem, ex_gmem, ey_gmem, ez_gmem, hx_plane,
                hy_plane, hz_plane, ex_plane, ey_plane, ez_plane, ex_plus1,
-               ey_plus1, z);
+               ey_plus1, (z % 2), z);
     stage_compute(hx_plane, hy_plane, hz_plane, ex_plane, ey_plane, ez_plane,
-                  ex_plus1, ey_plus1, hx_prev1, hy_prev1, z - 1);
+                  ex_plus1, ey_plus1, hx_prev1, hy_prev1, ((z - 1) % 2), z - 1);
     stage_write(hx_gmem, hy_gmem, hz_gmem, ex_gmem, ey_gmem, ez_gmem, hx_plane,
                 hy_plane, hz_plane, ex_plane, ey_plane, ez_plane, ex_plus1,
-                ey_plus1, z - 2);
+                ey_plus1, ((z - 2) % 2), z - 2);
   }
 }
