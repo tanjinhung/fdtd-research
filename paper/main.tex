@@ -64,17 +64,17 @@ Among these fundamentals, the simulation of electromagnetic waves remains at the
 
 A primary method for simulating electromagnetic waves is the Finite-Difference Time-Domain (FDTD) method \cite{yee-1138693}.
 While FDTD is a cornerstone of computational electromagnetics, providing a robust foundation for analysis, it faces significant challenges in 3D space.
-Specifically, the iterative nature of the method creates bottlenecks in memory bandwidth and data throughput, often characterized as the 'memory wall' in high-performance computing \cite{nguyen-2022, zohouri-2018}.
+Specifically, the iterative nature of the method creates bottlenecks in memory bandwidth and data throughput, often characterized as the ``memory wall'' in high-performance computing \cite{nguyen-2022, zohouri-2018}.
 As noted by Kong and Su \cite{kong-2016}, the computational demand of the 3D FDTD algorithm increases cubically with the grid resolution, necessitating highly parallel hardware architectures to maintain feasible simulation times.
 Traditionally, these simulations have been offloaded to Graphics Processing Units (GPUs).
-However, Field-Programmable Gate Arrays (FPGAs) have emerged as a compelling alternative.
+However, Field-Programmable Gate Arrays (FPGAs) have emerged as a compelling alternative. @??
 FPGAs offer distinct advantages over GPUs, including deterministic latency, superior energy efficiency \cite{nguyen-2022}, and the ability to implement highly customizable memory architectures for parallelism.
 Recent research has shown that through customized memory architectures, FPGAs can outperform GPUs in energy-per-update for structured-mesh solvers \cite{kamalakkannan-2023}.
 
-Despite these advantages, FPGAs are traditionally difficult to program using Hardware Description Language (HDLs).
-Implementing an FDTD simulation in HDL is tedious and requires the manual design of standard components that are better suited for automation.
+Despite these advantages, FPGAs are traditionally difficult to program using Hardware Description Languages (HDLs).
+Implementing an FDTD simulation in HDL is tedious and requires the modifications of standard components that are better suited for automation. @?? 
 High-Level Synthesis (HLS) addresses these challenges by allowing designers to describe complex hardware architectures using high-level languages such as C/C++.
-Recent benchmarking has demonstrated that HLS can achieve performance parity with manual RTL design while significantly reducing the development cycle \cite{bai-2023, rodriguez-canal-2023}.
+Recent benchmarking has demonstrated that HLS can achieve performance parity with manual RTL design while significantly accelerating the development cycle \cite{bai-2023, rodriguez-canal-2023}.
 
 This paper presents an optimized 3D FDTD accelerator designed via HLS, exploring several architectural optimization strategies, including:
 
@@ -84,7 +84,7 @@ This paper presents an optimized 3D FDTD accelerator designed via HLS, exploring
   \item[Task-Level Parallelism] Decomposing the algorithm into concurrent tasks to increase parallelism.
 \end{description}
 
-Through these optimization, we demonstrate that an HLS-driven approach can also produce a high-performance FDTD accelerator, while significantly improving code readability, maintainability, and design iteration speed compared to traditional HDL-based workflows.
+Through these optimization strategies, we demonstrate that an HLS-driven approach can also produce a high-performance FDTD accelerator, while significantly improving code readability, maintainability, and design iteration speed compared to traditional HDL-based workflows.
 
 \section{Background}
 \label{section:bg}
@@ -114,6 +114,7 @@ These equations, representing Gauss's Law, Gauss's Law for Magnetism, Faraday's 
     \mathbf{J} &= \sigma \mathbf{E}
   \end{align}
 \end{subequations}
+@??
 
 While \eqref{eq:Maxwell-Heaviside} provides a complete description of electromagnetism, it is more practical for numerical wave propagation analysis to substitute the constitutive relations directly into the curl equations. 
 By substituting the flux densities ($\mathbf{D}, \mathbf{B}$) and the current density ($\mathbf{J}$) into the curl equations, we obtain the coupled system of first-order partial differential equations:
@@ -141,7 +142,7 @@ By rearranging \eqref{eq:Maxwell-lossy} to isolate the temporal derivatives, we 
 \label{section:fdtd}
 To solve the coupled system of equations in \eqref{eq:Maxwell-temporal} using a digital computer, the continuous temporal and spatial derivatives must be transformed into a discrete form.
 The Finite-Difference Time-Domain (FDTD) method, first proposed by Kane S. Yee in 1966 \cite{yee-1138693}, achieves this by employing central-difference approximations.
-This approach maps the electric and magnetic fields onto a discrete staggered grid, allowing the system to be solved iteratively through a "leapfrog" time-stepping procedure.
+This approach maps the electric and magnetic fields onto a discrete staggered grid, allowing the system to be solved iteratively through a ``leapfrog'' time-stepping procedure.
 To ensure the numerical stability of this iterative scheme, the time step must satisfy the Courant-Friedrichs-Lewy (CFL) condition \cite{courant-1967}.
 
 \subsubsection{Yee's Staggered Grid}
@@ -153,10 +154,10 @@ In this configuration, each $\mathbf{E}$ component is located at the center of t
 The spatial coordinates of the field components within a single Yee cell are summarized in Table \ref{tab:offsets}.
 
 \begin{table}[htbp]
-  \label{tab:offsets}
   \centering
   \caption{Spatial offsets for $\mathbf{E}$ and $\mathbf{H}$ field components.}
   \renewcommand{\arraystretch}{1.1}
+  \label{tab:offsets}
   \begin{tabular}{l cc}
     \toprule
     \textbf{Axis} & \textbf{Electric Field ($\mathbf{E}$)} & \textbf{Magnetic Field ($\mathbf{H}$)} \\ \midrule
@@ -165,6 +166,7 @@ The spatial coordinates of the field components within a single Yee cell are sum
     $z$ & $(i, j, k + \frac{1}{2})$ & $(i + \frac{1}{2}, j + \frac{1}{2}, k)$ \\ \bottomrule
   \end{tabular}
 \end{table}
+@??
 
 This spatial staggering ensures that each field component is surrounded by four circulating dual-field components.
 This layout provides a natural representation of the curl operators, enabling second-order accurate central-difference approximations.
@@ -204,12 +206,12 @@ updating a single point requires values from its neighbors, which necessitates e
 \end{figure}
 
 While the Yee grid defines the spatial distribution of the fields, the FDTD method also requires discretization in the temporal domain.
-To achieve a stable and accurate simulation, a "leapfrog" time-stepping scheme is employed.
+To achieve a stable and accurate simulation, a ``leapfrog'' time-stepping scheme is employed.
 As illustrated in Figure \ref{fig:YeeCell}, the magnetic fields are offset by half a temporal step relative to the electric fields, allowing the interleaved calculation of field updates.
 
 \subsubsection{Temporal Update Equations}
 \label{section:update}
-In addition to spatial staggering, the FDTD method employs temporal interleaving, commonly referred to as the "leapfrog" scheme as describe by Taflove \cite{taflove-2005}.
+In addition to spatial staggering, the FDTD method employs temporal interleaving, commonly referred to as the ``leapfrog'' scheme as described by Taflove \cite{taflove-2005}.
 Under this arrangement, the $\mathbf{E}$ components are updated at integer time steps ($n, n+1, \dots$), whereas the $\mathbf{H}$ components are updated at half-integer time steps ($n+1/2, n+3/2, \dots$). 
 
 By applying central-difference approximations to the temporal and spatial derivatives in Maxwell’s Equations, we obtain the explicit update equations.
@@ -258,8 +260,8 @@ As noted by Zohouri et al. \cite{zohouri-2018}, the advantage of FPGAs in stenci
 To implement the complex update equations defined in Equation \eqref{eq:full_fdtd_vacuum}, the FPGA fabric utilizes several specialized hardware primitives:
 
 \begin{itemize}
-  \item \textbf{Configurable Logic Blocks (CLBs):} Consisting of Look-Up Tables (LUTs) and Flip-Flops (FF), these are the fundamental building blocks of the FPGA fabric.
-    They implement the "glue logic" and control flow of the system.
+  \item \textbf{Configurable Logic Blocks (CLBs):} Consisting of Look-Up Tables (LUTs) and Flip-Flops (FF), which are the fundamental building blocks of the FPGA fabric.
+    They implement the ``glue logic'' and control flow of the system.
     In an HLS-driven design, LUTs are used to build the Finite State Machines (FSMs) that coordinate dataflow between BRAM buffers and DSP slices.
     An increase in available LUTs allows for greater control complexity and more sophisticated optimization strategies.
   
@@ -269,7 +271,7 @@ To implement the complex update equations defined in Equation \eqref{eq:full_fdt
     Architecture studies in \cite{kong-2016} demonstrate that the spatial parallelism of FPGAs is uniquely suited to the concurrent field updates of the 3D FDTD grid.
   
   \item \textbf{Block RAM (BRAM):} These represent the on-chip memory resources that distinguish FPGAs from fixed-cache architectures.
-    Unlike standard global memory (DRAM), BRAM can be "partitioned" and "reshaped" to provide multiple independent access ports.
+    Unlike standard global memory (DRAM), BRAM can be ``partitioned'' and ``reshaped'' to provide multiple independent access ports.
     This is a critical feature for stencil computations, where the hardware must fetch several neighboring values simultaneously.
     Increasing BRAM capacity allows larger grid volumes to be stored on-chip, reducing the need for high-latency external memory access.
     Recent methodologies have focused on automatically extracting these memory patterns to reduce the overall FPGA memory footprint for complex stencil codes \cite{szafarczyk-2022}.
@@ -287,14 +289,14 @@ Many hardware structures, such as memory controllers and nested loop pipelines, 
 High-Level Synthesis (HLS) addresses these challenges by acting as an abstraction layer that automates the generation of these standard structures \cite{vitis-ug1399-2025}.
 Furthermore, HLS allows designers to describe complex projects using high-level languages like C or C++, significantly lowering the barrier of entry compared to RTL design in Verilog or VHDL.
 
-To bridge the gap between algorithmic description and hardware realization, HLS provides several critical optimization directives and data-handling paradigm \cite{vitis-ug1399-2025}:
+To bridge the gap between algorithmic description and hardware realization, HLS provides several critical optimization directives and data-handling paradigms \cite{vitis-ug1399-2025}:
 \begin{itemize}
     \item \textbf{Pipelining (\texttt{\#pragma HLS PIPELINE}):} This is a fundamental optimization for FDTD.
       It enables the concurrent execution of different stages of the update equation.
       By pipelining the inner loops, the hardware can begin a new field update before the previous one has completed, with the primary objective of achieving an Initiation Interval (II) of 1.
 
     \item \textbf{Memory Partitioning (\texttt{\#pragma HLS ARRAY\_PARTITION}):} Standard BRAM is limited by its physical port count (typically two).
-      Since 3D FDTD stencils require multiple simultaneous operands, HLS allows for the "partitioning" of these arrays into smaller, independent memory banks.
+      Since 3D FDTD stencils require multiple simultaneous operands, HLS allows for the ``partitioning'' of these arrays into smaller, independent memory banks.
       This provides the parallel access ports necessary to feed the DSP update engines without stalling the pipeline, a technique widely utilized to overcome the memory bottlenecks of structured-mesh solvers \cite{kamalakkannan-2023, szafarczyk-2022}.
 
     \item \textbf{Task-Level Parallelism (\texttt{\#pragma HLS DATAFLOW}):} This directive enables the execution of functions in a producer-consumer pattern.
@@ -302,10 +304,10 @@ To bridge the gap between algorithmic description and hardware realization, HLS 
 
     \item \textbf{Streaming Interfaces (\texttt{hls::stream} or \texttt{hls::stream\_of\_blocks}):} Beyond standard memory-mapped access, HLS supports a streaming data paradigm through built-in libraries (\texttt{hls\_streamofblocks.h} or \texttt{hls\_stream.h}).
       Using FIFO (First-In-First-Out) buffers, data can be passed point-to-point between hardware modules without the overhead of global memory addressing.
-      In 3D FDTD, streaming is essential for moving planes of data through the update engine, minimizing latency and enabling the high-throughput "Stream of Blocks" architecture\cite{so-2018}.
+      In 3D FDTD, streaming is essential for moving planes of data through the update engine, minimizing latency and enabling the high-throughput ``Stream of Blocks'' architecture \cite{so-2018}.
 \end{itemize}
 
-By utilizing these directives, HLS enables a "stepwise refinement" design process.
+By utilizing these directives, HLS enables a ``stepwise refinement'' design process.
 A designer can begin with a baseline software implementation and iteratively apply hardware constraints to transform a sequential C-program into a high-performance, parallelized 3D FDTD accelerator.
 As shown in automation frameworks such as SASA \cite{tian-sasa-2023}, overlapping computation and communication optimizations are critical for scaling FDTD accelerators to handle massive data volume of 3D electromagnetic simulations.
 
@@ -314,6 +316,8 @@ As shown in automation frameworks such as SASA \cite{tian-sasa-2023}, overlappin
 The development of the 3D FDTD accelerator followed a process of stepwise refinement, transitioning the initial algorithmic model into a hardware-optimized accelerator.
 This progression was driven by the specific memory and computational bottlenecks identified during the synthesis of the 3D Yee stencil.
 The following subsections detail the evolution from a baseline implementation to an advanced streaming architecture, exploring the specific hardware-software co-design strategies, such as domain decomposition, memory partitioning, and task-level parallelism, that were employed to maximize the system's throughput.
+
+@?? %Address the Critirion of the design.
 
 \subsection{Baseline Implementation}
 \label{section:baseline}
@@ -333,10 +337,10 @@ As a result, the HLS scheduler is unable to achieve single-cycle throughput, nec
 To circumvent these memory-mapped bottlenecks, an attempt was made to transition the design toward a streaming data paradigm.
 However, initial attempts to integrate streaming interfaces (\texttt{hls::stream}) directly into this baseline revealed significant architectural conflicts.
 Specifically, the naive integration of streaming without prior memory management led to severe resource contention.
-Synthesis reports for a simplified "pass-through" version of the kernel, designed only to read and write data, indicated a latency of upwards of 3 million clock cycles.
+Synthesis reports for a simplified ``pass-through'' version of the kernel, designed only to read and write data, indicated a latency of upwards of 3 million clock cycles.
 The full design size report illustrating this surge is provided in Appendix \ref{appendix:baseline_rpt}.
 This unacceptably high count was a result of the compiler's inability to resolve the 3D stencil dependencies across a sequential stream.
-These results confirmed that a more sophisticated domain decomposition and memory subsystem strategy were required before high-throughput streaming could be successfully implemented.
+These results confirmed that a more sophisticated domain decomposition and memory subsystem strategy was required before high-throughput streaming could be successfully implemented.
 
 \subsection{Domain Decomposition}
 \label{section:domain}
@@ -352,7 +356,7 @@ In this strategy, the 3D computational volume is processed as a series of these 
 As established by the Yee algorithm in Section \ref{section:fdtd}, updating field components at a specific Z-coordinate (plane $k$) requires the values from the adjacent planes ($k-1$ and $k+1$).
 By explicitly buffering these specific planes in on-chip BRAM, the accelerator can satisfy these 3D dependencies while only interacting with a small, localized subset of the total grid at any given time.
 
-This architectural shift effectively resolved the scheduler complexity that led to the "instruction surge" documented in Appendix \ref{appendix:baseline_rpt}.
+This architectural shift effectively resolved the scheduler complexity that led to the ``instruction surge'' documented in Appendix \ref{appendix:baseline_rpt}.
 By narrowing the HLS compiler's scope to a 2D planar update, the tool was able to synthesize an optimized state machine within the device's logic limits.
 Furthermore, the localized interaction within BRAM provided the necessary foundation for the memory partitioning and task-level throughput optimizations discussed in the subsequent sections.
 
@@ -438,7 +442,7 @@ This clarity allowed the compiler to better infer data dependencies and enabled 
 \label{section:arr_part}
 As established in Section \ref{section:fdtd}, the FDTD stencil requires simultaneous access to multiple field components.
 Standard BRAM primitives, however, are physically limited to two independent access ports, which forces the HLS scheduler to serialize memory fetches and stalls the pipeline.
-To resolve this "port starvation", the \texttt{\#pragma HLS ARRAY\_PARTITION} directive was applied to the Z-plane buffers.
+To resolve this ``port starvation'', the \texttt{\#pragma HLS ARRAY\_PARTITION} directive was applied to the Z-plane buffers.
 This optimization splits a single logical array into multiple independent hardware memory banks.
 This provided the parallel ports necessary to retrieve all stencil operands in a single clock cycle, satisfying the throughput requirements of the update engine without necessitating complex manual memory management.
 
@@ -446,7 +450,7 @@ This provided the parallel ports necessary to retrieve all stencil operands in a
 \label{section:sepfunc}
 To further refine the hardware schedule, the monolithic update loops were decomposed into modular functions, as shown in Listing \ref{lst:updateH}.
 By applying the \texttt{\#pragma HLS INLINE off} directive, the synthesis tool was directed to treat each field update as a dedicated hardware module.
-This "divide and conquer" approach allowed the HLS compiler to optimize the internal pipeline of each field independently.
+This ``divide and conquer'' approach allowed the HLS compiler to optimize the internal pipeline of each field independently.
 Furthermore, this modularity served as a critical prerequisite for overlapping execution, enabling the scheduler to manage the distinct computational requirements of the electric and magnetic field updates as separate processes rather than a single, oversized task.
 \vspace{16pt}
 \begin{lstlisting}[language=C++, style=CPPStyle, label={lst:updateH}, basicstyle=\ttfamily\footnotesize, caption={Implementation of the H-field update engine demonstrating Functional Decomposition}]
@@ -467,38 +471,7 @@ static void update_HX(float hx_plane[NY_1][NX_0],
   }
 }
 
-static void update_HY(float hy_plane[NY_0][NX_1], 
-                      float ez_plane[NY_0][NX_0],
-                      float ex_plus1[NY_0][NX_1], 
-                      float ex_plane[NY_0][NX_1]) {
-#pragma HLS INLINE off
-
-  // HY
-  for (int y = 0; y < NY_0; ++y) {
-    for (int x = 0; x < NX_1; ++x) {
-#pragma HLS PIPELINE II = 1
-      const float dez = ez_plane[y][x + 1] - ez_plane[y][x];
-      const float dex = ex_plus1[y][x] - ex_plane[y][x];
-      hy_plane[y][x] += ch * (dez - dex);
-    }
-  }
-}
-
-static void update_HZ(float hz_plane[NY_1][NX_1], 
-                      float ex_plane[NY_0][NX_1],
-                      float ey_plane[NY_1][NX_0]) {
-#pragma HLS INLINE off
-
-  // HZ
-  for (int y = 0; y < NY_1; ++y) {
-    for (int x = 0; x < NX_1; ++x) {
-#pragma HLS PIPELINE II = 1
-      const float dex = ex_plane[y + 1][x] - ex_plane[y][x];
-      const float dey = ey_plane[y][x + 1] - ey_plane[y][x];
-      hz_plane[y][x] += ch * (dex - dey);
-    }
-  }
-}
+// similar code for update_HY and update_HZ
 
 static void update_H_crit(float hx[NY_1][NX_0], 
                           float hy[NY_0][NX_1],
@@ -578,7 +551,7 @@ This capability provided the necessary data-access flexibility for the stencil m
 \label{appendix:baseline_rpt}
 
 The following report illustrates the internal compiler results for the initial attempt at synthesizing a streaming-based 3D FDTD engine without memory optimization or domain decomposition.
-This implementation was designed as a "pass-through" test, focusing solely on the logic required to read from and write to global memory.
+This implementation was designed as a ``pass-through'' test, focusing solely on the logic required to read from and write to global memory.
 
 As highlighted in Table \ref{appendix:design_size_rpt} the final \texttt{HW Transforms} phase, step (2) \texttt{optimizations}, the final instruction count reached a critical surge of 3,309,857.
 This count can be attributed to the HLS scheduler being forced to map the entire three-dimensional mesh simultaneously to satisfy the dataflow constraints, leading to a massive expansion of the state-machine logic.
