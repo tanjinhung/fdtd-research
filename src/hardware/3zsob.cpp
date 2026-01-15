@@ -1,16 +1,22 @@
 #include "def.h"
 #include "hls_streamofblocks.h"
 
-typedef struct PlaneBlock {
+typedef struct H_Block {
   float hx_plane[NY_1][NX_0];
   float hy_plane[NY_0][NX_1];
   float hz_plane[NY_1][NX_1];
+} H_Block;
+
+typedef struct E_Block {
   float ex_plane[NY_0][NX_1];
   float ey_plane[NY_1][NX_0];
   float ez_plane[NY_0][NX_0];
+} E_Block;
+
+typedef struct P_Block {
   float ex_plus1[NY_0][NX_1];
   float ey_plus1[NY_1][NX_0];
-} PlaneBlock;
+} P_Block;
 
 constexpr float ce = CDTDS * IMP0;
 constexpr float ch = CDTDS / IMP0;
@@ -223,55 +229,68 @@ static void
 stage_read(const float *__restrict__ hx_gmem, const float *__restrict__ hy_gmem,
            const float *__restrict__ hz_gmem, const float *__restrict__ ex_gmem,
            const float *__restrict__ ey_gmem, const float *__restrict__ ez_gmem,
-           hls::stream_of_blocks<PlaneBlock> &read2comp, const int z) {
+           hls::stream_of_blocks<H_Block> &hb,
+           hls::stream_of_blocks<E_Block> &eb,
+           hls::stream_of_blocks<P_Block> &pb, const int z) {
   if (z >= NZ_0 + 1) return;
-  hls::write_lock<PlaneBlock> wlock(read2comp);
-  PlaneBlock                 &out_data = wlock;
+  hls::write_lock<H_Block> wh(hb);
+  hls::write_lock<E_Block> we(eb);
+  hls::write_lock<P_Block> wp(pb);
+  H_Block                 &oh = wh;
+  E_Block                 &oe = we;
+  P_Block                 &op = wp;
 
   if (z < NZ_1) {
-    rd_plane(ex_gmem, &out_data.ex_plane[0][0], z, EX_PLANER);
-    rd_plane(ey_gmem, &out_data.ey_plane[0][0], z, EY_PLANER);
-    rd_plane(ez_gmem, &out_data.ez_plane[0][0], z, EZ_PLANER);
-    rd_plane(ex_gmem, &out_data.ex_plus1[0][0], z + 1, EX_PLANER);
-    rd_plane(ey_gmem, &out_data.ey_plus1[0][0], z + 1, EY_PLANER);
-    rd_plane(hx_gmem, &out_data.hx_plane[0][0], z, HX_PLANER);
-    rd_plane(hy_gmem, &out_data.hy_plane[0][0], z, HY_PLANER);
-    rd_plane(hz_gmem, &out_data.hz_plane[0][0], z, HZ_PLANER);
+    rd_plane(ex_gmem, &oe.ex_plane[0][0], z, EX_PLANER);
+    rd_plane(ey_gmem, &oe.ey_plane[0][0], z, EY_PLANER);
+    rd_plane(ez_gmem, &oe.ez_plane[0][0], z, EZ_PLANER);
+    rd_plane(ex_gmem, &op.ex_plus1[0][0], z + 1, EX_PLANER);
+    rd_plane(ey_gmem, &op.ey_plus1[0][0], z + 1, EY_PLANER);
+    rd_plane(hx_gmem, &oh.hx_plane[0][0], z, HX_PLANER);
+    rd_plane(hy_gmem, &oh.hy_plane[0][0], z, HY_PLANER);
+    rd_plane(hz_gmem, &oh.hz_plane[0][0], z, HZ_PLANER);
   } else {
-    rd_plane(ex_gmem, &out_data.ex_plane[0][0], z, EX_PLANER);
-    rd_plane(ey_gmem, &out_data.ey_plane[0][0], z, EY_PLANER);
-    rd_plane(hz_gmem, &out_data.hz_plane[0][0], z, HZ_PLANER);
+    rd_plane(ex_gmem, &oe.ex_plane[0][0], z, EX_PLANER);
+    rd_plane(ey_gmem, &oe.ey_plane[0][0], z, EY_PLANER);
+    rd_plane(hz_gmem, &oh.hz_plane[0][0], z, HZ_PLANER);
   }
 }
 
-static void stage_compute(hls::stream_of_blocks<PlaneBlock> &read2comp,
-                          hls::stream_of_blocks<PlaneBlock> &comp2wite,
-                          float hx_prev1[NY_1][NX_0],
-                          float hy_prev1[NY_0][NX_1], const int z) {
+static void stage_compute(
+    hls::stream_of_blocks<H_Block> &hbi, hls::stream_of_blocks<E_Block> &ebi,
+    hls::stream_of_blocks<P_Block> &pbi, hls::stream_of_blocks<H_Block> &hbo,
+    hls::stream_of_blocks<E_Block> &ebo, hls::stream_of_blocks<P_Block> &pbo,
+    float hx_prev1[NY_1][NX_0], float hy_prev1[NY_0][NX_1], const int z) {
   if (z < 0 || z >= NZ_0 + 1) return;
 
-  hls::read_lock<PlaneBlock>  rlock(read2comp);
-  hls::write_lock<PlaneBlock> wlock(comp2wite);
-
-  PlaneBlock &in_data  = rlock;
-  PlaneBlock &out_data = wlock;
-
-  out_data = in_data;
+  hls::read_lock<H_Block>  rh(hbi);
+  hls::read_lock<E_Block>  re(ebi);
+  hls::read_lock<P_Block>  rp(pbi);
+  hls::write_lock<H_Block> wh(hbo);
+  hls::write_lock<E_Block> we(ebo);
+  hls::write_lock<P_Block> wp(pbo);
+  H_Block                 &ih = rh;
+  E_Block                 &ie = re;
+  P_Block                 &ip = rp;
+  H_Block                 &oh = wh;
+  E_Block                 &oe = we;
+  P_Block                 &op = wp;
+  ih                          = oh;
+  ie                          = oe;
+  ip                          = op;
 
   if (z < NZ_1) {
-    update_H_crit(out_data.hx_plane, out_data.hy_plane, out_data.hz_plane,
-                  out_data.ex_plane, out_data.ex_plus1, out_data.ey_plane,
-                  out_data.ey_plus1, out_data.ez_plane);
-    update_E_crit(out_data.ex_plane, out_data.ey_plane, out_data.ez_plane,
-                  out_data.hz_plane, out_data.hy_plane, hy_prev1,
-                  out_data.hx_plane, hx_prev1);
-    check_dipole(out_data.ex_plane, out_data.ey_plane, z);
+    update_H_crit(oh.hx_plane, oh.hy_plane, oh.hz_plane, oe.ex_plane,
+                  op.ex_plus1, oe.ey_plane, op.ey_plus1, oe.ez_plane);
+    update_E_crit(oe.ex_plane, oe.ey_plane, oe.ez_plane, oh.hz_plane,
+                  oh.hy_plane, hy_prev1, oh.hx_plane, hx_prev1);
+    check_dipole(oe.ex_plane, oe.ey_plane, z);
 
     {
       float *hx_p1loc = &hx_prev1[0][0];
-      float *hx_plloc = &out_data.hx_plane[0][0];
+      float *hx_plloc = &oh.hx_plane[0][0];
       float *hy_p1loc = &hy_prev1[0][0];
-      float *hy_plloc = &out_data.hy_plane[0][0];
+      float *hy_plloc = &oh.hy_plane[0][0];
       for (int i = 0; i < HX_PLANER; ++i) {
 #pragma HLS PIPELINE II = 1
         hx_p1loc[i] = hx_plloc[i];
@@ -282,9 +301,8 @@ static void stage_compute(hls::stream_of_blocks<PlaneBlock> &read2comp,
       }
     }
   } else {
-    update_H_tail(out_data.hz_plane, out_data.ex_plane, out_data.ey_plane);
-    update_E_tail(out_data.ex_plane, out_data.ey_plane, out_data.hz_plane,
-                  hy_prev1, hx_prev1);
+    update_H_tail(oh.hz_plane, oe.ex_plane, oe.ey_plane);
+    update_E_tail(oe.ex_plane, oe.ey_plane, oh.hz_plane, hy_prev1, hx_prev1);
   }
 }
 
@@ -292,22 +310,25 @@ static void
 stage_write(float *__restrict__ hx_gmem, float *__restrict__ hy_gmem,
             float *__restrict__ hz_gmem, float *__restrict__ ex_gmem,
             float *__restrict__ ey_gmem, float *__restrict__ ez_gmem,
-            hls::stream_of_blocks<PlaneBlock> &comp2wite, const int z) {
+            hls::stream_of_blocks<H_Block> &hb,
+            hls::stream_of_blocks<E_Block> &eb, const int z) {
   if (z < 0 || z >= NZ_0 + 1) return;
-  hls::read_lock<PlaneBlock> rlock(comp2wite);
-  PlaneBlock                 in_data = rlock;
+  hls::read_lock<H_Block> rh(hb);
+  hls::read_lock<E_Block> re(eb);
+  H_Block                &ih = rh;
+  E_Block                &ie = re;
 
   if (z < NZ_1) {
-    wr_plane(hx_gmem, &in_data.hx_plane[0][0], z, HX_PLANER);
-    wr_plane(hy_gmem, &in_data.hy_plane[0][0], z, HY_PLANER);
-    wr_plane(hz_gmem, &in_data.hz_plane[0][0], z, HZ_PLANER);
-    wr_plane(ex_gmem, &in_data.ex_plane[0][0], z, EX_PLANER);
-    wr_plane(ey_gmem, &in_data.ey_plane[0][0], z, EY_PLANER);
-    wr_plane(ez_gmem, &in_data.ez_plane[0][0], z, EZ_PLANER);
+    wr_plane(hx_gmem, &ih.hx_plane[0][0], z, HX_PLANER);
+    wr_plane(hy_gmem, &ih.hy_plane[0][0], z, HY_PLANER);
+    wr_plane(hz_gmem, &ih.hz_plane[0][0], z, HZ_PLANER);
+    wr_plane(ex_gmem, &ie.ex_plane[0][0], z, EX_PLANER);
+    wr_plane(ey_gmem, &ie.ey_plane[0][0], z, EY_PLANER);
+    wr_plane(ez_gmem, &ie.ez_plane[0][0], z, EZ_PLANER);
   } else {
-    wr_plane(hz_gmem, &in_data.hz_plane[0][0], z, HZ_PLANER);
-    wr_plane(ex_gmem, &in_data.ex_plane[0][0], z, EX_PLANER);
-    wr_plane(ey_gmem, &in_data.ey_plane[0][0], z, EY_PLANER);
+    wr_plane(hz_gmem, &ih.hz_plane[0][0], z, HZ_PLANER);
+    wr_plane(ex_gmem, &ie.ex_plane[0][0], z, EX_PLANER);
+    wr_plane(ey_gmem, &ie.ey_plane[0][0], z, EY_PLANER);
   }
 }
 
@@ -325,8 +346,12 @@ void fdtd(float *__restrict__ hx_gmem, float *__restrict__ hy_gmem,
 #pragma HLS INTERFACE s_axilite port = return bundle = control
   // clang-format on
 
-  hls::stream_of_blocks<PlaneBlock, 2> read2comp;
-  hls::stream_of_blocks<PlaneBlock, 2> comp2wite;
+  hls::stream_of_blocks<H_Block, 2> read2comp_h;
+  hls::stream_of_blocks<E_Block, 2> read2comp_e;
+  hls::stream_of_blocks<P_Block, 2> read2comp_p;
+  hls::stream_of_blocks<H_Block, 2> comp2wite_h;
+  hls::stream_of_blocks<E_Block, 2> comp2wite_e;
+  hls::stream_of_blocks<P_Block, 2> comp2wite_p;
 
   static float hx_prev1[NY_1][NX_0];
   static float hy_prev1[NY_0][NX_1];
@@ -347,10 +372,11 @@ void fdtd(float *__restrict__ hx_gmem, float *__restrict__ hy_gmem,
 
   for (int z = 0; z < NZ_0 + 2; ++z) {
 #pragma HLS DATAFLOW
-    stage_read(hx_gmem, hy_gmem, hz_gmem, ex_gmem, ey_gmem, ez_gmem, read2comp,
-               z);
-    stage_compute(read2comp, comp2wite, hx_prev1, hy_prev1, z - 1);
-    stage_write(hx_gmem, hy_gmem, hz_gmem, ex_gmem, ey_gmem, ez_gmem, comp2wite,
-                z - 2);
+    stage_read(hx_gmem, hy_gmem, hz_gmem, ex_gmem, ey_gmem, ez_gmem,
+               read2comp_h, read2comp_e, read2comp_p, z);
+    stage_compute(read2comp_h, read2comp_e, read2comp_p, comp2wite_h,
+                  comp2wite_e, comp2wite_p, hx_prev1, hy_prev1, z - 1);
+    stage_write(hx_gmem, hy_gmem, hz_gmem, ex_gmem, ey_gmem, ez_gmem,
+                comp2wite_h, comp2wite_e, z - 2);
   }
 }
