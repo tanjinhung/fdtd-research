@@ -365,11 +365,11 @@ void fdtd(float *__restrict__ hx_gmem, float *__restrict__ hy_gmem,
   static float hx_prev1[NY_1][NX_0];
   static float hy_prev1[NY_0][NX_1];
 
-#pragma HLS disaggregate variable = read2comp_h
-#pragma HLS disaggregate variable = read2comp_e
-#pragma HLS disaggregate variable = read2comp_p
-#pragma HLS disaggregate variable = comp2wite_h
-#pragma HLS disaggregate variable = comp2wite_e
+  // #pragma HLS disaggregate variable = read2comp_h
+  // #pragma HLS disaggregate variable = read2comp_e
+  // #pragma HLS disaggregate variable = read2comp_p
+  // #pragma HLS disaggregate variable = comp2wite_h
+  // #pragma HLS disaggregate variable = comp2wite_e
   // #pragma HLS disaggregate variable = comp2wite_p
 
   {
