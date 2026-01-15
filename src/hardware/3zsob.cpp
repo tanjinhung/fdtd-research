@@ -265,11 +265,13 @@ stage_read(const float *__restrict__ hx_gmem, const float *__restrict__ hy_gmem,
   }
 }
 
-static void stage_compute(
-    hls::stream_of_blocks<H_Block> &hbi, hls::stream_of_blocks<E_Block> &ebi,
-    hls::stream_of_blocks<P_Block> &pbi, hls::stream_of_blocks<H_Block> &hbo,
-    hls::stream_of_blocks<E_Block> &ebo, hls::stream_of_blocks<P_Block> &pbo,
-    float hx_prev1[NY_1][NX_0], float hy_prev1[NY_0][NX_1], const int z) {
+static void stage_compute(hls::stream_of_blocks<H_Block> &hbi,
+                          hls::stream_of_blocks<E_Block> &ebi,
+                          hls::stream_of_blocks<P_Block> &pbi,
+                          hls::stream_of_blocks<H_Block> &hbo,
+                          hls::stream_of_blocks<E_Block> &ebo,
+                          float                           hx_prev1[NY_1][NX_0],
+                          float hy_prev1[NY_0][NX_1], const int z) {
   if (z < 0 || z >= NZ_0 + 1) return;
 
   hls::read_lock<H_Block>  rlh(hbi);
@@ -277,14 +279,12 @@ static void stage_compute(
   hls::read_lock<P_Block>  rlp(pbi);
   hls::write_lock<H_Block> wlh(hbo);
   hls::write_lock<E_Block> wle(ebo);
-  hls::write_lock<P_Block> wlp(pbo);
 
   H_Block &ih = rlh;
   E_Block &ie = rle;
   P_Block &ip = rlp;
   H_Block &oh = wlh;
   E_Block &oe = wle;
-  P_Block &op = wlp;
 
   if (z < NZ_1) {
     update_H_crit(oh.hx_plane, oh.hy_plane, oh.hz_plane, ih.hx_plane,
@@ -361,17 +361,16 @@ void fdtd(float *__restrict__ hx_gmem, float *__restrict__ hy_gmem,
   hls::stream_of_blocks<P_Block, 2> read2comp_p;
   hls::stream_of_blocks<H_Block, 2> comp2wite_h;
   hls::stream_of_blocks<E_Block, 2> comp2wite_e;
-  hls::stream_of_blocks<P_Block, 2> comp2wite_p;
 
   static float hx_prev1[NY_1][NX_0];
   static float hy_prev1[NY_0][NX_1];
 
-#pragma HLS disaggregate variable = read2comp_h
-#pragma HLS disaggregate variable = read2comp_e
-#pragma HLS disaggregate variable = read2comp_p
-#pragma HLS disaggregate variable = comp2wite_h
-#pragma HLS disaggregate variable = comp2wite_e
-#pragma HLS disaggregate variable = comp2wite_p
+  // #pragma HLS disaggregate variable = read2comp_h
+  // #pragma HLS disaggregate variable = read2comp_e
+  // #pragma HLS disaggregate variable = read2comp_p
+  // #pragma HLS disaggregate variable = comp2wite_h
+  // #pragma HLS disaggregate variable = comp2wite_e
+  // #pragma HLS disaggregate variable = comp2wite_p
 
   {
     float *hx_p1loc = &hx_prev1[0][0];
@@ -392,7 +391,7 @@ void fdtd(float *__restrict__ hx_gmem, float *__restrict__ hy_gmem,
     stage_read(hx_gmem, hy_gmem, hz_gmem, ex_gmem, ey_gmem, ez_gmem,
                read2comp_h, read2comp_e, read2comp_p, z);
     stage_compute(read2comp_h, read2comp_e, read2comp_p, comp2wite_h,
-                  comp2wite_e, comp2wite_p, hx_prev1, hy_prev1, z - 1);
+                  comp2wite_e, hx_prev1, hy_prev1, z - 1);
     stage_write(hx_gmem, hy_gmem, hz_gmem, ex_gmem, ey_gmem, ez_gmem,
                 comp2wite_h, comp2wite_e, z - 2);
   }
