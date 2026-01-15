@@ -272,27 +272,34 @@ static void stage_compute(
     float hx_prev1[NY_1][NX_0], float hy_prev1[NY_0][NX_1], const int z) {
   if (z < 0 || z >= NZ_0 + 1) return;
 
-  hls::read_lock<H_Block>  rh(hbi);
-  hls::read_lock<E_Block>  re(ebi);
-  hls::read_lock<P_Block>  rp(pbi);
-  hls::write_lock<H_Block> wh(hbo);
-  hls::write_lock<E_Block> we(ebo);
-  hls::write_lock<P_Block> wp(pbo);
+  hls::read_lock<H_Block>  rlh(hbi);
+  hls::read_lock<E_Block>  rle(ebi);
+  hls::read_lock<P_Block>  rlp(pbi);
+  hls::write_lock<H_Block> wlh(hbo);
+  hls::write_lock<E_Block> wle(ebo);
+  hls::write_lock<P_Block> wlp(pbo);
+
+  H_Block &ih = rlh;
+  E_Block &ie = rle;
+  P_Block &ip = rlp;
+  H_Block &oh = wlh;
+  E_Block &oe = wle;
+  P_Block &op = wlp;
 
   if (z < NZ_1) {
-    update_H_crit(wh.hx_plane, wh.hy_plane, wh.hz_plane, rh.hx_plane,
-                  rh.hy_plane, rh.hz_plane, re.ex_plane, rp.ex_plus1,
-                  re.ey_plane, rp.ey_plus1, re.ez_plane);
-    update_E_crit(we.ex_plane, we.ey_plane, we.ez_plane, re.ex_plane,
-                  re.ey_plane, re.ez_plane, wh.hz_plane, wh.hy_plane, hy_prev1,
-                  wh.hx_plane, hx_prev1);
-    check_dipole(we.ex_plane, we.ey_plane, z);
+    update_H_crit(oh.hx_plane, oh.hy_plane, oh.hz_plane, ih.hx_plane,
+                  ih.hy_plane, ih.hz_plane, ie.ex_plane, ip.ex_plus1,
+                  ie.ey_plane, ip.ey_plus1, ie.ez_plane);
+    update_E_crit(oe.ex_plane, oe.ey_plane, oe.ez_plane, ie.ex_plane,
+                  ie.ey_plane, ie.ez_plane, oh.hz_plane, oh.hy_plane, hy_prev1,
+                  oh.hx_plane, hx_prev1);
+    check_dipole(oe.ex_plane, oe.ey_plane, z);
 
     {
       float *hx_p1loc = &hx_prev1[0][0];
-      float *hx_plloc = &wh.hx_plane[0][0];
+      float *hx_plloc = &oh.hx_plane[0][0];
       float *hy_p1loc = &hy_prev1[0][0];
-      float *hy_plloc = &wh.hy_plane[0][0];
+      float *hy_plloc = &oh.hy_plane[0][0];
       for (int i = 0; i < HX_PLANER; ++i) {
 #pragma HLS PIPELINE II = 1
         hx_p1loc[i] = hx_plloc[i];
@@ -303,9 +310,9 @@ static void stage_compute(
       }
     }
   } else {
-    update_H_tail(wh.hz_plane, rh.hz_plane, we.ex_plane, we.ey_plane);
-    update_E_tail(we.ex_plane, we.ey_plane, re.ex_plane, re.ey_plane,
-                  wh.hz_plane, hy_prev1, hx_prev1);
+    update_H_tail(oh.hz_plane, ih.hz_plane, oe.ex_plane, oe.ey_plane);
+    update_E_tail(oe.ex_plane, oe.ey_plane, ie.ex_plane, ie.ey_plane,
+                  oh.hz_plane, hy_prev1, hx_prev1);
   }
 }
 
