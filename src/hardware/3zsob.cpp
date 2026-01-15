@@ -278,27 +278,21 @@ static void stage_compute(
   hls::write_lock<H_Block> wh(hbo);
   hls::write_lock<E_Block> we(ebo);
   hls::write_lock<P_Block> wp(pbo);
-  H_Block                 &ih = rh;
-  E_Block                 &ie = re;
-  P_Block                 &ip = rp;
-  H_Block                 &oh = wh;
-  E_Block                 &oe = we;
-  P_Block                 &op = wp;
 
   if (z < NZ_1) {
-    update_H_crit(oh.hx_plane, oh.hy_plane, oh.hz_plane, ih.hx_plane,
-                  ih.hy_plane, ih.hz_plane, oe.ex_plane, op.ex_plus1,
-                  oe.ey_plane, op.ey_plus1, oe.ez_plane);
-    update_E_crit(oe.ex_plane, oe.ey_plane, oe.ez_plane, ie.ex_plane,
-                  ie.ey_plane, ie.ez_plane, oh.hz_plane, oh.hy_plane, hy_prev1,
-                  oh.hx_plane, hx_prev1);
-    check_dipole(oe.ex_plane, oe.ey_plane, z);
+    update_H_crit(wh->hx_plane, wh->hy_plane, wh->hz_plane, rh->hx_plane,
+                  rh->hy_plane, rh->hz_plane, re->ex_plane, rp->ex_plus1,
+                  re->ey_plane, rp->ey_plus1, re->ez_plane);
+    update_E_crit(we->ex_plane, we->ey_plane, we->ez_plane, re->ex_plane,
+                  re->ey_plane, re->ez_plane, wh->hz_plane, wh->hy_plane,
+                  hy_prev1, wh->hx_plane, hx_prev1);
+    check_dipole(we.ex_plane, we.ey_plane, z);
 
     {
       float *hx_p1loc = &hx_prev1[0][0];
-      float *hx_plloc = &oh.hx_plane[0][0];
+      float *hx_plloc = &wh->hx_plane[0][0];
       float *hy_p1loc = &hy_prev1[0][0];
-      float *hy_plloc = &oh.hy_plane[0][0];
+      float *hy_plloc = &wh->hy_plane[0][0];
       for (int i = 0; i < HX_PLANER; ++i) {
 #pragma HLS PIPELINE II = 1
         hx_p1loc[i] = hx_plloc[i];
@@ -309,9 +303,9 @@ static void stage_compute(
       }
     }
   } else {
-    update_H_tail(oh.hz_plane, ih.hz_plane, oe.ex_plane, oe.ey_plane);
-    update_E_tail(oe.ex_plane, oe.ey_plane, ie.ex_plane, ie.ey_plane,
-                  oh.hz_plane, hy_prev1, hx_prev1);
+    update_H_tail(wh->hz_plane, rh->hz_plane, we->ex_plane, we->ey_plane);
+    update_E_tail(we->ex_plane, we->ey_plane, re->ex_plane, re->ey_plane,
+                  wh->hz_plane, hy_prev1, hx_prev1);
   }
 }
 
@@ -365,12 +359,12 @@ void fdtd(float *__restrict__ hx_gmem, float *__restrict__ hy_gmem,
   static float hx_prev1[NY_1][NX_0];
   static float hy_prev1[NY_0][NX_1];
 
-#pragma HLS aggregate variable = read2comp_h compact = none
-#pragma HLS aggregate variable = read2comp_e compact = none
-#pragma HLS aggregate variable = read2comp_p compact = none
-#pragma HLS aggregate variable = comp2wite_h compact = none
-#pragma HLS aggregate variable = comp2wite_e compact = none
-#pragma HLS aggregate variable = comp2wite_p compact = none
+#pragma HLS disaggregate variable = read2comp_h
+#pragma HLS disaggregate variable = read2comp_e
+#pragma HLS disaggregate variable = read2comp_p
+#pragma HLS disaggregate variable = comp2wite_h
+#pragma HLS disaggregate variable = comp2wite_e
+#pragma HLS disaggregate variable = comp2wite_p
 
   {
     float *hx_p1loc = &hx_prev1[0][0];
