@@ -58,7 +58,7 @@ static void wr_plane(float *g, const float *p, int z, int len) {
 static void update_HX(float hx_out[NY_1][NX_0], float hx_in[NY_1][NX_0],
                       float ey_plus1[NY_1][NX_0], float ey_plane[NY_1][NX_0],
                       float ez_plane[NY_0][NX_0]) {
-#pragma HLS INLINE off
+#pragma HLS INLINE
 
   // HX
   for (int y = 0; y < NY_1; ++y) {
@@ -74,7 +74,7 @@ static void update_HX(float hx_out[NY_1][NX_0], float hx_in[NY_1][NX_0],
 static void update_HY(float hy_out[NY_0][NX_1], float hy_in[NY_0][NX_1],
                       float ez_plane[NY_0][NX_0], float ex_plus1[NY_0][NX_1],
                       float ex_plane[NY_0][NX_1]) {
-#pragma HLS INLINE off
+#pragma HLS INLINE
 
   // HY
   for (int y = 0; y < NY_0; ++y) {
@@ -89,7 +89,7 @@ static void update_HY(float hy_out[NY_0][NX_1], float hy_in[NY_0][NX_1],
 
 static void update_HZ(float hz_out[NY_1][NX_1], float hz_in[NY_1][NX_1],
                       float ex_plane[NY_0][NX_1], float ey_plane[NY_1][NX_0]) {
-#pragma HLS INLINE off
+#pragma HLS INLINE
 
   // HZ
   for (int y = 0; y < NY_1; ++y) {
@@ -117,7 +117,7 @@ static void update_H_crit(float hx_out[NY_1][NX_0], float hy_out[NY_0][NX_1],
 static void update_EX(float ex_out[NY_0][NX_1], float ex_in[NY_0][NX_1],
                       float hz_plane[NY_1][NX_1], float hy_plane[NY_0][NX_1],
                       float hy_prev1[NY_0][NX_1]) {
-#pragma HLS INLINE off
+#pragma HLS INLINE
 
   // EX
   for (int y = 1; y < NY_1; ++y) {
@@ -133,7 +133,7 @@ static void update_EX(float ex_out[NY_0][NX_1], float ex_in[NY_0][NX_1],
 static void update_EY(float ey_out[NY_1][NX_0], float ey_in[NY_1][NX_0],
                       float hx_plane[NY_1][NX_0], float hx_prev1[NY_1][NX_0],
                       float hz_plane[NY_1][NX_1]) {
-#pragma HLS INLINE off
+#pragma HLS INLINE
 
   // EY
   for (int y = 0; y < NY_1; ++y) {
@@ -148,7 +148,7 @@ static void update_EY(float ey_out[NY_1][NX_0], float ey_in[NY_1][NX_0],
 
 static void update_EZ(float ez_out[NY_0][NX_0], float ez_in[NY_0][NX_0],
                       float hy_plane[NY_0][NX_1], float hx_plane[NY_1][NX_0]) {
-#pragma HLS INLINE off
+#pragma HLS INLINE
 
   // EZ
   for (int y = 1; y < NY_1; ++y) {
@@ -365,11 +365,11 @@ void fdtd(float *__restrict__ hx_gmem, float *__restrict__ hy_gmem,
   static float hx_prev1[NY_1][NX_0];
   static float hy_prev1[NY_0][NX_1];
 
-  // #pragma HLS disaggregate variable = read2comp_h
-  // #pragma HLS disaggregate variable = read2comp_e
-  // #pragma HLS disaggregate variable = read2comp_p
-  // #pragma HLS disaggregate variable = comp2wite_h
-  // #pragma HLS disaggregate variable = comp2wite_e
+#pragma HLS disaggregate variable = read2comp_h
+#pragma HLS disaggregate variable = read2comp_e
+#pragma HLS disaggregate variable = read2comp_p
+#pragma HLS disaggregate variable = comp2wite_h
+#pragma HLS disaggregate variable = comp2wite_e
   // #pragma HLS disaggregate variable = comp2wite_p
 
   {
