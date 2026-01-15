@@ -280,19 +280,19 @@ static void stage_compute(
   hls::write_lock<P_Block> wp(pbo);
 
   if (z < NZ_1) {
-    update_H_crit(wh->hx_plane, wh->hy_plane, wh->hz_plane, rh->hx_plane,
-                  rh->hy_plane, rh->hz_plane, re->ex_plane, rp->ex_plus1,
-                  re->ey_plane, rp->ey_plus1, re->ez_plane);
-    update_E_crit(we->ex_plane, we->ey_plane, we->ez_plane, re->ex_plane,
-                  re->ey_plane, re->ez_plane, wh->hz_plane, wh->hy_plane,
-                  hy_prev1, wh->hx_plane, hx_prev1);
+    update_H_crit(wh.hx_plane, wh.hy_plane, wh.hz_plane, rh.hx_plane,
+                  rh.hy_plane, rh.hz_plane, re.ex_plane, rp.ex_plus1,
+                  re.ey_plane, rp.ey_plus1, re.ez_plane);
+    update_E_crit(we.ex_plane, we.ey_plane, we.ez_plane, re.ex_plane,
+                  re.ey_plane, re.ez_plane, wh.hz_plane, wh.hy_plane, hy_prev1,
+                  wh.hx_plane, hx_prev1);
     check_dipole(we.ex_plane, we.ey_plane, z);
 
     {
       float *hx_p1loc = &hx_prev1[0][0];
-      float *hx_plloc = &wh->hx_plane[0][0];
+      float *hx_plloc = &wh.hx_plane[0][0];
       float *hy_p1loc = &hy_prev1[0][0];
-      float *hy_plloc = &wh->hy_plane[0][0];
+      float *hy_plloc = &wh.hy_plane[0][0];
       for (int i = 0; i < HX_PLANER; ++i) {
 #pragma HLS PIPELINE II = 1
         hx_p1loc[i] = hx_plloc[i];
@@ -303,9 +303,9 @@ static void stage_compute(
       }
     }
   } else {
-    update_H_tail(wh->hz_plane, rh->hz_plane, we->ex_plane, we->ey_plane);
-    update_E_tail(we->ex_plane, we->ey_plane, re->ex_plane, re->ey_plane,
-                  wh->hz_plane, hy_prev1, hx_prev1);
+    update_H_tail(wh.hz_plane, rh.hz_plane, we.ex_plane, we.ey_plane);
+    update_E_tail(we.ex_plane, we.ey_plane, re.ex_plane, re.ey_plane,
+                  wh.hz_plane, hy_prev1, hx_prev1);
   }
 }
 
