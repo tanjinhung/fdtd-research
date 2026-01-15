@@ -55,8 +55,9 @@ static void wr_plane(float *g, const float *p, int z, int len) {
   }
 }
 
-static void update_HX(float hx_plane[NY_1][NX_0], float ey_plus1[NY_1][NX_0],
-                      float ey_plane[NY_1][NX_0], float ez_plane[NY_0][NX_0]) {
+static void update_HX(float hx_out[NY_1][NX_0], float hx_in[NY_1][NX_0],
+                      float ey_plus1[NY_1][NX_0], float ey_plane[NY_1][NX_0],
+                      float ez_plane[NY_0][NX_0]) {
 #pragma HLS INLINE off
 
   // HX
@@ -65,13 +66,14 @@ static void update_HX(float hx_plane[NY_1][NX_0], float ey_plus1[NY_1][NX_0],
 #pragma HLS PIPELINE II = 1
       const float dey = ey_plus1[y][x] - ey_plane[y][x];
       const float dez = ez_plane[y + 1][x] - ez_plane[y][x];
-      hx_plane[y][x] += ch * (dey - dez);
+      hx_out[y][x]    = hx_in[y][x] + ch * (dey - dez);
     }
   }
 }
 
-static void update_HY(float hy_plane[NY_0][NX_1], float ez_plane[NY_0][NX_0],
-                      float ex_plus1[NY_0][NX_1], float ex_plane[NY_0][NX_1]) {
+static void update_HY(float hy_out[NY_0][NX_1], float hy_in[NY_0][NX_1],
+                      float ez_plane[NY_0][NX_0], float ex_plus1[NY_0][NX_1],
+                      float ex_plane[NY_0][NX_1]) {
 #pragma HLS INLINE off
 
   // HY
@@ -80,13 +82,13 @@ static void update_HY(float hy_plane[NY_0][NX_1], float ez_plane[NY_0][NX_0],
 #pragma HLS PIPELINE II = 1
       const float dez = ez_plane[y][x + 1] - ez_plane[y][x];
       const float dex = ex_plus1[y][x] - ex_plane[y][x];
-      hy_plane[y][x] += ch * (dez - dex);
+      hy_out[y][x]    = hy_in[y][x] + ch * (dez - dex);
     }
   }
 }
 
-static void update_HZ(float hz_plane[NY_1][NX_1], float ex_plane[NY_0][NX_1],
-                      float ey_plane[NY_1][NX_0]) {
+static void update_HZ(float hz_out[NY_1][NX_1], float hz_in[NY_1][NX_1],
+                      float ex_plane[NY_0][NX_1], float ey_plane[NY_1][NX_0]) {
 #pragma HLS INLINE off
 
   // HZ
@@ -95,23 +97,26 @@ static void update_HZ(float hz_plane[NY_1][NX_1], float ex_plane[NY_0][NX_1],
 #pragma HLS PIPELINE II = 1
       const float dex = ex_plane[y + 1][x] - ex_plane[y][x];
       const float dey = ey_plane[y][x + 1] - ey_plane[y][x];
-      hz_plane[y][x] += ch * (dex - dey);
+      hz_out[y][x]    = hz_in[y][x] + ch * (dex - dey);
     }
   }
 }
 
-static void update_H_crit(float hx[NY_1][NX_0], float hy[NY_0][NX_1],
-                          float hz[NY_1][NX_1], float ex[NY_0][NX_1],
-                          float ex1[NY_0][NX_1], float ey[NY_1][NX_0],
-                          float ey1[NY_1][NX_0], float ez[NY_0][NX_0]) {
+static void update_H_crit(float hx_out[NY_1][NX_0], float hy_out[NY_0][NX_1],
+                          float hz_out[NY_1][NX_1], float hx_in[NY_1][NX_0],
+                          float hy_in[NY_0][NX_1], float hz_in[NY_1][NX_1],
+                          float ex[NY_0][NX_1], float ex1[NY_0][NX_1],
+                          float ey[NY_1][NX_0], float ey1[NY_1][NX_0],
+                          float ez[NY_0][NX_0]) {
 #pragma HLS INLINE off
-  update_HX(hx, ey1, ey, ez);
-  update_HY(hy, ez, ex1, ex);
-  update_HZ(hz, ex, ey);
+  update_HX(hx_out, hx_in, ey1, ey, ez);
+  update_HY(hy_out, hy_in, ez, ex1, ex);
+  update_HZ(hz_out, hz_in, ex, ey);
 }
 
-static void update_EX(float ex_plane[NY_0][NX_1], float hz_plane[NY_1][NX_1],
-                      float hy_plane[NY_0][NX_1], float hy_prev1[NY_0][NX_1]) {
+static void update_EX(float ex_out[NY_0][NX_1], float ex_in[NY_0][NX_1],
+                      float hz_plane[NY_1][NX_1], float hy_plane[NY_0][NX_1],
+                      float hy_prev1[NY_0][NX_1]) {
 #pragma HLS INLINE off
 
   // EX
@@ -120,13 +125,14 @@ static void update_EX(float ex_plane[NY_0][NX_1], float hz_plane[NY_1][NX_1],
 #pragma HLS PIPELINE II = 1
       const float dhz = hz_plane[y][x] - hz_plane[y - 1][x];
       const float dhy = hy_plane[y][x] - hy_prev1[y][x];
-      ex_plane[y][x] += ce * (dhz - dhy);
+      ex_out[y][x]    = ex_in[y][x] + ce * (dhz - dhy);
     }
   }
 }
 
-static void update_EY(float ey_plane[NY_1][NX_0], float hx_plane[NY_1][NX_0],
-                      float hx_prev1[NY_1][NX_0], float hz_plane[NY_1][NX_1]) {
+static void update_EY(float ey_out[NY_1][NX_0], float ey_in[NY_1][NX_0],
+                      float hx_plane[NY_1][NX_0], float hx_prev1[NY_1][NX_0],
+                      float hz_plane[NY_1][NX_1]) {
 #pragma HLS INLINE off
 
   // EY
@@ -135,13 +141,13 @@ static void update_EY(float ey_plane[NY_1][NX_0], float hx_plane[NY_1][NX_0],
 #pragma HLS PIPELINE II = 1
       const float dhx = hx_plane[y][x] - hx_prev1[y][x];
       const float dhz = hz_plane[y][x] - hz_plane[y][x - 1];
-      ey_plane[y][x] += ce * (dhx - dhz);
+      ey_out[y][x]    = ey_in[y][x] + ce * (dhx - dhz);
     }
   }
 }
 
-static void update_EZ(float ez_plane[NY_0][NX_0], float hy_plane[NY_0][NX_1],
-                      float hx_plane[NY_1][NX_0]) {
+static void update_EZ(float ez_out[NY_0][NX_0], float ez_in[NY_0][NX_0],
+                      float hy_plane[NY_0][NX_1], float hx_plane[NY_1][NX_0]) {
 #pragma HLS INLINE off
 
   // EZ
@@ -150,28 +156,30 @@ static void update_EZ(float ez_plane[NY_0][NX_0], float hy_plane[NY_0][NX_1],
 #pragma HLS PIPELINE II = 1
       const float dhy = hy_plane[y][x] - hy_plane[y][x - 1];
       const float dhx = hx_plane[y][x] - hx_plane[y - 1][x];
-      ez_plane[y][x] += ce * (dhy - dhx);
+      ez_out[y][x]    = ez_in[y][x] + ce * (dhy - dhx);
     }
   }
 }
 
-static void update_E_crit(float ex[NY_0][NX_1], float ey[NY_1][NX_0],
-                          float ez[NY_0][NX_0], float hz[NY_1][NX_1],
-                          float hy[NY_0][NX_1], float hy1[NY_0][NX_1],
-                          float hx[NY_1][NX_0], float hx1[NY_1][NX_0]) {
+static void update_E_crit(float ex_out[NY_0][NX_1], float ey_out[NY_1][NX_0],
+                          float ez_out[NY_0][NX_0], float ex_in[NY_0][NX_1],
+                          float ey_in[NY_1][NX_0], float ez_in[NY_0][NX_0],
+                          float hz[NY_1][NX_1], float hy[NY_0][NX_1],
+                          float hy1[NY_0][NX_1], float hx[NY_1][NX_0],
+                          float hx1[NY_1][NX_0]) {
 #pragma HLS INLINE off
-  update_EX(ex, hz, hy, hy1);
-  update_EY(ey, hx, hx1, hz);
-  update_EZ(ez, hy, hx);
+  update_EX(ex_out, ex_in, hz, hy, hy1);
+  update_EY(ey_out, ey_in, hx, hx1, hz);
+  update_EZ(ez_out, ez_in, hy, hx);
 }
 
-static void update_H_tail(float hz[NY_1][NX_1], float ex[NY_0][NX_1],
-                          float ey[NY_1][NX_0]) {
+static void update_H_tail(float hz_out[NY_1][NX_1], float hz_in[NY_1][NX_1],
+                          float ex[NY_0][NX_1], float ey[NY_1][NX_0]) {
 #pragma HLS INLINE off
-  update_HZ(hz, ex, ey);
+  update_HZ(hz_out, hz_in, ex, ey);
 }
 
-static void update_EX_tail(float ex_plane[NY_0][NX_1],
+static void update_EX_tail(float ex_out[NY_0][NX_1], float ex_in[NY_0][NX_1],
                            float hz_plane[NY_1][NX_1],
                            float hy_prev1[NY_0][NX_1]) {
 #pragma HLS INLINE off
@@ -182,12 +190,12 @@ static void update_EX_tail(float ex_plane[NY_0][NX_1],
 #pragma HLS PIPELINE II = 1
       const float dhz = hz_plane[y][x] - hz_plane[y - 1][x];
       const float dhy = -hy_prev1[y][x];
-      ex_plane[y][x] += ce * (dhz - dhy);
+      ex_out[y][x]    = ex_in[y][x] + ce * (dhz - dhy);
     }
   }
 }
 
-static void update_EY_tail(float ey_plane[NY_1][NX_0],
+static void update_EY_tail(float ey_out[NY_1][NX_0], float ey_in[NY_1][NX_0],
                            float hx_prev1[NY_1][NX_0],
                            float hz_plane[NY_1][NX_1]) {
 #pragma HLS INLINE off
@@ -198,17 +206,18 @@ static void update_EY_tail(float ey_plane[NY_1][NX_0],
 #pragma HLS PIPELINE II = 1
       const float dhx = -hx_prev1[y][x];
       const float dhz = hz_plane[y][x] - hz_plane[y][x - 1];
-      ey_plane[y][x] += ce * (dhx - dhz);
+      ey_out[y][x]    = ey_in[y][x] + ce * (dhx - dhz);
     }
   }
 }
 
-static void update_E_tail(float ex[NY_0][NX_1], float ey[NY_1][NX_0],
+static void update_E_tail(float ex_out[NY_0][NX_1], float ey_out[NY_1][NX_0],
+                          float ex_in[NY_0][NX_1], float ey_in[NY_1][NX_0],
                           float hz[NY_1][NX_1], float hy1[NY_0][NX_1],
                           float hx1[NY_1][NX_0]) {
 #pragma HLS INLINE off
-  update_EX_tail(ex, hz, hy1);
-  update_EY_tail(ey, hx1, hz);
+  update_EX_tail(ex_out, ex_in, hz, hy1);
+  update_EY_tail(ey_out, ey_in, hx1, hz);
 }
 
 static void check_dipole(float ex_plane[NY_0][NX_1], float ey_plane[NY_1][NX_0],
@@ -275,15 +284,14 @@ static void stage_compute(
   H_Block                 &oh = wh;
   E_Block                 &oe = we;
   P_Block                 &op = wp;
-  ih                          = oh;
-  ie                          = oe;
-  ip                          = op;
 
   if (z < NZ_1) {
-    update_H_crit(oh.hx_plane, oh.hy_plane, oh.hz_plane, oe.ex_plane,
-                  op.ex_plus1, oe.ey_plane, op.ey_plus1, oe.ez_plane);
-    update_E_crit(oe.ex_plane, oe.ey_plane, oe.ez_plane, oh.hz_plane,
-                  oh.hy_plane, hy_prev1, oh.hx_plane, hx_prev1);
+    update_H_crit(oh.hx_plane, oh.hy_plane, oh.hz_plane, ih.hx_plane,
+                  ih.hy_plane, ih.hz_plane, oe.ex_plane, op.ex_plus1,
+                  oe.ey_plane, op.ey_plus1, oe.ez_plane);
+    update_E_crit(oe.ex_plane, oe.ey_plane, oe.ez_plane, ie.ex_plane,
+                  ie.ey_plane, ie.ez_plane, oh.hz_plane, oh.hy_plane, hy_prev1,
+                  oh.hx_plane, hx_prev1);
     check_dipole(oe.ex_plane, oe.ey_plane, z);
 
     {
@@ -301,8 +309,9 @@ static void stage_compute(
       }
     }
   } else {
-    update_H_tail(oh.hz_plane, oe.ex_plane, oe.ey_plane);
-    update_E_tail(oe.ex_plane, oe.ey_plane, oh.hz_plane, hy_prev1, hx_prev1);
+    update_H_tail(oh.hz_plane, ih.hz_plane, oe.ex_plane, oe.ey_plane);
+    update_E_tail(oe.ex_plane, oe.ey_plane, ie.ex_plane, ie.ey_plane,
+                  oh.hz_plane, hy_prev1, hx_prev1);
   }
 }
 
@@ -355,6 +364,13 @@ void fdtd(float *__restrict__ hx_gmem, float *__restrict__ hy_gmem,
 
   static float hx_prev1[NY_1][NX_0];
   static float hy_prev1[NY_0][NX_1];
+
+#pragma HLS aggregate variable = read2comp_h compact = none
+#pragma HLS aggregate variable = read2comp_e compact = none
+#pragma HLS aggregate variable = read2comp_p compact = none
+#pragma HLS aggregate variable = comp2wite_h compact = none
+#pragma HLS aggregate variable = comp2wite_e compact = none
+#pragma HLS aggregate variable = comp2wite_p compact = none
 
   {
     float *hx_p1loc = &hx_prev1[0][0];
